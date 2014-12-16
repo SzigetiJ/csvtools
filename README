@@ -1,0 +1,22 @@
+CsvTools
+========
+
+CsvTools were created for transforming CSV files. Supported transformations are:
+ * projection, i.e., column filtering;
+ * selection, i.e., row filtering;
+ * row sorting;
+ * joining of two CSV files using given columns;
+ * natural join of two CSV files using columns of the same name;
+ * aggregation;
+ * extending the CSV with new columns.
+
+I/O Format
+----------
+
+CsvTools can handle CSV files of the following format:
+ * Records are separated by newline character ('\n').
+ * Fields are separated by comma character (',').
+ * Escape character is the doublequoute character ('\"').
+ * TEXT cells MUST BE escaped IF they contain ANY separator character OR IF they begin with escape character.
+ * Otherwise TEXT cells MAY BE unescaped.
+ * NUMERIC cells are not escaped.

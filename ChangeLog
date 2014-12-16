@@ -1,0 +1,9 @@
+2014.12.17. version 1.0.0, jszigeti
+-----------------------------------
+
+Initial version containing:
+* Base class structure (CsvCell, CsvRow, CsvPipe) with I/O functions.
+* Column indentification functions (ColTypes).
+* Selection classes and functions (RowFilter).
+* Command-line tools: csvpipe, csvproj, csvfilter.
+* Some logging.
