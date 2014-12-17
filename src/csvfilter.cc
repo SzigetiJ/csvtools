@@ -23,20 +23,18 @@
 #include <algorithm>
 #include "CsvPipe.h"
 #include "RowFunc.h"
+#include "DefaultCommandLine.h"
 #include "log.h"
 
 using namespace std;
 
-LogConfig logger;
-
-string HELP="Projects selected columns of the CSV file. The program works with <stdin> and <stdout>\n"
-"Usage:\n"
-"csvproj [OPTIONS]\n"
-"Options:\n"
-"\t<op>:<exp>[,<exp>]:<str>\tfield list\n"
-"\t<exp>:\tnum|-num|num-|num-num\n"
-"\t<op>:\t=|!=|<|<=|>|>=\t(= and != compare strings, each other compares numbers)\n"
-"\t<str>:\tstring\n";
+const string DESCRIPTION="Filters selected rows of the CSV file. Takes stdin as input and puts result to stdout.\n";
+const string USAGE="-r <cond> [-r <cond> ...]\n"
+" cond ::= <op>:<expr>:str\t\t(filtering condition)\n"
+" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
+" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+" op ::= =|!=|<|<=|>|>=\t\t(comparison operator, = and != compare strings, each other compares numbers)\n"
+"where str is string, num is integer\n";
 
 
 bool op_streq(const string &a, const string &b){
@@ -76,46 +74,69 @@ const OpFunMap colop_m={
  OpFunKey(">",op_numgt)
 };
 
-int proc_param(char *a, RowFilterV &b){
- INFO(logger,"Parsing parameter ["<<a<<"]");
- char *ae=a+strlen(a);
- char *xptr=find(a,ae,':');
- *xptr=0;
- if (xptr==ae)
-  return -1;
- char *xptr1=find(xptr+1,ae,':');
- *xptr1=0;
- if (xptr1==ae)
-  return -1;
+// Selection specific options.
+const Option sel_option_a[]={
+{"r","row",1,APPEND,"Defines row filtering condition."}
+};
+const int sel_option_n = sizeof(sel_option_a)/sizeof(Option);
 
- string op=a;
- ColIvalV col_v=parse_projparam(xptr+1);
- string str=xptr1+1;
- OpFunMap::const_iterator comi=colop_m.find(op);
- if (comi==colop_m.end()) {
-  WARN(logger, "Unrecognized operator ["<<a<<"]. Filter skipped.");
-  return -2;
- }
- OpFun co=comi->second;
- b.push_back(make_pair(co,make_pair(col_v,str)));
- INFO(logger, "Parameter parsed.");
- return 0;
+/// Extension to DefaultCommandLine: SelectionCommandLine can derive row filtering conditions from row option value(s).
+class SelectionCommandLine : public DefaultCommandLine {
+ RowFilterV filter_v;
+public:
+ SelectionCommandLine(const string desc, const string &usage) :
+  DefaultCommandLine(desc, usage,set<Option>(sel_option_a,sel_option_a+sel_option_n)){};
+ RowFilterV get_filters() const {
+  return filter_v;
+ };
+ int process() {
+  filter_v.clear();
+
+  vector<vector<char*> > arg_v=get_values_for_longname("row");
+  for (vector<char*> arg : arg_v){
+   char *a=arg[0];
+   char *ae=a+strlen(a);
+   char *xptr=find(a,ae,':');
+   *xptr=0;
+   if (xptr==ae) {
+    ERROR(logger, "Cannot parse condition.");
+    return -1;
+   }
+   char *xptr1=find(xptr+1,ae,':');
+   *xptr1=0;
+   if (xptr1==ae) {
+    ERROR(logger, "Cannot parse condition.");
+    return -1;
+   }
+
+   string op=a;
+   ColIvalV col_v=parse_projparam(xptr+1);
+   string str=xptr1+1;
+   OpFunMap::const_iterator comi=colop_m.find(op);
+   if (comi==colop_m.end()) {
+    ERROR(logger, "Unrecognized operator ["<<a<<"]. Aborting.");
+    return -2;
+   }
+   OpFun co=comi->second;
+   filter_v.push_back(make_pair(co,make_pair(col_v,str)));
+   INFO(logger, "Parameter parsed.");
+  }
+  return 0;
+ };
 };
 
-int main(int argc, char **argv){
- RowFilterV filter_v;
 
- if (argc<2){
-  cerr<<HELP<<endl;
+int main(int argc, char **argv){
+ SelectionCommandLine cmdline=SelectionCommandLine(DESCRIPTION,USAGE);
+ if (cmdline.parse(argc, argv) || cmdline.process()) {
+  cmdline.print_help();
   return -1;
  }
- for (int i=1;i<argc;++i){
-  proc_param(argv[i], filter_v);
- }
-
+ if (cmdline.print_if_needed())
+  return 0;
  CsvPipe()
  .set_projection(ColIvalV(1,ColIval(COLID_UNDEF,COLID_UNDEF)))
- .set_filter(filter_v)
+ .set_filter(cmdline.get_filters())
  .process(cin,cout);
  return 0;
 }

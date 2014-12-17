@@ -24,8 +24,6 @@
 
 using namespace std;
 
-LogConfig logger;
-
 int main() {
  CsvPipe()
  .set_projection(ColIvalV(1,ColIval(COLID_UNDEF,COLID_UNDEF)))

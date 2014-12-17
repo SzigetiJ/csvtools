@@ -21,38 +21,47 @@
 
 #include <iostream>
 
-typedef struct _LogLevel {
- const char * level;
- bool enabled;
- std::ostream &stream;
- _LogLevel(const char *a, bool b, std::ostream &c):
-  level(a),enabled(b),stream(c){}; 
+/// Logging levels. Order matters.
+typedef enum {
+ FATAL = 0,	///< Very serious problem, when execution has to be terminated. Highest level.
+ ERROR = 1,	///< There is a problem that cannot be resolved.
+ WARN = 2,	///< Problem is detected but it can be resolved.
+ INFO = 3,	///< General information, e.g., entering function.
+ DEBUG = 4,	///< Detailed information about variables.
+ TRACE = 5	///< Very detailed information. Rarely used. Lowest level.
 } LogLevel;
 
+/// Stream output function for LogLevel.
+inline std::ostream &operator<<(std::ostream &a, const LogLevel &b){
+	return a<<(b==FATAL?"FATAL":
+	b==ERROR?"ERROR":
+	b==WARN?"WARN":
+	b==INFO?"INFO":
+	b==DEBUG?"DEBUG":
+	b==TRACE?"TRACE":
+	"UNKNOWN");
+}
+
+/// Configuration class for logging.
 class LogConfig {
+ std::ostream &out;	///< Where to put the log messages
+ LogLevel min_level;	///< What is the "lowest" level of logging.
+ bool file_info;	///< Whether to log the place of log (file:line) or not.
 public:
- LogLevel fatal;
- LogLevel error;
- LogLevel warn;
- LogLevel info;
- LogLevel debug;
- LogConfig():
-  fatal("FATAL",true,std::cerr),
-  error("ERROR",true,std::cerr),
-  warn("WARN",true,std::cerr),
-  info("INFO",true,std::cerr),
-  debug("DEBUG",false,std::cerr){};
+ LogConfig(std::ostream &a=std::cerr, LogLevel b=WARN, bool c=false):out(a),min_level(b),file_info(c){};	///< Standard constructor setting all of the private members.
+ bool is_enabled(LogLevel a) const {return a<=min_level;}	///< Returns whether a givel LogLevel needs to be logged or not.
+ bool do_file_info() const {return file_info;}	///< Getter for attribute file_info.
+ std::ostream &get_out() const {return out;}	///< Getter for attribute out.
 };
 
-extern LogConfig logger;
+// Logging macros
+#define FATAL(CFG,X) LOG_AT_LEVEL(CFG,FATAL,X)
+#define ERROR(CFG,X) LOG_AT_LEVEL(CFG,ERROR,X)
+#define WARN(CFG,X) LOG_AT_LEVEL(CFG,WARN,X)
+#define INFO(CFG,X) LOG_AT_LEVEL(CFG,INFO,X)
+#define DEBUG(CFG,X) LOG_AT_LEVEL(CFG,DEBUG,X)
 
-#define FATAL(CFG,X) LOG_AT_LEVEL(CFG.fatal,X)
-#define ERROR(CFG,X) LOG_AT_LEVEL(CFG.error,X)
-#define WARN(CFG,X) LOG_AT_LEVEL(CFG.warn,X)
-#define INFO(CFG,X) LOG_AT_LEVEL(CFG.info,X)
-#define DEBUG(CFG,X) LOG_AT_LEVEL(CFG.debug,X)
-
-#define LOG_AT_LEVEL(LEVEL,X) LOG(LEVEL.enabled, LEVEL.stream, LEVEL.level, X)
-#define LOG(ENABLED, STREAM, LEVEL, MSG) if (ENABLED) {STREAM << "["<< LEVEL <<":" << __FILE__ << ":" << __LINE__ << "] " << MSG << "\n"; STREAM.flush();}
+#define LOG_AT_LEVEL(CFG,LEVEL,X) if (CFG.is_enabled(LEVEL)) {LOG(CFG.do_file_info(), CFG.get_out(), LEVEL, X);}
+#define LOG(FILEINFO, STREAM, LEVEL, MSG) ((FILEINFO?STREAM << "["<< LEVEL <<":" << __FILE__ << ":" << __LINE__ << "] ":STREAM << LEVEL << ": ") << MSG << std::endl).flush()
 
 #endif

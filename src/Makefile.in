@@ -93,7 +93,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_csvfilter_OBJECTS = csvfilter.$(OBJEXT) CsvCell.$(OBJEXT) \
 	CsvRow.$(OBJEXT) CsvPipe.$(OBJEXT) ColTypes.$(OBJEXT) \
-	RowFunc.$(OBJEXT)
+	RowFunc.$(OBJEXT) CommandLine.$(OBJEXT) \
+	DefaultCommandLine.$(OBJEXT)
 csvfilter_OBJECTS = $(am_csvfilter_OBJECTS)
 csvfilter_LDADD = $(LDADD)
 am_csvpipe_OBJECTS = csvpipe.$(OBJEXT) CsvCell.$(OBJEXT) \
@@ -103,7 +104,8 @@ csvpipe_OBJECTS = $(am_csvpipe_OBJECTS)
 csvpipe_LDADD = $(LDADD)
 am_csvproj_OBJECTS = csvproj.$(OBJEXT) CsvCell.$(OBJEXT) \
 	CsvRow.$(OBJEXT) CsvPipe.$(OBJEXT) ColTypes.$(OBJEXT) \
-	RowFunc.$(OBJEXT)
+	RowFunc.$(OBJEXT) CommandLine.$(OBJEXT) \
+	DefaultCommandLine.$(OBJEXT)
 csvproj_OBJECTS = $(am_csvproj_OBJECTS)
 csvproj_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -256,8 +258,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 csvpipe_SOURCES = csvpipe.cc CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc
-csvfilter_SOURCES = csvfilter.cc CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc
-csvproj_SOURCES = csvproj.cc CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc
+csvfilter_SOURCES = csvfilter.cc CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc CommandLine.cc DefaultCommandLine.cc
+csvproj_SOURCES = csvproj.cc CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc CommandLine.cc DefaultCommandLine.cc
 all: all-am
 
 .SUFFIXES:
@@ -354,9 +356,11 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColTypes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CommandLine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CsvCell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CsvPipe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CsvRow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DefaultCommandLine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RowFunc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/csvfilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/csvpipe.Po@am__quote@

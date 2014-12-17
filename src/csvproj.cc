@@ -19,55 +19,49 @@
 #include <iostream>
 #include "CsvPipe.h"
 #include "ColTypes.h"
+#include "DefaultCommandLine.h"
 #include "log.h"
 
 using namespace std;
 
-LogConfig logger;
+// Projection specific options.
+const Option proj_option_a[]={
+{"c","columns",1,APPEND,"Define columns."}
+};
+const int proj_option_n = sizeof(proj_option_a)/sizeof(Option);
 
-string HELP="Projects selected columns of the csv file. The program works with <stdin> and <stdout>\n"
-"Usage:\n"
-"csvproj [OPTIONS]\n"
-"Options:\n"
-"\t-f<exp>[,<exp>]\tfield list\n"
-"\t<exp>:\tnum|-num|num-|num-num\n";
-
-ColIvalV proj_v;
-
-
-int proc_param(char *a){
- INFO(logger,"Parsing parameter ["<<a<<"]");
- switch (a[0]){
-  case '-':
-   switch (a[1]){
-    case 'f': // projected fields
-     {
-      ColIvalV tmpproj=parse_projparam(a+2);
-      proj_v.insert(proj_v.end(),tmpproj.begin(),tmpproj.end());
-     }
-     break;
-    default:
-     cerr<<HELP<<endl;
-   }
-   break;
-  default:
-   cerr<<"cannot parse parameter "<<a<<endl;
- }
- INFO(logger,"Parameter parsed.");
- return 0;
+/// Extension to DefaultCommandLine: ProjectionCommandLine can derive column intervals from columns option value(s).
+class ProjectionCommandLine : public DefaultCommandLine {
+public:
+ ProjectionCommandLine(const string desc, const string &usage) :
+  DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)){};
+ ColIvalV get_intervals() const {
+  ColIvalV retv;
+  vector<vector<char*> > arg_v=get_values_for_longname("columns");
+  for (vector<char*> arg : arg_v){
+   ColIvalV tmpproj=parse_projparam(arg[0]);
+   retv.insert(retv.end(),tmpproj.begin(),tmpproj.end());  
+  }
+  return retv;
+ };
 };
 
+const string DESCRIPTION="Filters columns of the csv file (projection). Takes stdin as input and puts result to stdout.\n";
+const string USAGE="-c <expr> [-c <expr> ...]\n"
+" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
+" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+"where num is integer value, for the first column num=0.";
+
 int main(int argc, char **argv){
- if (argc<2){
-  cerr<<HELP<<endl;
+ ProjectionCommandLine cmdline=ProjectionCommandLine(DESCRIPTION,USAGE);
+ if (cmdline.parse(argc, argv)) {
+  cmdline.print_help();
   return -1;
  }
- for (int i=1;i<argc;++i){
-  proc_param(argv[i]);
- }
-
+ if (cmdline.print_if_needed())
+  return 0;
  CsvPipe()
- .set_projection(proj_v)
+ .set_projection(cmdline.get_intervals())
  .process(cin,cout);
  return 0;
 }

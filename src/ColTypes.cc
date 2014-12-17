@@ -64,7 +64,7 @@ ColIval parse_projexpr(char *a){
   retv.first=atoi(a);
   retv.second=atoi(ptx+1);
  }
- INFO(logger,"ProjExpr: "<<retv);
+// INFO(logger,"ProjExpr: "<<retv);
  return retv;
 }
 
@@ -96,7 +96,7 @@ FieldV extract_ival(const ColIvalV &a, int len){
   int cend=(a[i].second==COLID_UNDEF?len:a[i].second+1);
    // exception:
   if (cend<cbegin) {
-   WARN(logger, "Invalid interval: ["<<cbegin<<","<<cend<<"]");
+//   WARN(logger, "Invalid interval: ["<<cbegin<<","<<cend<<"]");
    cend=cbegin;
   }
   generate_n(back_inserter(retv),cend-cbegin,IncGen(cbegin));
