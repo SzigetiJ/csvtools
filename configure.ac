@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([csvtools],[1.0.0])
+LT_INIT
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/CsvCell.h])
 AC_CONFIG_HEADERS([config.h])

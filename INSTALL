@@ -1,0 +1,58 @@
+INSTALLATION GUIDE
+==================
+
+Quick guide
+-----------
+
+./configure
+make
+sudo make install
+
+Detailed guide
+--------------
+
+I.) configure
+
+Configuration can be customized with environment variables or with
+configuration options.
+
+By setting CXXFLAGS we can override compilation with debug information
+(with or without -g flag), we can set optimization level (-O0 .. -O3),
+etc.
+
+To display the complete list of available options run
+
+ ./configure --help
+
+Example #1:
+
+If we want to build only dynamic libraries without debug information at
+optimization level 3 and to install them into a given location:
+
+ CXXFLAGS="-O3 -W -Wall" ./configure --disable-static --prefix=/home/user1/local
+
+
+II.) make
+
+With the make command we can compile the source and link the object files. The inverted command of make is
+
+ make clean
+
+which removes build executables, libs and object files. By invoking
+
+ make distclean
+
+we can also remove files created by the configure script.
+
+
+III.) make install
+
+The default prefix is /usr/local. Copying files into /usr/local usually
+requires root privileges. If we set prefix to a location where we have
+write permission, we do not have to sudo the command.
+
+Inverted command of make install is
+
+ make uninstall
+
+which removes installed binaries, libs and headers.

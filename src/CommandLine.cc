@@ -31,8 +31,8 @@ ostream &operator<<(ostream &a, const Option &b){
  if (b.longname) {
   a<<"\t"<<DASH_CHR<<DASH_CHR<<b.longname;
   if (b.arg_num){
-   for (int i=0;i<b.arg_num;++i){
-    a<<(i==0?EQ_CHR:' ')<<"<arg"<<(i+1)<<">";
+   for (int i=0; i<b.arg_num; ++i){
+    a << (i==0?EQ_CHR:' ') << "<arg" << (i+1) << ">";
    }
   }
  }
@@ -42,7 +42,7 @@ ostream &operator<<(ostream &a, const Option &b){
  return a;
 };
 
-CommandLine::CommandLine(const set<Option> &a):option_s(a),parsed(false),logger(LogConfig()){
+CommandLine::CommandLine(const set<Option> &a):logger(LogConfig()),option_s(a),parsed(false){
  for (auto option : a){
   flag_m.insert(make_pair(option.flag,option));
   longname_m.insert(make_pair(option.longname,option));

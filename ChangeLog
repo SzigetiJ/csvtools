@@ -1,4 +1,4 @@
-2014.12.17. version 1.0.0, jszigeti
+2014.12.18. version 1.0.0, jszigeti
 -----------------------------------
 
 Initial version containing:
@@ -6,4 +6,8 @@ Initial version containing:
 * Column indentification functions (ColTypes).
 * Selection classes and functions (RowFilter).
 * Command-line tools: csvpipe, csvproj, csvfilter.
-* Some logging.
+* Logger classes and macros.
+* Command line option parser parent and derived classes.
+Installation tool:
+* autoconf/automake sources and generated scripts & files.
+* libtool generates static / dynamic lib.

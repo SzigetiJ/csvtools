@@ -36,7 +36,7 @@ Soho"
 
 #### Projection
 
-For projection use `csvproj`. `csvproj` takes option `-c <expr>`, where expr defined columns or column interval.
+For projection use `csvproj`. `csvproj` takes option `-c <expr>`, where expr defines columns or column interval.
 * `-c 0,1,2` denotes first (0), second (1) and third (2) columns, respectively. Note that column numbering begins with 0.
 This column sequence definition is equivalent with `-c 0 -c 1 -c 2`.
 * `-c 2,0` denotes third (2) and first (0) columns, respectively.
