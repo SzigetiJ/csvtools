@@ -25,7 +25,7 @@ each line contains as many cells (fields) as the header):
 `persons.csv`
 ```
 "ID","YoB","Name","Address"
-0,1685,"Johann Sebastian Back","Leipzig"
+0,1685,"Johann Sebastian Bach","Leipzig"
 1,1756,"Wolfgang Amadeus Mozart","Salzburg"
 2,1770,"Ludwig van Beethoven",Vienna
 3,1810,"Frédéric Chopin",Paris
@@ -50,7 +50,7 @@ This column sequence definition is equivalent with `-c 0 -c 1 -c 2`.
 `cat persons.csv | csvproj -c 2` produces
 ```
 "Name"
-"Johann Sebastian Back"
+"Johann Sebastian Bach"
 "Wolfgang Amadeus Mozart"
 "Ludwig van Beethoven"
 "Frédéric Chopin"
