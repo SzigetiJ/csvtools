@@ -21,6 +21,19 @@
 
 using namespace std;
 
+char CsvRow::ifs=DEFAULT_CHR_IFS;
+char CsvRow::ofs=DEFAULT_CHR_OFS;
+
+/// Sets input field separator.
+void CsvRow::set_ifs(char a){
+ ifs=a;
+}
+
+/// Sets output field separator.
+void CsvRow::set_ofs(char a){
+ ofs=a;
+}
+
 /// Projection
 /// \param a cells to be selected (order sensitive)
 /// \return row of selected cells
@@ -51,12 +64,11 @@ CsvRow &CsvRow::operator+=(const CsvRow &a) {
 ostream &operator<<(ostream &a, const CsvRow &b){
  for (ColID i=0;i<b.size();++i) {
   if (i!=0)
-   a<<CHR_OFS;
+   a<<CsvRow::ofs;
   a<<b[i];
  }
  return a;
 }
-
 
 /// Parses the input stream and builds the CsvRow object.
 /// \param a input stream to parse
@@ -67,7 +79,7 @@ bool CsvRow::parse(istream &a){
  do {
   c_end=cx.parse(a);
   push_back(cx);
- } while (c_end==CHR_IFS);
+ } while (c_end==ifs);
  return (c_end!=CHR_EOF);
 }
 
