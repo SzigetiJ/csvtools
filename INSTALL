@@ -4,12 +4,24 @@ INSTALLATION GUIDE
 Quick guide
 -----------
 
-./configure
-make
-sudo make install
+Run bootstrap scripts:
+ libtoolize; aclocal; automake --add-missing; autoconf
+
+Run conventional build/install scripts:
+ ./configure
+ make
+ sudo make install
 
 Detailed guide
 --------------
+
+0.) Bootstrapping
+
+Repository does not contain generated files (e.g., configure script,
+Makefile, etc.). The only hand-written files that control the build and
+install process are configure.ac and Makefile.am. The bootstrap script
+are responsible for generating the files required by configure/make build
+process.
 
 I.) configure
 
