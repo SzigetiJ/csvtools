@@ -32,6 +32,7 @@ public:
  std::string get_dat() const;
  void set_escaped(bool);
  void to_decimal();
+ bool requires_escape() const;
  std::string get_escaped() const;
  bool operator<(const CsvCell&) const;
  bool operator==(const CsvCell&) const;

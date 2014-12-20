@@ -54,14 +54,23 @@ void CsvCell::to_decimal(){
  replace(dat.begin(),dat.end(),',','.');
 };
 
+/// Determines whether the cell must be escaped at the output or not.
+bool CsvCell::requires_escape() const {
+ return dat[0]==Delimiters::get(OESC)
+  || dat.find(Delimiters::get(OFS))!=dat.npos
+  || dat.find(Delimiters::get(ORS))!=dat.npos;
+}
+
 /// @return Escaped version of the cell.
 string CsvCell::get_escaped() const {
  string retv;
+ retv.push_back(Delimiters::get(OESC));
  for (unsigned int i=0;i<dat.length();++i){
   if (dat[i]==Delimiters::get(OESC))
    retv.push_back(Delimiters::get(OESC));
   retv.push_back(dat[i]);
  }
+ retv.push_back(Delimiters::get(OESC));
  return retv;
 }
 
@@ -121,6 +130,6 @@ bool CsvCell::operator<(const CsvCell &a) const {
 
 /// Standard output function of CsvCell instances.
 ostream &operator<<(ostream &a, const CsvCell &b){
- return (b.quote?a<<Delimiters::get(OESC)<<b.get_escaped()<<Delimiters::get(OESC):a<<b.get_escaped());
+ return a<<(b.quote || b.requires_escape()?b.get_escaped():b.get_dat());
 }
 
