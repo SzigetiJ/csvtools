@@ -21,6 +21,7 @@
 #include <iostream>
 #include "CsvPipe.h"
 #include "CsvRow.h"
+#include "Delimiters.h"
 #include "DefaultCommandLine.h"
 #include "log.h"
 
@@ -41,9 +42,9 @@ public:
  /// Checks whether ifs / ofs is given and sets CsvRow static attributes.
  int process() {
   if (is_set_flag("ifs"))
-   CsvRow::set_ifs(get_values_for_flag("ifs")[0][0][0]);
+   Delimiters::set(IFS,get_values_for_flag("ifs")[0][0][0]);
   if (is_set_flag("ofs"))
-   CsvRow::set_ofs(get_values_for_flag("ofs")[0][0][0]);
+   Delimiters::set(OFS,get_values_for_flag("ofs")[0][0][0]);
   return 0;
  }
 };

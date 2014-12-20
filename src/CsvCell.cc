@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
+#include "Delimiters.h"
 #include "CsvCell.h"
-#include "CsvRow.h"
 #include <cstdlib>
 #include <algorithm>
 
@@ -58,8 +58,8 @@ void CsvCell::to_decimal(){
 string CsvCell::get_escaped() const {
  string retv;
  for (unsigned int i=0;i<dat.length();++i){
-  if (dat[i]==CHR_QUOTE)
-   retv.push_back(CHR_QUOTE);
+  if (dat[i]==Delimiters::get(OESC))
+   retv.push_back(Delimiters::get(OESC));
   retv.push_back(dat[i]);
  }
  return retv;
@@ -74,31 +74,27 @@ char CsvCell::parse(istream &a){
   bool xq=false;
   PState xs=PSTART;
   try {
-  while (xs!=PENDF && !a.get(c).eof()){
+   while (xs!=PENDF && !a.get(c).eof()){
 //   cerr<<"read: "<<c<<endl;
-   switch (c){
-	// we read record or field separator
-    case CHR_RS:
-    case CHR_IFS:
-     if (xs==PSTR) {	// within an str value
+	if (c == Delimiters::get(IRS) || c == Delimiters::get(IFS)) {
+     if (xs == PSTR) {	// within an str value
       xdat.push_back(c);
      } else {	// outside an str value
-      xs=PENDF;
+      xs = PENDF;
      }
-     break;
-    case CHR_QUOTE: if (xs==PSTR) {xs=PSTRX;}
-      else if (xs==PSTRX) {xdat.push_back(CHR_QUOTE);xs=PSTR;}
-      else if (xs==PSTART) {xs=PSTR;xq=true;}
-      else {cerr<<"unexpected char.."<<endl;}
-      break;
-    default:
+    } else if (c == Delimiters::get(IESC)) {
+     if (xs==PSTR) {xs=PSTRX;}
+     else if (xs==PSTRX) {xdat.push_back(Delimiters::get(IESC));xs=PSTR;}
+     else if (xs==PSTART) {xs=PSTR;xq=true;}
+     else {cerr<<"unexpected char.."<<endl;}
+    } else {
      xdat.push_back(c);
+    }
    }
-  }
   } catch (...){};
   if (a.eof()){
 //   cerr<<"end of file.."<<endl;
-   c=CHR_EOF;
+   c=Delimiters::get(EoF);
   }
   dat=xdat;
   quote=xq;
@@ -125,6 +121,6 @@ bool CsvCell::operator<(const CsvCell &a) const {
 
 /// Standard output function of CsvCell instances.
 ostream &operator<<(ostream &a, const CsvCell &b){
- return (b.quote?a<<CHR_QUOTE<<b.get_escaped()<<CHR_QUOTE:a<<b.get_escaped());
+ return (b.quote?a<<Delimiters::get(OESC)<<b.get_escaped()<<Delimiters::get(OESC):a<<b.get_escaped());
 }
 

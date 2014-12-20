@@ -42,9 +42,7 @@ typedef struct _Option {
  int arg_num;	///< Number of required arguments.
  MultipleDefinition multidef;	///< Option override rule. Currently override rule can be given only for a single option, there is no possibility to define override rule for a set of options (e.g., verbosity level).
  const char *help;	///< One sentence long help message.
- bool operator<(const _Option &b) const {
-  return std::strcmp(flag, b.flag) < 0;
- };	///< strict weak ordering by flag (lexicographic).
+ bool operator<(const _Option &b) const;
 } Option;
 
 std::ostream &operator<<(std::ostream&, const Option&);

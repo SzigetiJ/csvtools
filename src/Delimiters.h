@@ -16,25 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#ifndef _CSVCELL_H_
-#define _CSVCELL_H_
-#include <iostream>
+#ifndef _DELIMITERS_H_
+#define _DELIMITERS_H_
+#include "CsvClasses.h"
 
-class CsvCell {
-/// the stored data
- std::string dat;
-/// whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
- bool quote:1;
+/// Enumeration of special characters.
+typedef enum {IFS, OFS, IRS, ORS, IESC, OESC, EoF} Delimiter; 
+
+/// Container of special characters.
+class Delimiters {
+ static char ifs;	///< Input field separator character.
+ static char ofs;	///< Output field separator character.
+ static char irs;	///< Input record separator character.
+ static char ors;	///< Output record separator character.
+ static char iesc;	///< Input escape character.
+ static char oesc;	///< Output escape character.
+ static char eof;	///< End of file character.
 public:
- char parse(std::istream &);
- CsvCell(const std::string &, bool);
- CsvCell();
- std::string get_dat() const;
- void set_escaped(bool);
- void to_decimal();
- std::string get_escaped() const;
- bool operator<(const CsvCell&) const;
- bool operator==(const CsvCell&) const;
- friend std::ostream &operator<<(std::ostream &, const CsvCell&);
+ static void set(Delimiter, char);
+ static char get(Delimiter);
 };
+
 #endif
+

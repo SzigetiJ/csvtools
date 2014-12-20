@@ -16,25 +16,40 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#ifndef _CSVCELL_H_
-#define _CSVCELL_H_
-#include <iostream>
+#include "default_chars.h"
+#include "Delimiters.h"
 
-class CsvCell {
-/// the stored data
- std::string dat;
-/// whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
- bool quote:1;
-public:
- char parse(std::istream &);
- CsvCell(const std::string &, bool);
- CsvCell();
- std::string get_dat() const;
- void set_escaped(bool);
- void to_decimal();
- std::string get_escaped() const;
- bool operator<(const CsvCell&) const;
- bool operator==(const CsvCell&) const;
- friend std::ostream &operator<<(std::ostream &, const CsvCell&);
-};
-#endif
+using namespace std;
+
+char Delimiters::ifs=DEFAULT_CHR_IFS;
+char Delimiters::ofs=DEFAULT_CHR_OFS;
+char Delimiters::irs=CHR_RS;
+char Delimiters::ors=CHR_RS;
+char Delimiters::iesc=CHR_QUOTE;
+char Delimiters::oesc=CHR_QUOTE;
+char Delimiters::eof=CHR_EOF;
+
+void Delimiters::set(Delimiter a, char b){
+ switch (a) {
+  case IFS: ifs=b; break;
+  case OFS: ofs=b; break;
+  case IRS: irs=b; break;
+  case ORS: ors=b; break;
+  case IESC: iesc=b; break;
+  case OESC: oesc=b; break;
+  case EoF: eof=b; break;
+  default:;
+ }
+}
+
+char Delimiters::get(Delimiter a){
+ return
+  a == IFS ? ifs:
+  a == OFS ? ofs:
+  a == IRS ? irs:
+  a == ORS ? ors:
+  a == IESC ? iesc:
+  a == OESC ? oesc:
+  eof;
+}
+

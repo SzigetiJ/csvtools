@@ -16,23 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
+#include "Delimiters.h"
 #include "CsvRow.h"
 #include "CsvCell.h"
 
 using namespace std;
-
-char CsvRow::ifs=DEFAULT_CHR_IFS;
-char CsvRow::ofs=DEFAULT_CHR_OFS;
-
-/// Sets input field separator.
-void CsvRow::set_ifs(char a){
- ifs=a;
-}
-
-/// Sets output field separator.
-void CsvRow::set_ofs(char a){
- ofs=a;
-}
 
 /// Projection
 /// \param a cells to be selected (order sensitive)
@@ -64,7 +52,7 @@ CsvRow &CsvRow::operator+=(const CsvRow &a) {
 ostream &operator<<(ostream &a, const CsvRow &b){
  for (ColID i=0;i<b.size();++i) {
   if (i!=0)
-   a<<CsvRow::ofs;
+   a<<Delimiters::get(OFS);
   a<<b[i];
  }
  return a;
@@ -79,8 +67,8 @@ bool CsvRow::parse(istream &a){
  do {
   c_end=cx.parse(a);
   push_back(cx);
- } while (c_end==ifs);
- return (c_end!=CHR_EOF);
+ } while (c_end==Delimiters::get(IFS));
+ return (c_end!=Delimiters::get(EoF));
 }
 
 

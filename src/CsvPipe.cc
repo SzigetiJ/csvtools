@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
+#include "Delimiters.h"
 #include "CsvPipe.h"
 #include "CsvCell.h"
 #include "CsvRow.h"
@@ -40,12 +41,12 @@ const CsvPipe &CsvPipe::process(istream &xin, ostream &xout) const {
  if (!head.parse(xin))
   return *this;
  FieldV xproj_v=extract_ival(proj_v,head.size());
- xout<<head.get_fields(xproj_v)<<CHR_RS;
+ xout<<head.get_fields(xproj_v)<<Delimiters::get(ORS);
 
  CsvRow rx;
  while (rx.parse(xin)){
   if (row_matches(rx,filter_v)){
-   xout<<rx.get_fields(xproj_v)<<CHR_RS;
+   xout<<rx.get_fields(xproj_v)<<Delimiters::get(ORS);
   }
   rx.clear();
  }

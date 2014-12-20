@@ -22,23 +22,12 @@
 #include <vector>
 #include "CsvCell.h"
 #include "ColTypes.h"
-#ifndef DEFAULT_CHR_IFS
-#define DEFAULT_CHR_IFS ','
-#endif
-#ifndef DEFAULT_CHR_OFS
-#define DEFAULT_CHR_OFS ','
-#endif
-
 
 /// Class representing a line (row) of a csv file.
 class CsvRow : public std::vector<CsvCell>{
- static char ifs;	///< Input field separator character.
- static char ofs;	///< Output field separator character.
 public:
  bool parse(std::istream &);
  CsvRow get_fields(const FieldV&) const;
- static void set_ifs(char);
- static void set_ofs(char);
  CsvRow &operator+=(const CsvRow&);
  friend std::ostream &operator<<(std::ostream &, const CsvRow &);
 };

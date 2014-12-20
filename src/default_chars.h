@@ -16,25 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#ifndef _CSVCELL_H_
-#define _CSVCELL_H_
-#include <iostream>
+#ifndef _DEFAULT_CHARS_H_
+#define _DEFAULT_CHARS_H_
 
-class CsvCell {
-/// the stored data
- std::string dat;
-/// whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
- bool quote:1;
-public:
- char parse(std::istream &);
- CsvCell(const std::string &, bool);
- CsvCell();
- std::string get_dat() const;
- void set_escaped(bool);
- void to_decimal();
- std::string get_escaped() const;
- bool operator<(const CsvCell&) const;
- bool operator==(const CsvCell&) const;
- friend std::ostream &operator<<(std::ostream &, const CsvCell&);
-};
+/// Default record separator character
+#define CHR_RS '\n'
+/// Pseudo end-of-line character (for return value)
+#define CHR_EOF '\0'
+/// Default quote character
+#define CHR_QUOTE '"'
+
+#ifndef DEFAULT_CHR_IFS
+#define DEFAULT_CHR_IFS ','
 #endif
+#ifndef DEFAULT_CHR_OFS
+#define DEFAULT_CHR_OFS ','
+#endif
+
+#endif
+

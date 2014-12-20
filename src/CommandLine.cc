@@ -25,6 +25,11 @@
 #define EQ_CHR '='
 using namespace std;
 
+/// strict weak ordering by flag (lexicographic).
+bool Option::operator<(const _Option &b) const {
+ return std::strcmp(flag, b.flag) < 0;
+};
+
 ostream &operator<<(ostream &a, const Option &b){
  if (b.flag)
   a<<DASH_CHR<<b.flag;
