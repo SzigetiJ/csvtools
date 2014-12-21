@@ -16,18 +16,37 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#ifndef _LOG_H_
-#define _LOG_H_
 #include "LogConfig.h"
 
-// Logging macros
-#define FATAL(CFG,X) LOG_AT_LEVEL(CFG,FATAL,X)
-#define ERROR(CFG,X) LOG_AT_LEVEL(CFG,ERROR,X)
-#define WARN(CFG,X) LOG_AT_LEVEL(CFG,WARN,X)
-#define INFO(CFG,X) LOG_AT_LEVEL(CFG,INFO,X)
-#define DEBUG(CFG,X) LOG_AT_LEVEL(CFG,DEBUG,X)
+using namespace std;
 
-#define LOG_AT_LEVEL(CFG,LEVEL,X) if (CFG.is_enabled(LEVEL)) {LOG(CFG.do_file_info(), CFG.get_out(), LEVEL, X);}
-#define LOG(FILEINFO, STREAM, LEVEL, MSG) ((FILEINFO?STREAM << "["<< LEVEL <<":" << __FILE__ << ":" << __LINE__ << "] ":STREAM << LEVEL << ": ") << MSG << std::endl).flush()
+/// Stream output function for LogLevel.
+std::ostream &operator<<(std::ostream &a, const LogLevel &b){
+	return a<<(b==FATAL?"FATAL":
+	b==ERROR?"ERROR":
+	b==WARN?"WARN":
+	b==INFO?"INFO":
+	b==DEBUG?"DEBUG":
+	b==TRACE?"TRACE":
+	"UNKNOWN");
+}
 
-#endif
+LogConfig::LogConfig(std::ostream &a, LogLevel b, bool c):
+ out(a),min_level(b),file_info(c){
+};
+
+/// Returns whether a givel LogLevel needs to be logged or not.
+bool LogConfig::is_enabled(LogLevel a) const {
+ return a<=min_level;
+}
+
+/// Getter method of attribute file_info.
+bool LogConfig::do_file_info() const {
+ return file_info;
+}
+
+/// Getter method of attribute out.
+ostream &LogConfig::get_out() const {
+ return out;
+}
+

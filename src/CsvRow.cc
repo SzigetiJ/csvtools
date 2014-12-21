@@ -49,26 +49,25 @@ CsvRow &CsvRow::operator+=(const CsvRow &a) {
 
 /// Print.
 /// Standard output function of CsvRow objects.
-ostream &operator<<(ostream &a, const CsvRow &b){
- for (ColID i=0;i<b.size();++i) {
+void CsvRow::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat){
+ for (ColID i=0;i<size();++i) {
   if (i!=0)
-   a<<Delimiters::get(OFS);
-  a<<b[i];
+   a<<delims.get(OFS);
+  at(i).print(a,delims,strat);
  }
- return a;
 }
 
 /// Parses the input stream and builds the CsvRow object.
 /// \param a input stream to parse
 /// \return input has more lines (no eof has been encountered)
-bool CsvRow::parse(istream &a){
+bool CsvRow::parse(istream &a, const Delimiters &delims){
  char c_end;
   CsvCell cx;
  do {
-  c_end=cx.parse(a);
+  c_end=cx.parse(a, delims);
   push_back(cx);
- } while (c_end==Delimiters::get(IFS));
- return (c_end!=Delimiters::get(EoF));
+ } while (c_end==delims.get(IFS));
+ return (c_end!=delims.get(EoF));
 }
 
 

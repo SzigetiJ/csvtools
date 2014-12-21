@@ -19,40 +19,26 @@
 #ifndef _CSVCELL_H_
 #define _CSVCELL_H_
 #include <iostream>
-
-/// Field escaping strategy.
-typedef enum {
- ESC_ALL,	///< Every field must be escaped.
- ESC_PRESERVE,	///< Exising escaping must be preserved.
- ESC_RESOLVE,	///< If input escaping was requisite but output escaping is not needed than do not escape the field.
- ESC_REMOVE,	///< Do not escape fields if not required.
- ESC_UNDEF	///< Undefined value (denotes error).
-} EscapeStrategy;
-
+#include "Delimiters.h"
 
 class CsvCell {
-/// Cell escaping strategy.
- static EscapeStrategy esc_strat;
 /// The stored data.
  std::string dat;
 /// Whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
  bool quote:1;
 
- bool requires_escape_at(bool) const;
+ bool requires_escape_at(bool, const Delimiters&) const;
 public:
- static EscapeStrategy parse_esc_strat(const std::string&);
- static void set_esc_strat(EscapeStrategy);
-
- char parse(std::istream &);
+ char parse(std::istream &, const Delimiters &);
  CsvCell(const std::string &, bool);
  CsvCell();
  std::string get_dat() const;
  void set_escaped(bool);
  void to_decimal();
- bool requires_escape() const;
- std::string get_escaped() const;
+ bool requires_escape_for_strategy(const EscapeStrategy&, const Delimiters&) const;
+ std::string get_escaped(const Delimiters&) const;
  bool operator<(const CsvCell&) const;
  bool operator==(const CsvCell&) const;
- friend std::ostream &operator<<(std::ostream &, const CsvCell&);
+ void print(std::ostream &, const Delimiters&, const EscapeStrategy&) const;
 };
 #endif

@@ -26,10 +26,10 @@
 /// Class representing a line (row) of a csv file.
 class CsvRow : public std::vector<CsvCell>{
 public:
- bool parse(std::istream &);
+ bool parse(std::istream&, const Delimiters&);
+ void print(std::ostream&, const Delimiters&, const EscapeStrategy&);
  CsvRow get_fields(const FieldV&) const;
  CsvRow &operator+=(const CsvRow&);
- friend std::ostream &operator<<(std::ostream &, const CsvRow &);
 };
 
 /// Pure virtual parent class for row comparing functors.

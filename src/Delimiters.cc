@@ -21,13 +21,26 @@
 
 using namespace std;
 
-char Delimiters::ifs=DEFAULT_CHR_IFS;
-char Delimiters::ofs=DEFAULT_CHR_OFS;
-char Delimiters::irs=CHR_RS;
-char Delimiters::ors=CHR_RS;
-char Delimiters::iesc=CHR_QUOTE;
-char Delimiters::oesc=CHR_QUOTE;
-char Delimiters::eof=CHR_EOF;
+EscapeStrategy &operator<<(EscapeStrategy &a, const string &b){
+ a=
+  "all"==b?ESC_ALL:
+  "preserve"==b?ESC_PRESERVE:
+  "resolve"==b?ESC_RESOLVE:
+  "remove"==b?ESC_REMOVE:
+  ESC_UNDEF;
+ return a;
+};
+
+
+Delimiters::Delimiters():
+ ifs(DEFAULT_CHR_IFS),
+ ofs(DEFAULT_CHR_OFS),
+ irs(CHR_RS),
+ ors(CHR_RS),
+ iesc(CHR_QUOTE),
+ oesc(CHR_QUOTE),
+ eof(CHR_EOF){
+};
 
 void Delimiters::set(Delimiter a, char b){
  switch (a) {
@@ -42,7 +55,7 @@ void Delimiters::set(Delimiter a, char b){
  }
 }
 
-char Delimiters::get(Delimiter a){
+char Delimiters::get(Delimiter a) const {
  return
   a == IFS ? ifs:
   a == OFS ? ofs:

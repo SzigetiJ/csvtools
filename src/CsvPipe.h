@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
+#include "Delimiters.h"
 #include "ColTypes.h"
 #include "RowFunc.h"
 #include <iostream>
@@ -32,6 +33,6 @@ class CsvPipe {
 public:
  CsvPipe &set_projection(const ColIvalV&);
  CsvPipe &set_filter(const RowFilterV&);
- const CsvPipe &process(std::istream&, std::ostream&) const;
+ const CsvPipe &process(std::istream &xin, std::ostream &xout, const Delimiters &delims=Delimiters(), const EscapeStrategy &strat=ESC_PRESERVE) const;
 };
 

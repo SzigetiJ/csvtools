@@ -16,7 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#include "Delimiters.h"
 #include "CsvCell.h"
 #include <cstdlib>
 #include <algorithm>
@@ -30,23 +29,6 @@ typedef enum {
  PSTRX,	///< within a string we have found a string delimiter. This means that either the string is over or a delimiter character is encoded in the string.
  PENDF,	///< we have parsed end-of-field
 } PState;
-
-/// Set default value.
-EscapeStrategy CsvCell::esc_strat = ESC_PRESERVE;
-
-void CsvCell::set_esc_strat(EscapeStrategy a) {
- esc_strat=a;
-};
-
-/// Parser for EscapeStrategy.
-EscapeStrategy CsvCell::parse_esc_strat(const std::string &value) {
-   return
-    "all"==value?ESC_ALL:
-    "preserve"==value?ESC_PRESERVE:
-    "resolve"==value?ESC_RESOLVE:
-    "remove"==value?ESC_REMOVE:
-    ESC_UNDEF;
-}
 
 /// Standard constructor.
 CsvCell::CsvCell(const string &a, bool b):dat(a),quote(b){
@@ -72,37 +54,37 @@ void CsvCell::to_decimal(){
 
 /// Determines whether the cell must be escaped at the input/output or not.
 /// \param a true: output, false: input.
-bool CsvCell::requires_escape_at(bool a) const {
- return dat[0]==Delimiters::get(a?OESC:IESC)
-  || dat.find(Delimiters::get(a?OFS:IFS))!=dat.npos
-  || dat.find(Delimiters::get(a?ORS:IRS))!=dat.npos;
+bool CsvCell::requires_escape_at(bool a, const Delimiters &delims) const {
+ return dat[0]==delims.get(a?OESC:IESC)
+  || dat.find(delims.get(a?OFS:IFS))!=dat.npos
+  || dat.find(delims.get(a?ORS:IRS))!=dat.npos;
 }
 
 /// Determines whether the cell must be escaped at the output or not.
-bool CsvCell::requires_escape() const {
- return requires_escape_at(true)
-  || esc_strat==ESC_ALL
-  || (esc_strat==ESC_PRESERVE && quote)
-  || (esc_strat==ESC_RESOLVE && quote && !requires_escape_at(false));
+bool CsvCell::requires_escape_for_strategy(const EscapeStrategy &a, const Delimiters &delims) const {
+ return requires_escape_at(true, delims)
+  || a==ESC_ALL
+  || (a==ESC_PRESERVE && quote)
+  || (a==ESC_RESOLVE && quote && !requires_escape_at(false, delims));
 }
 
 /// @return Escaped version of the cell.
-string CsvCell::get_escaped() const {
+string CsvCell::get_escaped(const Delimiters &a) const {
  string retv;
- retv.push_back(Delimiters::get(OESC));
+ retv.push_back(a.get(OESC));
  for (unsigned int i=0;i<dat.length();++i){
-  if (dat[i]==Delimiters::get(OESC))
-   retv.push_back(Delimiters::get(OESC));
+  if (dat[i]==a.get(OESC))
+   retv.push_back(a.get(OESC));
   retv.push_back(dat[i]);
  }
- retv.push_back(Delimiters::get(OESC));
+ retv.push_back(a.get(OESC));
  return retv;
 }
 
-/// Parses the input stream and builds the CsvData object.
+/// Parses the input stream and builds CsvCell object.
 /// \param a input stream to parse
-/// \return last read character (CHR_IFS,CHR_RS, eof)
-char CsvCell::parse(istream &a){
+/// \return last read character (IFS,IRS, EoF)
+char CsvCell::parse(istream &a, const Delimiters &delims){
   char c;
   string xdat;
   bool xq=false;
@@ -110,15 +92,15 @@ char CsvCell::parse(istream &a){
   try {
    while (xs!=PENDF && !a.get(c).eof()){
 //   cerr<<"read: "<<c<<endl;
-	if (c == Delimiters::get(IRS) || c == Delimiters::get(IFS)) {
+	if (c == delims.get(IRS) || c == delims.get(IFS)) {
      if (xs == PSTR) {	// within an str value
       xdat.push_back(c);
      } else {	// outside an str value
       xs = PENDF;
      }
-    } else if (c == Delimiters::get(IESC)) {
+    } else if (c == delims.get(IESC)) {
      if (xs==PSTR) {xs=PSTRX;}
-     else if (xs==PSTRX) {xdat.push_back(Delimiters::get(IESC));xs=PSTR;}
+     else if (xs==PSTRX) {xdat.push_back(delims.get(IESC));xs=PSTR;}
      else if (xs==PSTART) {xs=PSTR;xq=true;}
      else {cerr<<"unexpected char.."<<endl;}
     } else {
@@ -128,7 +110,7 @@ char CsvCell::parse(istream &a){
   } catch (...){};
   if (a.eof()){
 //   cerr<<"end of file.."<<endl;
-   c=Delimiters::get(EoF);
+   c=delims.get(EoF);
   }
   dat=xdat;
   quote=xq;
@@ -154,7 +136,7 @@ bool CsvCell::operator<(const CsvCell &a) const {
 };
 
 /// Standard output function of CsvCell instances.
-ostream &operator<<(ostream &a, const CsvCell &b){
- return a<<(b.requires_escape()?b.get_escaped():b.get_dat());
+void CsvCell::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat) const {
+ a<<(requires_escape_for_strategy(strat,delims)?get_escaped(delims):get_dat());
 }
 

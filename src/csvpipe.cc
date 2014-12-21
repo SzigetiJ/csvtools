@@ -37,25 +37,27 @@ const int pipe_option_n = sizeof(pipe_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: PipeCommandLine can change default field separator characters.
 class PipeCommandLine : public DefaultCommandLine {
+ Delimiters delims;
+ EscapeStrategy strat=ESC_PRESERVE;
 public:
  PipeCommandLine(const string desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(pipe_option_a,pipe_option_a+pipe_option_n)){};
  /// Checks whether ifs / ofs is given and sets CsvRow static attributes.
  int process() {
   if (is_set_flag("ifs"))
-   Delimiters::set(IFS,get_values_for_flag("ifs")[0][0][0]);
+   delims.set(IFS,get_values_for_flag("ifs")[0][0][0]);
   if (is_set_flag("ofs"))
-   Delimiters::set(OFS,get_values_for_flag("ofs")[0][0][0]);
+   delims.set(OFS,get_values_for_flag("ofs")[0][0][0]);
   if (is_set_flag("esc")) {
-   EscapeStrategy strat = CsvCell::parse_esc_strat(string(get_values_for_flag("esc")[0][0]));
-   if (strat==ESC_UNDEF) {
+   if ((strat<<string(get_values_for_flag("esc")[0][0]))==ESC_UNDEF) {
     ERROR(logger,"Invalid escape-strategy.");
     return -1;
    }
-   CsvCell::set_esc_strat(strat);
   }
   return 0;
  }
+ Delimiters get_delims() const {return delims;}
+ EscapeStrategy get_strat() const {return strat;}
 };
 
 const string DESCRIPTION="Pipes csv from stdin to stdout. Field separator character may be overridden.\n";
@@ -72,6 +74,6 @@ int main(int argc, char **argv) {
   return 0;
  CsvPipe()
  .set_projection(ColIvalV(1,ColIval(COLID_UNDEF,COLID_UNDEF)))
- .process(cin,cout);
+ .process(cin,cout,cmdline.get_delims(),cmdline.get_strat());
 }
 

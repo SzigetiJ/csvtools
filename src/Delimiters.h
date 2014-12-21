@@ -18,24 +18,35 @@
  */
 #ifndef _DELIMITERS_H_
 #define _DELIMITERS_H_
-#include "CsvClasses.h"
+#include <iostream>
+
+/// Field escaping strategy.
+typedef enum {
+ ESC_ALL,	///< Every field must be escaped.
+ ESC_PRESERVE,	///< Exising escaping must be preserved.
+ ESC_RESOLVE,	///< If input escaping was requisite but output escaping is not needed than do not escape the field.
+ ESC_REMOVE,	///< Do not escape fields if not required.
+ ESC_UNDEF	///< Undefined value (denotes error).
+} EscapeStrategy;
+
+EscapeStrategy &operator<<(EscapeStrategy&, const std::string&);
 
 /// Enumeration of special characters.
 typedef enum {IFS, OFS, IRS, ORS, IESC, OESC, EoF} Delimiter; 
 
 /// Container of special characters.
 class Delimiters {
- static char ifs;	///< Input field separator character.
- static char ofs;	///< Output field separator character.
- static char irs;	///< Input record separator character.
- static char ors;	///< Output record separator character.
- static char iesc;	///< Input escape character.
- static char oesc;	///< Output escape character.
- static char eof;	///< End of file character.
+ char ifs;	///< Input field separator character.
+ char ofs;	///< Output field separator character.
+ char irs;	///< Input record separator character.
+ char ors;	///< Output record separator character.
+ char iesc;	///< Input escape character.
+ char oesc;	///< Output escape character.
+ char eof;	///< End of file character.
 public:
- static void set(Delimiter, char);
- static char get(Delimiter);
+ Delimiters();
+ void set(Delimiter, char);
+ char get(Delimiter) const;
 };
 
 #endif
-

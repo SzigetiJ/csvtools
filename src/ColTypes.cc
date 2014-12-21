@@ -21,7 +21,6 @@
 #include <cstring>
 #include <algorithm>
 #include <functional>
-#include "stl_out.h"
 #include "log.h"
 
 using namespace std;

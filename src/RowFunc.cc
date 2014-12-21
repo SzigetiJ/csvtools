@@ -13,7 +13,7 @@ bool row_matches(const CsvRow &row, const RowFilterV &filter_v){
    CsvRow dfline_csv=row.get_fields(xfv);
    stringstream ss;
    string dfline_s;
-   ss<<dfline_csv;
+   dfline_csv.print(ss,Delimiters(),ESC_PRESERVE);
    dfline_s=ss.str();
    if (!filter_v[filt].first(dfline_s,filter_v[filt].second.second))
     ok=false;

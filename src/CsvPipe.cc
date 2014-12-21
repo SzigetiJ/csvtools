@@ -33,20 +33,22 @@ CsvPipe &CsvPipe::set_filter(const RowFilterV &a){
  return *this;
 };
 
-const CsvPipe &CsvPipe::process(istream &xin, ostream &xout) const {
+const CsvPipe &CsvPipe::process(istream &xin, ostream &xout, const Delimiters &delims, const EscapeStrategy &strat) const {
  // filter each row except head
  // project each row
  // get colnum from head and transform v<ColIval> into FieldV
  CsvRow head;
- if (!head.parse(xin))
+ if (!head.parse(xin, delims))
   return *this;
  FieldV xproj_v=extract_ival(proj_v,head.size());
- xout<<head.get_fields(xproj_v)<<Delimiters::get(ORS);
+ head.get_fields(xproj_v).print(xout,delims, strat);
+ xout<<delims.get(ORS);
 
  CsvRow rx;
- while (rx.parse(xin)){
+ while (rx.parse(xin, delims)){
   if (row_matches(rx,filter_v)){
-   xout<<rx.get_fields(xproj_v)<<Delimiters::get(ORS);
+   rx.get_fields(xproj_v).print(xout,delims,strat);
+   xout<<delims.get(ORS);
   }
   rx.clear();
  }
