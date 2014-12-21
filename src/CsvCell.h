@@ -20,12 +20,29 @@
 #define _CSVCELL_H_
 #include <iostream>
 
+/// Field escaping strategy.
+typedef enum {
+ ESC_ALL,	///< Every field must be escaped.
+ ESC_PRESERVE,	///< Exising escaping must be preserved.
+ ESC_RESOLVE,	///< If input escaping was requisite but output escaping is not needed than do not escape the field.
+ ESC_REMOVE,	///< Do not escape fields if not required.
+ ESC_UNDEF	///< Undefined value (denotes error).
+} EscapeStrategy;
+
+
 class CsvCell {
-/// the stored data
+/// Cell escaping strategy.
+ static EscapeStrategy esc_strat;
+/// The stored data.
  std::string dat;
-/// whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
+/// Whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
  bool quote:1;
+
+ bool requires_escape_at(bool) const;
 public:
+ static EscapeStrategy parse_esc_strat(const std::string&);
+ static void set_esc_strat(EscapeStrategy);
+
  char parse(std::istream &);
  CsvCell(const std::string &, bool);
  CsvCell();

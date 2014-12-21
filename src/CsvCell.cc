@@ -31,6 +31,22 @@ typedef enum {
  PENDF,	///< we have parsed end-of-field
 } PState;
 
+/// Set default value.
+EscapeStrategy CsvCell::esc_strat = ESC_PRESERVE;
+
+void CsvCell::set_esc_strat(EscapeStrategy a) {
+ esc_strat=a;
+};
+
+/// Parser for EscapeStrategy.
+EscapeStrategy CsvCell::parse_esc_strat(const std::string &value) {
+   return
+    "all"==value?ESC_ALL:
+    "preserve"==value?ESC_PRESERVE:
+    "resolve"==value?ESC_RESOLVE:
+    "remove"==value?ESC_REMOVE:
+    ESC_UNDEF;
+}
 
 /// Standard constructor.
 CsvCell::CsvCell(const string &a, bool b):dat(a),quote(b){
@@ -54,11 +70,20 @@ void CsvCell::to_decimal(){
  replace(dat.begin(),dat.end(),',','.');
 };
 
+/// Determines whether the cell must be escaped at the input/output or not.
+/// \param a true: output, false: input.
+bool CsvCell::requires_escape_at(bool a) const {
+ return dat[0]==Delimiters::get(a?OESC:IESC)
+  || dat.find(Delimiters::get(a?OFS:IFS))!=dat.npos
+  || dat.find(Delimiters::get(a?ORS:IRS))!=dat.npos;
+}
+
 /// Determines whether the cell must be escaped at the output or not.
 bool CsvCell::requires_escape() const {
- return dat[0]==Delimiters::get(OESC)
-  || dat.find(Delimiters::get(OFS))!=dat.npos
-  || dat.find(Delimiters::get(ORS))!=dat.npos;
+ return requires_escape_at(true)
+  || esc_strat==ESC_ALL
+  || (esc_strat==ESC_PRESERVE && quote)
+  || (esc_strat==ESC_RESOLVE && quote && !requires_escape_at(false));
 }
 
 /// @return Escaped version of the cell.
@@ -130,6 +155,6 @@ bool CsvCell::operator<(const CsvCell &a) const {
 
 /// Standard output function of CsvCell instances.
 ostream &operator<<(ostream &a, const CsvCell &b){
- return a<<(b.quote || b.requires_escape()?b.get_escaped():b.get_dat());
+ return a<<(b.requires_escape()?b.get_escaped():b.get_dat());
 }
 

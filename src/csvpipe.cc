@@ -30,7 +30,8 @@ using namespace std;
 // Projection specific options.
 const Option pipe_option_a[]={
 {"ifs","input-field-separator",1,OVERRIDE,"Define input field separator character."},
-{"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."}
+{"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."},
+{"esc","escape-strategy",1,OVERRIDE,"Set (un)escape strategy {all|preserve|resolve|remove}. Default: preserve."}
 };
 const int pipe_option_n = sizeof(pipe_option_a)/sizeof(Option);
 
@@ -45,6 +46,14 @@ public:
    Delimiters::set(IFS,get_values_for_flag("ifs")[0][0][0]);
   if (is_set_flag("ofs"))
    Delimiters::set(OFS,get_values_for_flag("ofs")[0][0][0]);
+  if (is_set_flag("esc")) {
+   EscapeStrategy strat = CsvCell::parse_esc_strat(string(get_values_for_flag("esc")[0][0]));
+   if (strat==ESC_UNDEF) {
+    ERROR(logger,"Invalid escape-strategy.");
+    return -1;
+   }
+   CsvCell::set_esc_strat(strat);
+  }
   return 0;
  }
 };
