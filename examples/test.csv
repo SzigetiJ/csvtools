@@ -1,0 +1,14 @@
+id,desc,col1,col2,col3,col4
+1,simple,word,with space,end with space , begin with space
+2,empty,,,,
+3,escape_for_comma,"word","with space","with, comma",",more,,,comma"
+4,escape_for_newline,"
+","hello
+
+world","newline at the end
+","
+newline at the beginning"
+5,escape_for_escape,"","""","""""","in the ""middle"""
+6,noescape,simple " character, "after space,end with", """
+7,integers,0,-1,01,-01
+8,decimals,0.5,-0.5,.5,-.5
