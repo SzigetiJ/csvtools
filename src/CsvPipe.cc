@@ -20,6 +20,8 @@
 #include "CsvPipe.h"
 #include "CsvCell.h"
 #include "CsvRow.h"
+#include <functional>
+#include <algorithm>
 
 using namespace std;
 
@@ -46,7 +48,7 @@ const CsvPipe &CsvPipe::process(istream &xin, ostream &xout, const Delimiters &d
 
  CsvRow rx;
  while (rx.parse(xin, delims)){
-  if (row_matches(rx,filter_v)){
+  if (all_of(filter_v.begin(),filter_v.end(),bind2nd(mem_fun_ref(&RowFilter::row_matches),rx))) {
    rx.get_fields(xproj_v).print(xout,delims,strat);
    xout<<delims.get(ORS);
   }
