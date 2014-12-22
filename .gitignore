@@ -1,6 +1,7 @@
 autom4te.cache
 aclocal.m4
 Makefile.in
+Makefile
 compile
 configure
 config.guess
@@ -10,4 +11,7 @@ depcomp
 install-sh
 ltmain.sh
 missing
-
+src/*.o
+src/*.lo
+src/.deps
+src/.libs

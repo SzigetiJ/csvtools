@@ -36,42 +36,17 @@ const string USAGE="-r <cond> [-r <cond> ...]\n"
 " op ::= =|!=|<|<=|>|>=\t\t(comparison operator, = and != compare strings, each other compares numbers)\n"
 "where str is string, num is integer\n";
 
-
-bool op_streq(const string &a, const string &b){
- return a==b;
-}
-
-bool op_strne(const string &a, const string &b){
- return a!=b;
-}
-
-bool op_numle(const string &a, const string &b){
- return atof(a.c_str())<=atof(b.c_str());
-}
-
-bool op_numlt(const string &a, const string &b){
- return atof(a.c_str())<atof(b.c_str());
-}
-
-bool op_numge(const string &a, const string &b){
- return atof(a.c_str())>=atof(b.c_str());
-}
-
-bool op_numgt(const string &a, const string &b){
- return atof(a.c_str())>atof(b.c_str());
-}
-
 typedef pair<string,OpFun> OpFunKey;
 typedef map<string,OpFun> OpFunMap;
 
-
+/// Avaliable row filter functions mapped by operator sign / function name.
 const OpFunMap colop_m={
- OpFunKey("=",op_streq),
- OpFunKey("!=",op_strne),
- OpFunKey("<=",op_numle),
- OpFunKey("<",op_numlt),
- OpFunKey(">=",op_numge),
- OpFunKey(">",op_numgt)
+ {"=",[](const string &a, const string &b)->bool{return a==b;}},
+ {"!=",[](const string &a, const string &b)->bool{return a!=b;}},
+ {"<=",[](const string &a, const string &b)->bool{return atof(a.c_str())<=atof(b.c_str());}},
+ {"<",[](const string &a, const string &b)->bool{return atof(a.c_str())<atof(b.c_str());}},
+ {">=",[](const string &a, const string &b)->bool{return atof(a.c_str())>=atof(b.c_str());}},
+ {">",[](const string &a, const string &b)->bool{return atof(a.c_str())>atof(b.c_str());}}
 };
 
 // Selection specific options.
