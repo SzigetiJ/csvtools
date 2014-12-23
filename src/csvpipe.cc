@@ -27,7 +27,7 @@
 
 using namespace std;
 
-// Projection specific options.
+// Piping specific options.
 const Option pipe_option_a[]={
 {"ifs","input-field-separator",1,OVERRIDE,"Define input field separator character."},
 {"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."},
