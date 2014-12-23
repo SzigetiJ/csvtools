@@ -28,10 +28,10 @@ using namespace std;
 /// \file ColTypes.cc Column related types and procedures.
 
 /// Simple incremental integer generator. It can be initialized (first generated value).
-class IncGen : public unary_function<void, int>{
+class Sequence : public unary_function<void, int>{
  int last;
 public:
- IncGen(int a):last(a){};
+ Sequence(int a=0):last(a){};
  int operator()(){
   return last++;
  }
@@ -45,60 +45,43 @@ public:
 /// If the left side of the dash (first) is omitted, the interval begin will be undefined (meaning that the interval begins with the first column);
 /// if the right side of the dash (last) is omitted, the interval end will be undifined (meaning that the interval ends with the last column).
 /// @param a Character sequence (cstring) to parse.
-/// @return column interval.
-ColIval parse_projexpr(char *a){
- ColIval retv=ColIval(COLID_UNDEF,COLID_UNDEF);
- char *ae=a+strlen(a);
- char *ptx=find(a,ae,'-');
- if (ptx==a){ // -num
-  retv.second=atoi(a+1);
- } else if (ptx==ae-1){ // num-
-  *ptx=0;
-  retv.first=atoi(a);
- } else if (ptx==ae) { // num
-  retv.first=atoi(a);
-  retv.second=atoi(a);
- } else { // num-num
-  *ptx=0;
-  retv.first=atoi(a);
-  retv.second=atoi(ptx+1);
- }
-// INFO(logger,"ProjExpr: "<<retv);
- return retv;
+ColIval::ColIval(const char *a){
+ const char *a_end=a+strlen(a);
+ const char *dash_p=find(a,a_end,'-');
+ bool is_interval=(dash_p!=a_end);
+ bool undef_begin=(dash_p==a);
+ bool undef_end=(dash_p==a_end-1);
+ first=undef_begin?COLID_UNDEF:stoi(string(a,dash_p));
+ second=undef_end?COLID_UNDEF:
+ is_interval?stoi(dash_p+1):first;
 }
 
 /// Parses a projection parameter. The syntax of the projection parameter is
 ///  projparam::=projexpr[,projparam]
 /// @param a Character sequence (cstring) to parse.
-/// @return sequence of column intervals.
-ColIvalV parse_projparam(char *a){
- ColIvalV retv;
- char *ae=a+strlen(a);
- while (a<ae) {
-  char *ptx=find(a,ae,',');
-  *ptx=0;
-  ColIval projexpr=parse_projexpr(a);
-  retv.push_back(projexpr);
-  a=ptx+1;
+ColIvalV::ColIvalV(const char *a){
+ const char* const a_end=a+strlen(a);
+ while (a<a_end) {
+  const char* const comma_p=find(a,a_end,',');
+  push_back(ColIval(string(a,comma_p).c_str()));
+  a=comma_p+1;
  }
- return retv;
 }
 
 /// Extracts sequence of column indentifiers from column intervals.
-/// @param a Column intervals.
 /// @param len total number of columns (needed if {last} is omitted).
 /// @return Sequence of column identifiers.
-FieldV extract_ival(const ColIvalV &a, int len){
+FieldV ColIvalV::extract_ival(int len) const {
  FieldV retv;
- for (unsigned int i=0;i<a.size();++i){
-  int cbegin=(a[i].first==COLID_UNDEF?0:a[i].first);
-  int cend=(a[i].second==COLID_UNDEF?len:a[i].second+1);
+ for (unsigned int i=0;i<size();++i){
+  int cbegin=(at(i).first==COLID_UNDEF?0:at(i).first);
+  int cend=(at(i).second==COLID_UNDEF?len:at(i).second+1);
    // exception:
   if (cend<cbegin) {
 //   WARN(logger, "Invalid interval: ["<<cbegin<<","<<cend<<"]");
    cend=cbegin;
   }
-  generate_n(back_inserter(retv),cend-cbegin,IncGen(cbegin));
+  generate_n(back_inserter(retv),cend-cbegin,Sequence(cbegin));
  }
  return retv;
 }

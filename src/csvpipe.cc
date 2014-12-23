@@ -73,7 +73,6 @@ int main(int argc, char **argv) {
  if (cmdline.print_if_needed())
   return 0;
  CsvPipe()
- .set_projection(ColIvalV(1,ColIval(COLID_UNDEF,COLID_UNDEF)))
  .process(cin,cout,cmdline.get_delims(),cmdline.get_strat());
 }
 

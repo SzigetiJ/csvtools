@@ -25,16 +25,27 @@
 
 using namespace std;
 
+/// Default constructor. Initializes projection to project every column
+/// and leaves row filter to select every row.
+CsvPipe::CsvPipe():proj_v("-"){};
+
+/// Setter for projection.
 CsvPipe &CsvPipe::set_projection(const ColIvalV &a){
  proj_v=a;
  return *this;
 };
 
+/// Setter for filters.
 CsvPipe &CsvPipe::set_filter(const RowFilterV &a){
  filter_v=a;
  return *this;
 };
 
+/// Processes input stream and puts row/column filtered result to output stream.
+/// @param xin Input stream to process.
+/// @param xout Output stream to put the result to.
+/// @param delims Use input/output delimiters.
+/// @param strat Field escaping strategy to apply.
 const CsvPipe &CsvPipe::process(istream &xin, ostream &xout, const Delimiters &delims, const EscapeStrategy &strat) const {
  // filter each row except head
  // project each row
@@ -42,7 +53,7 @@ const CsvPipe &CsvPipe::process(istream &xin, ostream &xout, const Delimiters &d
  CsvRow head;
  if (!head.parse(xin, delims))
   return *this;
- FieldV xproj_v=extract_ival(proj_v,head.size());
+ FieldV xproj_v=proj_v.extract_ival(head.size());
  head.get_fields(xproj_v).print(xout,delims, strat);
  xout<<delims.get(ORS);
 

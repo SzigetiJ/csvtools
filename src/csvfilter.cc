@@ -85,7 +85,7 @@ public:
    }
 
    string op=a;
-   ColIvalV col_v=parse_projparam(xptr+1);
+   ColIvalV col_v(xptr+1);
    string str=xptr1+1;
    OpFunMap::const_iterator comi=colop_m.find(op);
    if (comi==colop_m.end()) {
@@ -110,7 +110,6 @@ int main(int argc, char **argv){
  if (cmdline.print_if_needed())
   return 0;
  CsvPipe()
- .set_projection(ColIvalV(1,ColIval(COLID_UNDEF,COLID_UNDEF)))
  .set_filter(cmdline.get_filters())
  .process(cin,cout);
  return 0;

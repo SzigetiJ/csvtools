@@ -28,19 +28,21 @@
 typedef unsigned int ColID;
 
 /// Column interval defined by the first and the last (!!!inclusive!!!) column.
-typedef std::pair<ColID,ColID> ColIval;
+class ColIval : public std::pair<ColID,ColID> {
+public:
+ ColIval(const char*);
+};
 
 /// Array of columns
 typedef std::vector<ColID> FieldV;
+
 /// Array of intervals
-typedef std::vector<ColIval> ColIvalV;
+class ColIvalV : public std::vector<ColIval>{
+public:
+ ColIvalV(const char*);
+ FieldV extract_ival(int) const;
+};
 
 class IncGen;
 
-ColIval parse_projexpr(char*);
-ColIvalV parse_projparam(char*);
-
-FieldV extract_ival(const ColIvalV&, int);
-
 #endif
-

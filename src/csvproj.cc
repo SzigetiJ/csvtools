@@ -36,10 +36,10 @@ public:
  ProjectionCommandLine(const string desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)){};
  ColIvalV get_intervals() const {
-  ColIvalV retv;
+  ColIvalV retv("");
   vector<vector<char*> > arg_v=get_values_for_longname("columns");
   for (vector<char*> arg : arg_v){
-   ColIvalV tmpproj=parse_projparam(arg[0]);
+   ColIvalV tmpproj(arg[0]);
    retv.insert(retv.end(),tmpproj.begin(),tmpproj.end());  
   }
   return retv;

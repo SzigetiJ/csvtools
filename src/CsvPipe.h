@@ -31,6 +31,7 @@ class CsvPipe {
  RowFilterV filter_v;
 
 public:
+ CsvPipe();
  CsvPipe &set_projection(const ColIvalV&);
  CsvPipe &set_filter(const RowFilterV&);
  const CsvPipe &process(std::istream &xin, std::ostream &xout, const Delimiters &delims=Delimiters(), const EscapeStrategy &strat=ESC_PRESERVE) const;
