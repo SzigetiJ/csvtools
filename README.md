@@ -69,3 +69,28 @@ Paris,3
 Soho",4
 "London",5
 ```
+
+#### Selection
+
+Use `csvfilter` for selecting rows by condition. The special option interpreted by `csvfilter` is `-r <cond>`, where cond defines the fitering condition. The condition is given as a relation between a column (or sequence of columns) and a string constant. The syntax of the condition is `cond ::= <relation>:<expr>:str` where relation is one of {=, !=, <, <=, >, >=}, expr is a column expression (see Projection) and str is a string constant. If multiple `-r <cond>` conditions are given, row must fulfill each of them to get selected.
+* `-r =:0:1` select rows where the first cell is `1`.
+* `-r =:1,3:foo,bar` selects rows where columns 1 and 3 (separated by default output field separator, `,`) give `foo,bar`. Equivalent with
+  * `-r =:3,1:bar,foo`
+  * `-r =:1:foo -r =:3:bar`
+* `-r >=:0,50 -r <:0:100` selects rows where the first column is at least 50 but less than 100.
+
+`cat persons.csv | csvfilter -r "<:1:1800"` produces
+```
+"ID","YoB","Name","Address"
+0,1685,"Johann Sebastian Bach","Leipzig"
+1,1756,"Wolfgang Amadeus Mozart","Salzburg"
+2,1770,"Ludwig van Beethoven",Vienna
+```
+
+#### Dealing with Other-than-Comma Separated Values
+
+CSV files are not always comma-separated. Some "CSV" files contain TAB- or semicolon-separated values. With `csvpipe` these files can be converted into comma-separated files and CSV files can be converted into Any-character Separated Values file. Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`, where ifs and ofs define the field separator at the input and at the output, respectively, whereas esc defines the field escaping strategy:
+* `all`: every field will be escaped.
+* `preserve`: already escaped fields remain escaped and escaping is introduced where necessary.
+* `resolce`: same as `preserve`, except for the fields where field escaping was necessary at the input, but is not required at the output - there fields will not be escaped.
+* `remove`: remove escaping from fields if possible.
