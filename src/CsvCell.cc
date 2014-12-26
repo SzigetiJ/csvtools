@@ -25,6 +25,7 @@ using namespace std;
 /// States of csv parser
 typedef enum {
  PSTART,	///< parse begins
+ PRAW,	///< raw field, unescaped
  PSTR,	///< we are parsing a string (waiting for string delimiter)
  PSTRX,	///< within a string we have found a string delimiter. This means that either the string is over or a delimiter character is encoded in the string.
  PENDF,	///< we have parsed end-of-field
@@ -71,6 +72,7 @@ bool CsvCell::requires_escape_for_strategy(const EscapeStrategy &a, const Delimi
 /// @return Escaped version of the cell.
 string CsvCell::get_escaped(const Delimiters &a) const {
  string retv;
+ retv.reserve(dat.length()+2);	// at least
  retv.push_back(a.get(OESC));
  for (unsigned int i=0;i<dat.length();++i){
   if (dat[i]==a.get(OESC))
@@ -87,24 +89,34 @@ string CsvCell::get_escaped(const Delimiters &a) const {
 char CsvCell::parse(istream &a, const Delimiters &delims){
   char c;
   string xdat;
-  bool xq=false;
+  bool escaped=false;
   PState xs=PSTART;
   try {
    while (xs!=PENDF && !a.get(c).eof()){
-//   cerr<<"read: "<<c<<endl;
-	if (c == delims.get(IRS) || c == delims.get(IFS)) {
-     if (xs == PSTR) {	// within an str value
+    if (c == delims.get(IESC)) {
+     if (xs==PSTART) {
+      xs=PSTR;escaped=true;
+     } else if (xs==PSTR) {
+      xs=PSTRX;
+     } else {
+      if (xs==PSTRX)
+       xs=PSTR;
       xdat.push_back(c);
-     } else {	// outside an str value
-      xs = PENDF;
      }
-    } else if (c == delims.get(IESC)) {
-     if (xs==PSTR) {xs=PSTRX;}
-     else if (xs==PSTRX) {xdat.push_back(delims.get(IESC));xs=PSTR;}
-     else if (xs==PSTART) {xs=PSTR;xq=true;}
-     else {cerr<<"unexpected char.."<<endl;}
+    } else if (c == delims.get(IRS) || c == delims.get(IFS)) {
+     if (xs==PSTR) {
+      xdat.push_back(c);
+     } else {
+      xs=PENDF;
+     }
     } else {
-     xdat.push_back(c);
+     if (xs==PSTRX) {
+      cerr<<"Expected IESC, IFS or IRS. Read: ["<<c<<"]"<<endl;
+     } else {
+      if (xs==PSTART)
+       xs=PRAW;
+      xdat.push_back(c);
+     }
     }
    }
   } catch (...){};
@@ -113,7 +125,7 @@ char CsvCell::parse(istream &a, const Delimiters &delims){
    c=delims.get(EoF);
   }
   dat=xdat;
-  quote=xq;
+  quote=escaped;
 //  cerr<<"read field: "<<*this<<endl;
   return c;
 }

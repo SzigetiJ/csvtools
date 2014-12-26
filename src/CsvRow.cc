@@ -28,7 +28,7 @@ using namespace std;
 CsvRow CsvRow::get_fields(const FieldV &a) const {
  CsvRow retv;
  for (ColID i=0;i<a.size();++i){
-  retv.push_back((*this)[a[i]]);
+  retv.push_back(at(a[i]));
  }
  return retv;
 };
