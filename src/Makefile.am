@@ -9,8 +9,8 @@ csvproj_LDADD = libcsvtools.la
 csvsort_LDADD = libcsvtools.la
 
 lib_LTLIBRARIES = libcsvtools.la
-libcsvtools_la_SOURCES = CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc Delimiters.cc LogConfig.cc RowOrderKey.cc
+libcsvtools_la_SOURCES = CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc Delimiters.cc LogConfig.cc RowOrderKey.cc globals.cc
 libcsvtools_la_LDFLAGS = -version-info 1:0:0
 
-include_HEADERS = CsvClasses.h CsvCell.h CsvRow.h CsvPipe.h ColTypes.h log.h RowFunc.h default_chars.h Delimiters.h LogConfig.h RowOrderKey.h
+include_HEADERS = CsvClasses.h CsvCell.h CsvRow.h CsvPipe.h ColTypes.h log.h RowFunc.h default_chars.h Delimiters.h LogConfig.h RowOrderKey.h globals.h
 

@@ -24,6 +24,7 @@
 #include <map>
 #include <string>
 #include "log.h"
+#include "globals.h"
 
 /// Possible handling of options that are define multiple times.
 typedef enum {

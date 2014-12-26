@@ -20,6 +20,7 @@
 #define _CSVCELL_H_
 #include <iostream>
 #include "Delimiters.h"
+#include "log.h"
 
 class CsvCell {
 /// The stored data.

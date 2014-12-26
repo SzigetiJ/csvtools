@@ -66,14 +66,21 @@ DefaultCommandLine::DefaultCommandLine(const string &desc, const string &use, co
  description(desc),
  usage(use){};
 
+int DefaultCommandLine::process() {
+ global_logger=get_log_config();
+ return 0;
+}
+
 LogConfig DefaultCommandLine::get_log_config() const {
  LogLevel level=
  is_set_flag("vvv")?TRACE:
  is_set_flag("vv")?DEBUG:
  is_set_flag("v")?INFO:
+ is_set_flag("q")?ERROR:
+ is_set_flag("qq")?FATAL:
  WARN;
  bool debug=is_set_flag("D");
- return LogConfig(cerr,level,debug);
+ return LogConfig(&cerr,level,debug);
 };
 
 int DefaultCommandLine::print_if_needed() const {

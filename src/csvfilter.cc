@@ -96,7 +96,7 @@ public:
    filter_v.push_back(make_pair(co,make_pair(col_v,str)));
    INFO(logger, "Parameter parsed.");
   }
-  return 0;
+  return DefaultCommandLine::process();
  };
 };
 

@@ -35,11 +35,11 @@ std::ostream &operator<<(std::ostream&, const LogLevel&);
 
 /// Configuration class for logging.
 class LogConfig {
- std::ostream &out;	///< Where to put the log messages
+ std::ostream *out;	///< Where to put the log messages
  LogLevel min_level;	///< What is the "lowest" level of logging.
  bool file_info;	///< Whether to log the place of log (file:line) or not.
 public:
- LogConfig(std::ostream &a=std::cerr, LogLevel b=WARN, bool c=false);
+ LogConfig(std::ostream *a=&std::cerr, LogLevel b=WARN, bool c=false);
  bool is_enabled(LogLevel a) const;
  bool do_file_info() const;
  std::ostream &get_out() const;

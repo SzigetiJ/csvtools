@@ -54,7 +54,7 @@ public:
     return -1;
    }
   }
-  return 0;
+  return DefaultCommandLine::process();
  }
  Delimiters get_delims() const {return delims;}
  EscapeStrategy get_strat() const {return strat;}

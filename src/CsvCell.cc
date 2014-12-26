@@ -16,9 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#include "CsvCell.h"
 #include <cstdlib>
 #include <algorithm>
+#include "CsvCell.h"
+#include "globals.h"
 
 using namespace std;
 
@@ -109,14 +110,15 @@ char CsvCell::parse(istream &a, const Delimiters &delims){
      } else {
       xs=PENDF;
      }
-    } else {
+    } else {	// not special char
      if (xs==PSTRX) {
-      cerr<<"Expected IESC, IFS or IRS. Read: ["<<c<<"]"<<endl;
-     } else {
-      if (xs==PSTART)
-       xs=PRAW;
-      xdat.push_back(c);
+      WARN(global_logger,"Unescaped escape character");
+      xdat.push_back(delims.get(IESC));
+      xs=PSTR;
+     } else if (xs==PSTART) {
+      xs=PRAW;
      }
+     xdat.push_back(c);
     }
    }
   } catch (...){};

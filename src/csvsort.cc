@@ -48,7 +48,7 @@ public:
     order_l.push_back(RowOrderKey(stoi(a),(a.find('d')!=string::npos),(a.find('n')!=string::npos),(a.find('e')!=string::npos)));
    }
   }
-  return 0;
+  return DefaultCommandLine::process();
  }
  list<RowOrderKey> get_keys() const {return order_l;}
 };

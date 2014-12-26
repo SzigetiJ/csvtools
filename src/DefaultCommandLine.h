@@ -30,6 +30,7 @@ class DefaultCommandLine : public CommandLine {
  std::string usage;	///< Short usage tip.
 public:
  DefaultCommandLine(const std::string&, const std::string&, const std::set<Option>&);
+ int process();
  LogConfig get_log_config() const;
  int print_if_needed() const;
  void print_usage() const;
