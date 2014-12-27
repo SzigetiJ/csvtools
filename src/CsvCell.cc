@@ -136,7 +136,7 @@ char CsvCell::parse(istream &a, const Delimiters &delims){
 
 /// Case sensitive equality check. Does not check the quote flag.
 bool CsvCell::operator==(const CsvCell &a) const {
- return !(*this<a) && !(a<*this); 
+ return (quote==a.quote && dat==a.dat);
 }
 /// Comparison operator of the CsvCell instances.
 /// If the data is text, we compare them as strings,

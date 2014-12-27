@@ -56,6 +56,10 @@ ColIval::ColIval(const char *a){
  is_interval?stoi(dash_p+1):first;
 }
 
+ColIval::ColIval(const ColID &a) {
+ first=a;
+ second=a;
+}
 /// Parses a projection parameter. The syntax of the projection parameter is
 ///  projparam::=projexpr[,projparam]
 /// @param a Character sequence (cstring) to parse.

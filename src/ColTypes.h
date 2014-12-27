@@ -30,6 +30,7 @@ typedef unsigned int ColID;
 /// Column interval defined by the first and the last (!!!inclusive!!!) column.
 class ColIval : public std::pair<ColID,ColID> {
 public:
+ ColIval(const ColID&);
  ColIval(const char*);
 };
 

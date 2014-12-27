@@ -1,12 +1,14 @@
-bin_PROGRAMS = csvpipe csvfilter csvproj csvsort
+bin_PROGRAMS = csvpipe csvfilter csvproj csvsort csvjoin
 csvpipe_SOURCES = csvpipe.cc CommandLine.cc DefaultCommandLine.cc
 csvfilter_SOURCES = csvfilter.cc CommandLine.cc DefaultCommandLine.cc
 csvproj_SOURCES = csvproj.cc CommandLine.cc DefaultCommandLine.cc
 csvsort_SOURCES = csvsort.cc CommandLine.cc DefaultCommandLine.cc
+csvjoin_SOURCES = csvjoin.cc CommandLine.cc DefaultCommandLine.cc
 csvpipe_LDADD = libcsvtools.la
 csvfilter_LDADD = libcsvtools.la
 csvproj_LDADD = libcsvtools.la
 csvsort_LDADD = libcsvtools.la
+csvjoin_LDADD = libcsvtools.la
 
 lib_LTLIBRARIES = libcsvtools.la
 libcsvtools_la_SOURCES = CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc Delimiters.cc LogConfig.cc RowOrderKey.cc globals.cc
