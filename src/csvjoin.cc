@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
@@ -26,22 +27,12 @@
 #include "CsvRow.h"
 #include "RowOrderKey.h"
 #include "DefaultCommandLine.h"
+#include "CsvIStream.h"
+#include "MultiSetJoinAlgorithm.h"
 #include "log.h"
 #include "stl_out.h"
 
 using namespace std;
-
-typedef enum {JOIN_NATURAL, JOIN_CROSS, JOIN_INNER, JOIN_OUTER, JOIN_UNDEF} JoinType;
-
-JoinType &operator<<(JoinType &a, const string &b){
- a=
-  "natural"==b?JOIN_NATURAL:
-  "cross"==b?JOIN_CROSS:
-  "inner"==b?JOIN_INNER:
-  "outer"==b?JOIN_OUTER:
-  JOIN_UNDEF;
- return a;
-};
 
 const string DESCRIPTION="Joins two CSV file. Left CSV file is taken from stdin, the filename of the right CSV data is given as argument and the result is put to stdout.\n";
 const string USAGE="-{jf} filename {-jt {natural|cross} | -jt {inner|outer} -jc <jexpr> [-jc <jexpr> ...]}\n"
@@ -60,14 +51,13 @@ const int join_option_n = sizeof(join_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: JoinCommandLine can derive join parameters from options.
 class JoinCommandLine : public DefaultCommandLine {
- pair<FieldV,FieldV> join_fields;
  pair<ColIvalV,ColIvalV> join_columns=make_pair("","");
- CsvRow right_head;
- list<CsvRow> right_body;
+ char *right_fname;
  JoinType join_type=JOIN_INNER;
 public:
  JoinCommandLine(const string desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)){};
+
  int process() {
 // general
   if (DefaultCommandLine::process()) {
@@ -78,8 +68,10 @@ public:
    join_type<<get_values_for_flag("jt")[0][0];
   }
 // right table
-  if (set_right_table()) {
-   ERROR(get_log_config(), "Cannot process right table.");
+  if (is_set_flag("jf")) {
+   right_fname=get_values_for_flag("jf")[0][0];
+  } else {
+   ERROR(get_log_config(),"Right table is not defined.");
    return 2;
   }
 // join columns
@@ -89,6 +81,7 @@ public:
   }
   return 0;
  };
+
  int set_join_columns() {
   if (!is_set_flag("jc")){
    return 1;
@@ -104,63 +97,11 @@ public:
   }
   return 0;
  };
- int set_right_table(){
-  if (!is_set_flag("jf")){
-   ERROR(get_log_config(),"Right table is not defined.");
-   return 1;
-  }
-   ifstream fin(get_values_for_flag("jf")[0][0]);
-   if (fin.rdstate()) {
-    ERROR(get_log_config(),"Cannot read input file.");
-    return 2;
-   }
-   if (!right_head.parse(fin,Delimiters())) {
-    WARN(get_log_config(),"Right file empty.");
-    return 0;
-   }
-   CsvRow row;
-   while (row.parse(fin,Delimiters())) {
-    right_body.push_back(row);
-    row.clear();
-   }
-   fin.close();
-  return 0;
- }
 
- void update_join_fields(const CsvRow &left_head) {
-  if (join_type == JOIN_CROSS) {
-   join_columns=make_pair("-","-");
-  }
-  if (join_type == JOIN_NATURAL) {
-   for (unsigned int i=0; i<right_head.size(); ++i) {
-    auto it=find(left_head.begin(),left_head.end(),right_head.at(i));
-    if (it!=left_head.end()){
-     join_fields.first.push_back(i);
-     int j=it-left_head.begin();
-     join_fields.second.push_back(j);
-    }
-   }
-  } else {
-   join_fields=make_pair(
-    join_columns.first.extract_ival(left_head.size()),
-    join_columns.second.extract_ival(right_head.size()));
-  }
-// sort right table by join columns
- list<RowOrderKey> right_order_keys;
- transform(join_fields.second.begin(),join_fields.second.end(),back_inserter(right_order_keys),[](const ColID &a)->RowOrderKey {return RowOrderKey(a,false,false,false);});
- right_body.sort([compare=right_order_keys](const CsvRow &a, const CsvRow &b)->bool {
-  for (auto key : compare) {
-   int diff=key.compare(a,b);
-   if (diff!=0) {
-    return diff<0;
-   }
-  }
-  return false;
- });
- }
- list<CsvRow> get_right_body() const {
-  return right_body;
- }
+ // getters
+ char *get_right_fname() const {return right_fname;};
+ JoinType get_join_type() const {return join_type;};
+ pair<ColIvalV,ColIvalV> get_join_columns() const {return join_columns;};
 };
 
 
@@ -173,15 +114,28 @@ int main(int argc, char **argv){
  if (cmdline.print_if_needed())
   return 0;
 
-// header
- CsvRow left_head;
- if (!left_head.parse(cin, Delimiters())){
-  ERROR(cmdline.get_log_config(),"Cannot parse CSV header");
-  return -2;
- }
- cmdline.update_join_fields(left_head);
- 
-// TODO match rows
+ Delimiters delims;
+ EscapeStrategy strat=ESC_PRESERVE;
 
+ ifstream right_fstream(cmdline.get_right_fname());
+ if (right_fstream.rdstate()) {
+  ERROR(cmdline.get_log_config(),"Cannot read input file.");
+  return 2;
+ }
+ CsvIStream left_table(cin,delims);
+ CsvIStream right_table(right_fstream,delims);
+ JoinAlgorithm *join_alg=new MultiSetJoinAlgorithm(
+  &left_table,
+  &right_table,
+  cmdline.get_join_type(),
+  cmdline.get_join_columns());
+
+ join_alg->get_head().print(cout,delims,strat);cout<<delims.get(ORS);
+ while (join_alg->next()){
+  join_alg->get_current_line().print(cout,delims,strat);cout<<delims.get(ORS);
+ }
+
+ delete join_alg;
+ right_fstream.close();
  return 0;
 }

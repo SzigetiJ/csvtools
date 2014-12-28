@@ -35,7 +35,7 @@ typedef enum {
 /// Standard constructor.
 CsvCell::CsvCell(const string &a, bool b):dat(a),quote(b){
 };
-CsvCell::CsvCell(){};
+CsvCell::CsvCell():dat(),quote(false){};
 
 /// Cell datum getter
 string CsvCell::get_dat() const {
@@ -139,14 +139,13 @@ bool CsvCell::operator==(const CsvCell &a) const {
  return (quote==a.quote && dat==a.dat);
 }
 /// Comparison operator of the CsvCell instances.
-/// If the data is text, we compare them as strings,
-/// if they are numeric, we compare them as floats.
-/// Hopefully the compared CsvCells are both either text or numeric.
+/// Compares stored strings. If the stored strings are the same,
+/// unquoted instances come first.
 bool CsvCell::operator<(const CsvCell &a) const {
- if (quote) {
-  return dat<a.dat;
- }
- return atof(dat.c_str())<atof(a.dat.c_str());
+ int x=dat.compare(a.dat);
+ if (x==0)
+  return quote < a.quote;
+ return x<0;
 };
 
 /// Standard output function of CsvCell instances.

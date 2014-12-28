@@ -49,7 +49,7 @@ CsvRow &CsvRow::operator+=(const CsvRow &a) {
 
 /// Print.
 /// Standard output function of CsvRow objects.
-void CsvRow::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat){
+void CsvRow::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat) const {
  for (ColID i=0;i<size();++i) {
   if (i!=0)
    a<<delims.get(OFS);
