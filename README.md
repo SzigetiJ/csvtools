@@ -4,13 +4,14 @@ csvtools
 CsvTools provides transformation tools for CSV files. Supported transformation are the followings:
 * projection (column filtering)
 * selection (row filtering by row condition)
-* sorting (rows ordered by given column(s)) (TODO)
-* aggregation (applying given column function to given columns) (TODO)
+* sorting (rows ordered by given column(s))
+* aggregation (applying given column function to given columns)
 * extension (appending new column(s) to the CSV as result of given row functions) (TODO)
-* join of two CSV files (TODO)
+* join of two CSV files
   * natural join
   * equijoin
   * outer left join
+  * cross (full) join
 
 Furthermore, CsvTools can be used as C++ library (libcsvtools).
 
