@@ -79,6 +79,11 @@ public:
  std::vector<std::vector<char*> > get_values_for_option(const Option&) const;
  std::vector<std::vector<char*> > get_values_for_flag(const char*) const;
  std::vector<std::vector<char*> > get_values_for_longname(const char*) const;
+
+ char* get_arg_for_option(const Option&, int i=0) const;
+ char* get_arg_for_flag(const char*, int i=0) const;
+ char* get_arg_for_longname(const char*, int i=0) const;
+
 };
 
 #endif

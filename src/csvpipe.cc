@@ -45,11 +45,11 @@ public:
  /// Checks whether ifs / ofs is given and sets CsvRow static attributes.
  int process() {
   if (is_set_flag("ifs"))
-   delims.set(IFS,get_values_for_flag("ifs")[0][0][0]);
+   delims.set(IFS,get_arg_for_flag("ifs")[0]);
   if (is_set_flag("ofs"))
-   delims.set(OFS,get_values_for_flag("ofs")[0][0][0]);
+   delims.set(OFS,get_arg_for_flag("ofs")[0]);
   if (is_set_flag("esc")) {
-   if ((strat<<string(get_values_for_flag("esc")[0][0]))==ESC_UNDEF) {
+   if ((strat<<string(get_arg_for_flag("esc")))==ESC_UNDEF) {
     ERROR(logger,"Invalid escape-strategy.");
     return -1;
    }

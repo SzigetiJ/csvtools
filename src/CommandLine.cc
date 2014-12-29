@@ -102,8 +102,16 @@ int CommandLine::parse(int argc, char **argv){
     value_v.push_back(argv[i]+arg_chr_shift);
     arg_chr_shift=0;
    }
-   value_m.insert(make_pair(xoption,value_v));
-   
+   // decide what to do according to multidef setting
+   auto found_option=value_m.find(xoption);
+   if (xoption.multidef==IGNORE && found_option!=value_m.end()){
+    WARN(logger,"Option "<<xcmd<<" ignored (multiple definition).");
+   } else if (xoption.multidef==OVERRIDE && found_option!=value_m.end()) {
+    WARN(logger,"Option "<<xcmd<<" overrides previous setting (multiple definition).");
+    found_option->second=value_v;
+   } else {
+    value_m.insert(make_pair(xoption,value_v));
+   }
   } else {
    ERROR(logger,"Parse error at cmdline argument #"<<i<<": "<<xcmd);
    return 1;
@@ -135,5 +143,15 @@ vector<vector<char*> > CommandLine::get_values_for_flag(const char *a) const {
 };
 vector<vector<char*> > CommandLine::get_values_for_longname(const char *a) const {
  return longname_m.find(a)!=longname_m.end()?get_values_for_option(longname_m.find(a)->second):vector<vector<char*> >();
+};
+
+char* CommandLine::get_arg_for_option(const Option &a, int i) const {
+ return is_set_option(a)?value_m.find(a)->second.at(i):NULL;
+};
+char* CommandLine::get_arg_for_flag(const char *a, int i) const {
+ return is_set_flag(a)?value_m.find(flag_m.find(a)->second)->second.at(i):NULL;
+};
+char* CommandLine::get_arg_for_longname(const char *a, int i) const {
+ return is_set_longname(a)?value_m.find(longname_m.find(a)->second)->second.at(i):NULL;
 };
 

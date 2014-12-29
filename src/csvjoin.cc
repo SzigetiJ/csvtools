@@ -61,11 +61,11 @@ public:
  int process() {
 // join type
   if (is_set_flag("jt")) {
-   join_type<<get_values_for_flag("jt")[0][0];
+   join_type<<get_arg_for_flag("jt");
   }
 // right table
   if (is_set_flag("jf")) {
-   right_fname=get_values_for_flag("jf")[0][0];
+   right_fname=get_arg_for_flag("jf");
   } else {
    ERROR(get_log_config(),"Right table is not defined.");
    return 2;
