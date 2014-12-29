@@ -66,9 +66,24 @@ DefaultCommandLine::DefaultCommandLine(const string &desc, const string &use, co
  description(desc),
  usage(use){};
 
-int DefaultCommandLine::process() {
+void DefaultCommandLine::set_global_logger() {
  global_logger=get_log_config();
- return 0;
+}
+
+CommandLineExecuteResponse DefaultCommandLine::execute(int argc, char **argv) {
+ if (parse(argc, argv)) {
+  print_help();
+  return CMDLINE_ERROR;
+ }
+ DefaultCommandLine::set_global_logger();
+ if (print_if_needed()) {
+  return CMDLINE_BREAK;
+ }
+ if (process()) {
+  print_help();
+  return CMDLINE_ERROR;
+ }
+ return CMDLINE_OK;
 }
 
 LogConfig DefaultCommandLine::get_log_config() const {

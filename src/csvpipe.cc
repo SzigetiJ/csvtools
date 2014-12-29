@@ -54,7 +54,7 @@ public:
     return -1;
    }
   }
-  return DefaultCommandLine::process();
+  return 0;
  }
  Delimiters get_delims() const {return delims;}
  EscapeStrategy get_strat() const {return strat;}
@@ -66,12 +66,10 @@ const string USAGE="[-ifs {chr}] [-ofs {chr}]\n";
 
 int main(int argc, char **argv) {
  PipeCommandLine cmdline=PipeCommandLine(DESCRIPTION,USAGE);
- if (cmdline.parse(argc, argv) || cmdline.process()) {
-  cmdline.print_help();
-  return -1;
+ CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ if (resp!=CMDLINE_OK) {
+  return resp;
  }
- if (cmdline.print_if_needed())
-  return 0;
  CsvPipe()
  .process(cin,cout,cmdline.get_delims(),cmdline.get_strat());
 }

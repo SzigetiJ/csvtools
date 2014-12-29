@@ -96,19 +96,17 @@ public:
    filter_v.push_back(make_pair(co,make_pair(col_v,str)));
    INFO(logger, "Parameter parsed.");
   }
-  return DefaultCommandLine::process();
+  return 0;
  };
 };
 
 
 int main(int argc, char **argv){
  SelectionCommandLine cmdline=SelectionCommandLine(DESCRIPTION,USAGE);
- if (cmdline.parse(argc, argv) || cmdline.process()) {
-  cmdline.print_help();
-  return -1;
+ CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ if (resp!=CMDLINE_OK) {
+  return resp;
  }
- if (cmdline.print_if_needed())
-  return 0;
  CsvPipe()
  .set_filter(cmdline.get_filters())
  .process(cin,cout);

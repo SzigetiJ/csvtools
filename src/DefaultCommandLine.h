@@ -28,9 +28,11 @@
 class DefaultCommandLine : public CommandLine {
  std::string description;	///< Brief description about the tool.
  std::string usage;	///< Short usage tip.
+protected:
+ void set_global_logger();
 public:
  DefaultCommandLine(const std::string&, const std::string&, const std::set<Option>&);
- int process();
+ virtual CommandLineExecuteResponse execute(int, char**);
  LogConfig get_log_config() const;
  int print_if_needed() const;
  void print_usage() const;

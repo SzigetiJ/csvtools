@@ -32,11 +32,11 @@ const int proj_option_n = sizeof(proj_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: ProjectionCommandLine can derive column intervals from columns option value(s).
 class ProjectionCommandLine : public DefaultCommandLine {
+ 
 public:
  ProjectionCommandLine(const string desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)){};
  int process(){
-  DefaultCommandLine::process();
   return 0;
  };
  ColIvalV get_intervals() const {
@@ -58,12 +58,10 @@ const string USAGE="-c <expr> [-c <expr> ...]\n"
 
 int main(int argc, char **argv){
  ProjectionCommandLine cmdline=ProjectionCommandLine(DESCRIPTION,USAGE);
- if (cmdline.parse(argc, argv) || cmdline.process()) {
-  cmdline.print_help();
-  return -1;
+ CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ if (resp!=CMDLINE_OK) {
+  return resp;
  }
- if (cmdline.print_if_needed())
-  return 0;
  CsvPipe()
  .set_projection(cmdline.get_intervals())
  .process(cin,cout);

@@ -26,6 +26,13 @@
 #include "log.h"
 #include "globals.h"
 
+/// Possible responses of CommandLine.execute method.
+typedef enum {
+ CMDLINE_BREAK = 0,	///< Program must be terminated with exit status 0.
+ CMDLINE_ERROR = 1,	///< Program must be terminated due to an error (1).
+ CMDLINE_OK = 2	///< Everything is fine.
+} CommandLineExecuteResponse;
+
 /// Possible handling of options that are define multiple times.
 typedef enum {
  IGNORE,	///< First in effect, others ignored.
@@ -59,9 +66,11 @@ protected:
  std::map<std::string, Option> longname_m;	///< Longname=>Option lookup map.
  std::multimap<Option,std::vector<char*> > value_m;	///< Option=>given argument map. 
  bool parsed;	/// Indicating whether parsing is already done.
+ int parse(int, char**);
+ virtual int process() = 0;
 public:
  CommandLine(const std::set<Option>&);
- int parse(int, char**);
+ virtual CommandLineExecuteResponse execute(int, char**) = 0;
 
  bool is_set_option(const Option&) const;
  bool is_set_flag(const char*) const;

@@ -59,10 +59,6 @@ public:
   DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)){};
 
  int process() {
-// general
-  if (DefaultCommandLine::process()) {
-   return 1;
-  }
 // join type
   if (is_set_flag("jt")) {
    join_type<<get_values_for_flag("jt")[0][0];
@@ -107,12 +103,10 @@ public:
 
 int main(int argc, char **argv){
  JoinCommandLine cmdline=JoinCommandLine(DESCRIPTION,USAGE);
- if (cmdline.parse(argc, argv) || cmdline.process()) {
-  cmdline.print_help();
-  return -1;
+ CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ if (resp!=CMDLINE_OK) {
+  return resp;
  }
- if (cmdline.print_if_needed())
-  return 0;
 
  Delimiters delims;
  EscapeStrategy strat=ESC_PRESERVE;

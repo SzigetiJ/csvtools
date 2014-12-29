@@ -48,7 +48,7 @@ public:
     order_l.push_back(RowOrderKey(stoi(a),(a.find('d')!=string::npos),(a.find('n')!=string::npos),(a.find('e')!=string::npos)));
    }
   }
-  return DefaultCommandLine::process();
+  return 0;
  }
  list<RowOrderKey> get_keys() const {return order_l;}
 };
@@ -61,12 +61,10 @@ int main(int argc, char **argv) {
  const EscapeStrategy strat=ESC_PRESERVE;
 
  SortCommandLine cmdline=SortCommandLine(DESCRIPTION,USAGE);
- if (cmdline.parse(argc, argv) || cmdline.process()) {
-  cmdline.print_help();
-  return -1;
+ CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ if (resp!=CMDLINE_OK) {
+  return resp;
  }
- if (cmdline.print_if_needed())
-  return 0;
 // header
  CsvRow head;
  if (!head.parse(cin, delims)){
