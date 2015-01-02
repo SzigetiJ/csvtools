@@ -88,6 +88,21 @@ Use `csvfilter` for selecting rows by condition. The special option interpreted 
 2,1770,"Ludwig van Beethoven",Vienna
 ```
 
+#### Sorting
+
+With `csvsort` the rows of CSV file can be sorted. Features:
+* multi-column sort,
+* ascending / descending sort,
+* numeric / lexicographic sort,
+* special handling of empty cells.
+
+The order of the rows can by contolled with the `-k {num}[d][n][e]` option where `num` is a column number, `d` is flag for _descending_ order, `n` flag is for _numeric_ sort and `e` flag denotes that empty cells are greater than not empty cells. If multiple order columns are defined, the second, third, etc. definitions are taken into account only if the rows cannot be sorted with the first definition. Examples:
+* `-k 0` sorts the rows ordered by the first column, lexicographically.
+* `-k 0 -k 1n` sorts the rows ordered by the first column lexicographically, and if rows have the same value in the first column, their order is defined by the second column with numeric order.
+* `-k 0d` rows ordered by first column, descending order.
+* `-k 0e` rows ordered by first column, but rows with empty first cell go to the end.
+
+
 #### Dealing with Other-than-Comma Separated Values
 
 CSV files are not always comma-separated. Some "CSV" files contain TAB- or semicolon-separated values. With `csvpipe` these files can be converted into comma-separated files and CSV files can be converted into Any-character Separated Values file. Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`, where ifs and ofs define the field separator at the input and at the output, respectively, whereas esc defines the field escaping strategy:
