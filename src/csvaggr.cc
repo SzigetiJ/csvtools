@@ -37,13 +37,53 @@ const string USAGE="-a <name> <fun> <expr> [-a <name> <fun> <expr> [...]]\n"
 " fun ::= sum|min|max|count|concat\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
 "where str is string, num is integer\n";
 
-class AggrValue;
+/// General interface for aggregation (column) functions.
+class AggrFunIface {
+public:
+ virtual void *init_value(const string&) const = 0;
+ virtual void *accumulate(void*, const string&) const = 0;
+ virtual string to_string(void*) const = 0;
+ virtual void delete_value(void*) const = 0;
+ virtual ~AggrFunIface() = default;
+};
 
-struct AggrFun {
- function<AggrValue &(AggrValue&, const string&)> initializer;
- function<AggrValue &(AggrValue&, const string&)> accumulator;
- function<string (const AggrValue&)> reader;
- function<void (AggrValue&)> destructor;
+/// Base implementation of aggregation interface.
+/// It can be used with any type that supports T->string conversion.
+/// Accumulator function MUST be given,
+/// initializer function MAY be given (defaults to T(string&) constructor).
+template<typename T>
+class AggrFunBase : public AggrFunIface {
+ function<T & (T&, const string&)> accumulator;
+ function<void * (const string&)> initializer;
+public:
+ AggrFunBase(const function<T & (T&, const string&)> &a, const function<void * (const string&)> &b=[](const string &a)->void*{return new T(a);}):accumulator(a),initializer(b){}
+ void *init_value(const string &a) const {return initializer(a);}
+ void *accumulate(void *a, const string &b) const {
+  T &item=*(reinterpret_cast<T*>(a));
+  accumulator(item,b);
+  return &item;
+ }
+ virtual string to_string(void *a) const { return *(reinterpret_cast<string*>(a));}
+ void delete_value(void *a) const {delete reinterpret_cast<T*>(a);}
+};
+
+/// Aggregation function dealing with numeric values.
+class AggrFunNumeric : public AggrFunBase<Numeric> {
+public:
+ AggrFunNumeric(const function<Numeric& (Numeric&, const string&)> &a):AggrFunBase<Numeric>(a){}
+ string to_string(void *a) const {
+  return reinterpret_cast<Numeric*>(a)->to_string();
+ }
+};
+
+/// Aggregation for counting. Use with type T=int|unsigned|long...
+template<typename T>
+class AggrFunCnt : public AggrFunBase<T> {
+public:
+ AggrFunCnt():AggrFunBase<T>([](T &a, const string &b)->T&{return a+=(b.empty()?0:1);},[](const string &a)->void*{return new T(a.empty()?0:1);}){}
+ string to_string(void *a) const {
+  return std::to_string(*reinterpret_cast<T*>(a));
+ }
 };
 
 /// Represents an aggregated value.
@@ -53,67 +93,44 @@ struct AggrFun {
 /// 2.) it must accept a string value for accumulation;
 /// 3.) it must present a string value as result.
 class AggrValue {
- AggrFun fun; 
+ const AggrFunIface *fun; 
  bool has_dat;
+ void *dat;
 public:
- void *dat;	///< Could not protect it because of lambdas.
- AggrValue(const AggrFun &f):fun(f),has_dat(false){};
- bool init(const string &a){if (!has_dat) {fun.initializer(*this,a); has_dat=true; return true;} return false;};
- void accumulate(const string &a){fun.accumulator(*this,a);};
- string get_dat(){return fun.reader(*this);};
- bool cleanup(){if (has_dat) {fun.destructor(*this);has_dat=false; return true;} return false;};
+ AggrValue(const AggrFunIface *f):fun(f),has_dat(false){};
+ bool init(const string &a){if (!has_dat) {dat=fun->init_value(a); has_dat=true; return true;} return false;};
+ void accumulate(const string &a){fun->accumulate(dat,a);};
+ string get_dat(){return fun->to_string(dat);};
+ bool cleanup(){if (has_dat) {fun->delete_value(dat);has_dat=false; return true;} return false;};
  bool valid_dat() const {return has_dat;};
 };
 
-typedef pair<string,AggrFun> AggrFunKey;
-typedef map<string,AggrFun> AggrFunMap;
-typedef tuple<char*, AggrFun, ColIvalV, FieldV> AggrCol;
+typedef pair<string,AggrFunIface*> AggrFunKey;
+typedef map<string,AggrFunIface*> AggrFunMap;
+
+typedef tuple<char*, AggrFunIface*, ColIvalV, FieldV> AggrCol;
 
 // Available column functions mapped by name.
-// Seems like templates could be used.
 const AggrFunMap colfun_m={
- {"sum",{
-  [](AggrValue &a, const string &b)->AggrValue&{a.dat=new Numeric(b); return a;},
-  [](AggrValue &a, const string &b)->AggrValue&{*(reinterpret_cast<Numeric*>(a.dat))+=b; return a;},
-  [](const AggrValue &a)->string{return reinterpret_cast<Numeric*>(a.dat)->to_string();},
-  [](const AggrValue &a){delete reinterpret_cast<Numeric*>(a.dat);}}
- },
- {"min",{
-  [](AggrValue &a, const string &b)->AggrValue&{a.dat=new Numeric(b); return a;},
-  [](AggrValue &a, const string &b)->AggrValue&{
-   Numeric btmp(b);
-   Numeric *atmp=reinterpret_cast<Numeric*>(a.dat);
-   if (btmp<*atmp) *atmp=btmp;
-   return a;},
-  [](const AggrValue &a)->string{return reinterpret_cast<Numeric*>(a.dat)->to_string();},
-  [](const AggrValue &a){delete reinterpret_cast<Numeric*>(a.dat);}}
- },
- {"max",{
-  [](AggrValue &a, const string &b)->AggrValue&{a.dat=new Numeric(b); return a;},
-  [](AggrValue &a, const string &b)->AggrValue&{
-   Numeric btmp(b);
-   Numeric *atmp=reinterpret_cast<Numeric*>(a.dat);
-   if (*atmp<btmp) *atmp=btmp;
-   return a;},
-  [](const AggrValue &a)->string{return reinterpret_cast<Numeric*>(a.dat)->to_string();},
-  [](const AggrValue &a){delete reinterpret_cast<Numeric*>(a.dat);}}
- },
- {"count",{
-  [](AggrValue &a, const string &b)->AggrValue&{a.dat=new int(b.empty()?0:1); return a;},
-  [](AggrValue &a, const string &b)->AggrValue&{
-   if (!b.empty()) ++(*reinterpret_cast<int*>(a.dat));
-   return a;},
-  [](const AggrValue &a)->string{return to_string(*reinterpret_cast<int*>(a.dat));},
-  [](const AggrValue &a){delete reinterpret_cast<int*>(a.dat);}}
- },
- {"concat",{
-  [](AggrValue &a, const string &b)->AggrValue&{a.dat=new string(b); return a;},
-  [](AggrValue &a, const string &b)->AggrValue&{
-   (*reinterpret_cast<string*>(a.dat))+=b;
-   return a;},
-  [](const AggrValue &a)->string{return *reinterpret_cast<string*>(a.dat);},
-  [](const AggrValue &a){delete reinterpret_cast<string*>(a.dat);}}
- }
+ {"sum",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{return a+=b;})},
+ {"min",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{
+    Numeric bnum(b);
+    if (bnum<a) {
+     a=bnum;
+    }
+    return a;
+   })},
+ {"max",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{
+    Numeric bnum(b);
+    if (a<bnum) {
+     a=bnum;
+    }
+    return a;
+   })},
+ {"count",new AggrFunCnt<int>()},
+ {"concat",new AggrFunBase<string>([](string &a, const string &b)->string&{
+    return a+=b;
+   })}
 };
 
 // Aggregation specific options.
@@ -142,7 +159,7 @@ public:
     ERROR(logger, "Unrecognized function ["<<fun<<"]. Aborting.");
     return -2;
    }
-   AggrFun af=fmi->second;
+   AggrFunIface *af=fmi->second;
    aggr_v.push_back(make_tuple(name,af,col_v,FieldV()));
    INFO(global_logger, "Aggregation parsed.");
   }
@@ -265,6 +282,10 @@ int main(int argc, char **argv){
   rx.clear();
  }
  flush_aggr_line(ref,cout,delims,strat,avalues);
+
+ for (auto item : colfun_m){
+  delete (item.second);
+ }
  return 0;
 }
 
