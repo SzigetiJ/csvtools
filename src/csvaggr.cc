@@ -19,6 +19,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <memory>
 #include "CsvPipe.h"
 #include "CsvRow.h"
 #include "Delimiters.h"
@@ -46,6 +47,9 @@ public:
  virtual void delete_value(void*) const = 0;
  virtual ~AggrFunIface() = default;
 };
+
+typedef shared_ptr<AggrFunIface> AggrFunSmartPtr;
+typedef AggrFunIface* AggrFunPtr;
 
 /// Base implementation of aggregation interface.
 /// It can be used with any type that supports T->string conversion.
@@ -80,7 +84,7 @@ public:
 template<typename T>
 class AggrFunCnt : public AggrFunBase<T> {
 public:
- AggrFunCnt():AggrFunBase<T>([](T &a, const string &b)->T&{return a+=(b.empty()?0:1);},[](const string &a)->void*{return new T(a.empty()?0:1);}){}
+ AggrFunCnt():AggrFunBase<T>([](T &a, const string &b)->T&{return b.empty()?a:++a;},[](const string &a)->void*{return new T(a.empty()?0:1);}){}
  string to_string(void *a) const {
   return std::to_string(*reinterpret_cast<T*>(a));
  }
@@ -93,11 +97,11 @@ public:
 /// 2.) it must accept a string value for accumulation;
 /// 3.) it must present a string value as result.
 class AggrValue {
- const AggrFunIface *fun; 
+ const AggrFunPtr fun; 
  bool has_dat;
  void *dat;
 public:
- AggrValue(const AggrFunIface *f):fun(f),has_dat(false){};
+ AggrValue(const AggrFunPtr &f):fun(f),has_dat(false){};
  bool init(const string &a){if (!has_dat) {dat=fun->init_value(a); has_dat=true; return true;} return false;};
  void accumulate(const string &a){fun->accumulate(dat,a);};
  string get_dat(){return fun->to_string(dat);};
@@ -105,30 +109,29 @@ public:
  bool valid_dat() const {return has_dat;};
 };
 
-typedef pair<string,AggrFunIface*> AggrFunKey;
-typedef map<string,AggrFunIface*> AggrFunMap;
+typedef map<string,AggrFunSmartPtr> AggrFunMap;
 
-typedef tuple<char*, AggrFunIface*, ColIvalV, FieldV> AggrCol;
+typedef tuple<char*, AggrFunPtr, ColIvalV, FieldV> AggrCol;
 
 // Available column functions mapped by name.
 const AggrFunMap colfun_m={
- {"sum",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{return a+=b;})},
- {"min",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{
+ {"sum",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{return a+=b;})},
+ {"min",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{
     Numeric bnum(b);
     if (bnum<a) {
      a=bnum;
     }
     return a;
    })},
- {"max",new AggrFunNumeric([](Numeric &a, const string &b)->Numeric&{
+ {"max",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{
     Numeric bnum(b);
     if (a<bnum) {
      a=bnum;
     }
     return a;
    })},
- {"count",new AggrFunCnt<int>()},
- {"concat",new AggrFunBase<string>([](string &a, const string &b)->string&{
+ {"count", make_shared<AggrFunCnt<int> >()},
+ {"concat", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
     return a+=b;
    })}
 };
@@ -159,7 +162,7 @@ public:
     ERROR(logger, "Unrecognized function ["<<fun<<"]. Aborting.");
     return -2;
    }
-   AggrFunIface *af=fmi->second;
+   AggrFunPtr af=fmi->second.get();
    aggr_v.push_back(make_tuple(name,af,col_v,FieldV()));
    INFO(global_logger, "Aggregation parsed.");
   }
@@ -200,7 +203,7 @@ void flush_aggr_line(
  const EscapeStrategy &strat,
  vector<AggrValue> &avals,
  bool refill=false,
- vector<string> refill_v=vector<string>()
+ const vector<string> &refill_v=vector<string>()
 ){
   ref.print(os,delims,strat);
    if (!ref.empty() && !avals.empty()){
@@ -257,6 +260,7 @@ int main(int argc, char **argv){
   }
   CsvRow group=rx.get_fields(cmdline.get_remain());
   vector<string> to_aggr;
+  to_aggr.reserve(acols.size());
   for (auto acol : acols) {
    stringstream ss;
    rx.get_fields(get<3>(acol)).print(ss,Delimiters(),ESC_REMOVE);
@@ -283,9 +287,6 @@ int main(int argc, char **argv){
  }
  flush_aggr_line(ref,cout,delims,strat,avalues);
 
- for (auto item : colfun_m){
-  delete (item.second);
- }
  return 0;
 }
 
