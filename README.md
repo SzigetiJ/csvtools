@@ -102,6 +102,41 @@ The order of the rows can by contolled with the `-k {num}[d][n][e]` option where
 * `-k 0d` rows ordered by first column, descending order.
 * `-k 0e` rows ordered by first column, but rows with empty first cell go to the end.
 
+#### Aggregation
+
+With `csvaggr` a column (or a set of columns) can be aggregated.
+`csvaggr` supports the following column functions:
+* sum
+* min
+* max
+* count
+* concat
+
+Use `csvaggr` with option `-a <name> <fun> <expr>` where <name> will be the name of the result column,
+<fun> is the applied column function and <expr> is the column expression (see csvproj).
+There can be given multiple `-a` options. If a column is not part of any column expression,
+it will be used as grouping column.
+Thus, every column either will be aggregated or will be a grouping column. 
+
+For `csvaggr` to work properly, it is requsite that the input csv data is
+sorted by the grouping columns. 
+
+Unnecessaey columns cannot be dropped with `csvaggr`.
+Use `csvproj` to get rid of unused columns.
+
+Summarized, for aggregating an arbitrary csv file, invoke the
+`csvproj | csvsort | csvaggr` process pipeline.
+
+Examples:
+* `csvaggr -a cnt count -` counts the records.
+* `csvaggr -a cnt count 1-` counts the records grouped by the first column.
+* `csvaggr -a cnt count 1,3-` counts the the records grouped by the first and the third columns.
+* `csvproj -c -1 | csvaggr -a sum sum 1` calculates the sum of values in the second column grouped by the first column.
+* `csvproj -c 4 | csvaggr -a min min 0` finds the minimum value of column #4.
+
+#### Join CSV files
+
+
 
 #### Dealing with Other-than-Comma Separated Values
 
