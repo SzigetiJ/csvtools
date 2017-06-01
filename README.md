@@ -136,12 +136,20 @@ Examples:
 
 #### Join CSV files
 
+The command `csvjoin` supports joining of two csv files (left and right table).
+The left table is read from stdin, whereas the right table is defined by command line parameter `-jf <filename>`.
+The join type is also a mandatory parameter: `-jt <join_type>`. The following `join_type` values are available:
+* `natural` recognizes common colums, and performs inner join based on the common columns.
+* `cross` performs full join. Results in Descartes-product of the two input tables.
+* `inner` for inner join.
+* `outer` for outer left join.
 
+In case of inner and outer join, the join columns must be provided: `-jc <expr>` where `expr` is a column expression (see projection).
 
 #### Dealing with Other-than-Comma Separated Values
 
 CSV files are not always comma-separated. Some "CSV" files contain TAB- or semicolon-separated values. With `csvpipe` these files can be converted into comma-separated files and CSV files can be converted into Any-character Separated Values file. Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`, where ifs and ofs define the field separator at the input and at the output, respectively, whereas esc defines the field escaping strategy:
 * `all`: every field will be escaped.
 * `preserve`: already escaped fields remain escaped and escaping is introduced where necessary.
-* `resolce`: same as `preserve`, except for the fields where field escaping was necessary at the input, but is not required at the output - there fields will not be escaped.
+* `resolve`: same as `preserve`, except for the fields where field escaping was necessary at the input, but is not required at the output - there fields will not be escaped.
 * `remove`: remove escaping from fields if possible.
