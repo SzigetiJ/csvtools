@@ -1,3 +1,6 @@
+![GitHub](https://img.shields.io/github/license/SzigetiJ/csvtools)
+![C/C++ CI](https://github.com/SzigetiJ/csvtools/workflows/C/C++%20CI/badge.svg)
+
 csvtools
 ========
 
