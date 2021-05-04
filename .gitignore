@@ -15,3 +15,5 @@ src/*.o
 src/*.lo
 src/.deps
 src/.libs
+m4/l*.m4
+

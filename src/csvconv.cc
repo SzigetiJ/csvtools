@@ -28,12 +28,12 @@
 using namespace std;
 
 // Piping specific options.
-const Option pipe_option_a[]={
+const Option conv_option_a[]={
 {"ifs","input-field-separator",1,OVERRIDE,"Define input field separator character."},
 {"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."},
 {"esc","escape-strategy",1,OVERRIDE,"Set (un)escape strategy {all|preserve|resolve|remove}. Default: preserve."}
 };
-const int pipe_option_n = sizeof(pipe_option_a)/sizeof(Option);
+const int conv_option_n = sizeof(conv_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: PipeCommandLine can change default field separator characters.
 class PipeCommandLine : public DefaultCommandLine {
@@ -41,7 +41,7 @@ class PipeCommandLine : public DefaultCommandLine {
  EscapeStrategy strat=ESC_PRESERVE;
 public:
  PipeCommandLine(const string desc, const string &usage) :
-  DefaultCommandLine(desc, usage,set<Option>(pipe_option_a,pipe_option_a+pipe_option_n)){};
+  DefaultCommandLine(desc, usage,set<Option>(conv_option_a,conv_option_a+conv_option_n)){};
  /// Checks whether ifs / ofs is given and sets CsvRow static attributes.
  int process() {
   if (is_set_flag("ifs"))
@@ -60,8 +60,8 @@ public:
  EscapeStrategy get_strat() const {return strat;}
 };
 
-const string DESCRIPTION="Pipes csv from stdin to stdout. Field separator character may be overridden.\n";
-const string USAGE="[-ifs {chr}] [-ofs {chr}]\n";
+const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified conversions on rows and fields. Field separator character may be overridden.\n";
+const string USAGE="[-ifs {chr}] [-ofs {chr}] [-esc {strategy}]\n";
 
 
 int main(int argc, char **argv) {
