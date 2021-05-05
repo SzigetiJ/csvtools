@@ -3,7 +3,6 @@
 
 AC_PREREQ([2.68])
 AC_INIT([csvtools],[1.0.0])
-LT_INIT
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/CsvCell.h])
 AC_CONFIG_HEADERS([config.h])
@@ -12,8 +11,9 @@ AC_CONFIG_MACRO_DIR([m4])
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_RANLIB
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 m4_include([m4/ax_cxx_compile_stdcxx.m4])
 AX_CXX_COMPILE_STDCXX(11, noext, mandatory)
 
@@ -29,3 +29,4 @@ AC_HEADER_STDBOOL
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
 AC_OUTPUT
+

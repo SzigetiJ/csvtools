@@ -5,16 +5,27 @@ csvproj_SOURCES = csvproj.cc CommandLine.cc DefaultCommandLine.cc
 csvsort_SOURCES = csvsort.cc CommandLine.cc DefaultCommandLine.cc
 csvjoin_SOURCES = csvjoin.cc CommandLine.cc DefaultCommandLine.cc
 csvaggr_SOURCES = csvaggr.cc CommandLine.cc DefaultCommandLine.cc Numeric.cc
-csvconv_LDADD = libcsvtools.la
-csvfilter_LDADD = libcsvtools.la
-csvproj_LDADD = libcsvtools.la
-csvsort_LDADD = libcsvtools.la
-csvjoin_LDADD = libcsvtools.la
-csvaggr_LDADD = libcsvtools.la
+csvconv_LDADD = libcsvtools.a
+csvfilter_LDADD = libcsvtools.a
+csvproj_LDADD = libcsvtools.a
+csvsort_LDADD = libcsvtools.a
+csvjoin_LDADD = libcsvtools.a
+csvaggr_LDADD = libcsvtools.a
 
-lib_LTLIBRARIES = libcsvtools.la
-libcsvtools_la_SOURCES = CsvCell.cc CsvRow.cc CsvPipe.cc ColTypes.cc RowFunc.cc Delimiters.cc LogConfig.cc RowOrderKey.cc globals.cc CsvIStream.cc JoinAlgorithm.cc MultiSetJoinAlgorithm.cc
-libcsvtools_la_LDFLAGS = -version-info 1:0:0
+lib_LIBRARIES = libcsvtools.a
+libcsvtools_a_SOURCES = \
+ ColTypes.cc \
+ CsvCell.cc \
+ CsvIStream.cc \
+ CsvPipe.cc \
+ CsvRow.cc \
+ Delimiters.cc \
+ globals.cc \
+ JoinAlgorithm.cc \
+ LogConfig.cc \
+ MultiSetJoinAlgorithm.cc \
+ RowFunc.cc \
+ RowOrderKey.cc
 
 include_HEADERS = \
  ColTypes.h \

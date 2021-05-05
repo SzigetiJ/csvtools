@@ -5,6 +5,7 @@ Makefile
 compile
 configure
 config.guess
+config.h.in
 config.sub
 depcomp
 depcomp
