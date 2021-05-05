@@ -59,7 +59,7 @@ const int sel_option_n = sizeof(sel_option_a)/sizeof(Option);
 class SelectionCommandLine : public DefaultCommandLine {
  RowFilterV filter_v;
 public:
- SelectionCommandLine(const string desc, const string &usage) :
+ SelectionCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(sel_option_a,sel_option_a+sel_option_n)){};
  RowFilterV get_filters() const {
   return filter_v;

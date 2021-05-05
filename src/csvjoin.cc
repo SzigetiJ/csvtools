@@ -55,7 +55,7 @@ class JoinCommandLine : public DefaultCommandLine {
  char *right_fname;
  JoinType join_type=JOIN_INNER;
 public:
- JoinCommandLine(const string desc, const string &usage) :
+ JoinCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)){};
 
  int process() {

@@ -147,7 +147,7 @@ class AggregationCommandLine : public DefaultCommandLine {
  vector<AggrCol> aggr_v;
  FieldV remain_v;	///< Set of fields that are not part of any aggregation.
 public:
- AggregationCommandLine(const string desc, const string &usage) :
+ AggregationCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(aggr_option_a,aggr_option_a+aggr_option_n)){};
 
  int process() {

@@ -34,7 +34,7 @@ const int proj_option_n = sizeof(proj_option_a)/sizeof(Option);
 class ProjectionCommandLine : public DefaultCommandLine {
  
 public:
- ProjectionCommandLine(const string desc, const string &usage) :
+ ProjectionCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)){};
  int process(){
   return 0;

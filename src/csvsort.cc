@@ -36,7 +36,7 @@ const int sort_option_n = sizeof(sort_option_a)/sizeof(Option);
 class SortCommandLine : public DefaultCommandLine {
  list<RowOrderKey> order_l;
 public:
- SortCommandLine(const string desc, const string &usage) :
+ SortCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(sort_option_a,sort_option_a+sort_option_n)){};
  /// Checks for order keys.
  int process() {

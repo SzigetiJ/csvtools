@@ -40,7 +40,7 @@ class PipeCommandLine : public DefaultCommandLine {
  Delimiters delims;
  EscapeStrategy strat=ESC_PRESERVE;
 public:
- PipeCommandLine(const string desc, const string &usage) :
+ PipeCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(conv_option_a,conv_option_a+conv_option_n)){};
  /// Checks whether ifs / ofs is given and sets CsvRow static attributes.
  int process() {
