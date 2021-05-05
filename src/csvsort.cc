@@ -83,8 +83,8 @@ int main(int argc, char **argv) {
  }
 
 // sort
- body.sort([compare=cmdline.get_keys()](const CsvRow &a, const CsvRow &b)->bool {
-  for (auto key : compare) {
+ body.sort([&cmdline](const CsvRow &a, const CsvRow &b)->bool {
+  for (auto key : cmdline.get_keys()) {
    int diff=key.compare(a,b);
    if (diff!=0) {
     return diff<0;
@@ -93,9 +93,9 @@ int main(int argc, char **argv) {
   return false;
  });
 // body out
- for_each(body.begin(),body.end(),[&xout=cout, delims, strat](CsvRow &row) {
-  row.print(xout, delims, strat);
-  xout<<delims.get(ORS);
+ for_each(body.begin(),body.end(),[delims, strat](CsvRow &row) {
+  row.print(cout, delims, strat);
+  cout<<delims.get(ORS);
  }); 
 }
 
