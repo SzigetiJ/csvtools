@@ -38,5 +38,10 @@ int main(int argc, const char *argv[]) {
   assert(test_CsvCellPrintByStrat(CsvCell("quote\"within",true), ESC_REMOVE, "quote\"within"));
   assert(test_CsvCellPrintByStrat(CsvCell("quote\"within",true), ESC_RESOLVE, "\"quote\"\"within\""));
 
+  assert(test_CsvCellPrintByStrat(CsvCell("comma,",true), ESC_PRESERVE, "\"comma,\""));
+  assert(test_CsvCellPrintByStrat(CsvCell("comma,",true), ESC_ALL, "\"comma,\""));
+  assert(test_CsvCellPrintByStrat(CsvCell("comma,",true), ESC_REMOVE, "\"comma,\""));
+  assert(test_CsvCellPrintByStrat(CsvCell("comma,",true), ESC_RESOLVE, "\"comma,\""));
+
   return 0;
 }
