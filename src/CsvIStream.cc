@@ -28,33 +28,33 @@ void CsvIStream::update_curr_m() const {
    curr_m.insert(make_pair(head[i].get_dat(),curr_row[i]));
   }
  }
-};
+}
 
 /// Standard constuctor.
 CsvIStream::CsvIStream(std::istream &a, const Delimiters &b):is(a),delims(b),record_cnt(0),curr_m_u2d(false){
  head.parse(is,delims);
-};
+}
 
 /// Getter method of curr_m. If curr_m is dirty, first updated curr_m.
 std::map<std::string,CsvCell> CsvIStream::get_current_line_m() const {
  update_curr_m();
  return curr_m;
-};
+}
 
 /// Simple getter method of head.
 CsvRow CsvIStream::get_head() const{
  return head;
-};
+}
 
 /// Simple getter method of curr_row.
 CsvRow CsvIStream::get_current_line() const {
  return curr_row;
-};
+}
 
 /// Simple getter method of record_cnt.
 int CsvIStream::get_record_cnt() const {
  return record_cnt;
-};
+}
 
 /// Steps to the next line if possible.
 /// \return the next line could be read (otherwise the current data is not updated).
@@ -67,5 +67,4 @@ bool CsvIStream::next() {
   ++record_cnt;
  }
  return retv;
-};
-
+}

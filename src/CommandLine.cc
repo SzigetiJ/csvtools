@@ -28,7 +28,7 @@ using namespace std;
 /// strict weak ordering by flag (lexicographic).
 bool Option::operator<(const _Option &b) const {
  return std::strcmp(flag, b.flag) < 0;
-};
+}
 
 ostream &operator<<(ostream &a, const Option &b){
  if (b.flag)
@@ -45,14 +45,14 @@ ostream &operator<<(ostream &a, const Option &b){
   a<<"\t"<<b.help;
  }
  return a;
-};
+}
 
 CommandLine::CommandLine(const set<Option> &a):logger(LogConfig()),option_s(a),parsed(false){
  for (auto option : a){
   flag_m.insert(make_pair(option.flag,option));
   longname_m.insert(make_pair(option.longname,option));
  }
-};
+}
 
 int CommandLine::parse(int argc, char **argv){
  progname=argv[0];
@@ -120,38 +120,37 @@ int CommandLine::parse(int argc, char **argv){
  DEBUG(logger,"parsed: "<<value_m);
  parsed=true;
  return retv;
-};
+}
 
 bool CommandLine::is_set_option(const Option &a) const {
  return value_m.find(a)!=value_m.end();
-};
+}
 bool CommandLine::is_set_flag(const char *a) const {
  return flag_m.find(a)!=flag_m.end() && is_set_option(flag_m.find(a)->second);
-};
+}
 bool CommandLine::is_set_longname(const char *a) const {
  return longname_m.find(a)!=longname_m.end() && is_set_option(longname_m.find(a)->second);
-};
+}
 
 vector<vector<char*> > CommandLine::get_values_for_option(const Option &a) const {
  vector<vector<char*> > retv;
  for (auto it = value_m.lower_bound(a);it!=value_m.upper_bound(a); ++it)
   retv.push_back(it->second);
  return retv;
-};
+}
 vector<vector<char*> > CommandLine::get_values_for_flag(const char *a) const {
  return flag_m.find(a)!=flag_m.end()?get_values_for_option(flag_m.find(a)->second):vector<vector<char*> >();
-};
+}
 vector<vector<char*> > CommandLine::get_values_for_longname(const char *a) const {
  return longname_m.find(a)!=longname_m.end()?get_values_for_option(longname_m.find(a)->second):vector<vector<char*> >();
-};
+}
 
 char* CommandLine::get_arg_for_option(const Option &a, int i) const {
  return is_set_option(a)?value_m.find(a)->second.at(i):NULL;
-};
+}
 char* CommandLine::get_arg_for_flag(const char *a, int i) const {
  return is_set_flag(a)?value_m.find(flag_m.find(a)->second)->second.at(i):NULL;
-};
+}
 char* CommandLine::get_arg_for_longname(const char *a, int i) const {
  return is_set_longname(a)?value_m.find(longname_m.find(a)->second)->second.at(i):NULL;
-};
-
+}

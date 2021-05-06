@@ -44,5 +44,4 @@ int RowOrderKey::compare(const CsvRow &a, const CsvRow &b) {
   return (numeric?signum(stof(a_cell.get_dat())-stof(b_cell.get_dat())):a_cell.get_dat().compare(b_cell.get_dat()))*(desc?-1:1);
  }
  return (a_cell.get_dat().empty()?-1:1)*(high_empty?-1:1);
-};
-
+}

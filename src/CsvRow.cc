@@ -31,7 +31,7 @@ CsvRow CsvRow::get_fields(const FieldV &a) const {
   retv.push_back(at(a[i]));
  }
  return retv;
-};
+}
 
 /// Merge. Pastes a row to the end of the current row.
 /// \param a row to paste.
@@ -80,4 +80,3 @@ CsvRowCompareWrapper::CsvRowCompareWrapper(CsvRowCompare &cmp) : cmp(cmp) {
 bool CsvRowCompareWrapper::operator()(const CsvRow &a, const CsvRow &b) const {
  return cmp(a, b); 
 }
-

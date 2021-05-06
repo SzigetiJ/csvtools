@@ -30,7 +30,7 @@ JoinType &operator<<(JoinType &a, const string &b){
   "outer"==b?JOIN_OUTER:
   JOIN_UNDEF;
  return a;
-};
+}
 
 /// Standard constuctor. Initializes attributes.
 JoinAlgorithm::JoinAlgorithm(
@@ -42,7 +42,7 @@ JoinAlgorithm::JoinAlgorithm(
  const CsvRow &lhead=a->get_head();
  const CsvRow &rhead=b->get_head();
  join_fields=derive_join_fields(lhead,rhead,type,d);
-};
+}
 
 /// Static method that calculates column sequences from column intervals.
 FieldPV JoinAlgorithm::derive_join_fields(
@@ -73,4 +73,3 @@ FieldPV JoinAlgorithm::derive_join_fields(
  }
  return retv;
 }
-

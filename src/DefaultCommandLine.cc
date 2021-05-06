@@ -37,34 +37,34 @@ const int default_option_n = sizeof(default_option_a)/sizeof(Option);
 void DefaultCommandLine::print_usage() const {
  cout<<"Common usage: "<<endl;
  cout<<progname<<" "<<usage<<endl<<endl;
-};
+}
 
 void DefaultCommandLine::print_help() const {
  cout<<"Available options: "<<endl;
  for (auto option : option_s) {
  cout<<"\t"<<option<<endl;
  }
-};
+}
 
 void DefaultCommandLine::print_description() const {
  cout<<description<<endl;
-};
+}
 
 void DefaultCommandLine::print_version() const {
  cout<<PACKAGE_STRING<<endl;
-};
+}
 
 template<typename Iterator1, typename Iterator2>
 set<Option> set_merge(Iterator1 begin1, Iterator1 end1, Iterator2 begin2, Iterator2 end2) {
  set<Option> retv(begin1,end1);
  retv.insert(begin2,end2);
  return retv;
-};
+}
 
 DefaultCommandLine::DefaultCommandLine(const string &desc, const string &use, const set<Option> &opt):
  CommandLine(set_merge(opt.begin(),opt.end(),default_option_a,default_option_a+default_option_n)),
  description(desc),
- usage(use){};
+ usage(use){}
 
 void DefaultCommandLine::set_global_logger() {
  global_logger=get_log_config();
@@ -96,7 +96,7 @@ LogConfig DefaultCommandLine::get_log_config() const {
  WARN;
  bool debug=is_set_flag("D");
  return LogConfig(&cerr,level,debug);
-};
+}
 
 int DefaultCommandLine::print_if_needed() const {
  if (is_set_longname("help")) {
@@ -111,5 +111,4 @@ int DefaultCommandLine::print_if_needed() const {
   return 2;
  }
  return 0;
-};
-
+}

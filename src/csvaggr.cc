@@ -220,7 +220,7 @@ void flush_aggr_line(
      avals[i].init(refill_v[i]);
    }
    os<<delims.get(ORS);
-};
+}
 
 
 int main(int argc, char **argv){
@@ -289,4 +289,3 @@ int main(int argc, char **argv){
 
  return 0;
 }
-

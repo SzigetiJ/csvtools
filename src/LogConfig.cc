@@ -33,7 +33,7 @@ std::ostream &operator<<(std::ostream &a, const LogLevel &b){
 
 LogConfig::LogConfig(std::ostream *a, LogLevel b, bool c):
  out(a),min_level(b),file_info(c){
-};
+}
 
 /// Returns whether a givel LogLevel needs to be logged or not.
 bool LogConfig::is_enabled(LogLevel a) const {
@@ -49,4 +49,3 @@ bool LogConfig::do_file_info() const {
 ostream &LogConfig::get_out() const {
  return *out;
 }
-

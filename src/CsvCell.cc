@@ -34,25 +34,25 @@ typedef enum {
 
 /// Standard constructor.
 CsvCell::CsvCell(const string &a, bool b):dat(a),quote(b){
-};
-CsvCell::CsvCell():dat(),quote(false){};
+}
+CsvCell::CsvCell():dat(),quote(false){}
 
 /// Cell datum getter
 string CsvCell::get_dat() const {
  return dat;
-};
+}
 
 /// Sets the quote flag.
 /// @param a Quote flag.
 void CsvCell::set_escaped(bool a){
  quote=a;
-};
+}
 
 /// Some locales use decimal comma instead of decimal point.
 /// This funciton replaces comma characters to points.
 void CsvCell::to_decimal(){
  replace(dat.begin(),dat.end(),',','.');
-};
+}
 
 /// Determines whether the cell must be escaped at the input/output or not.
 /// \param a true: output, false: input.
@@ -133,7 +133,6 @@ char CsvCell::parse(istream &a, const Delimiters &delims){
 }
 
 
-
 /// Case sensitive equality check. Does not check the quote flag.
 bool CsvCell::operator==(const CsvCell &a) const {
  return (quote==a.quote && dat==a.dat);
@@ -146,10 +145,9 @@ bool CsvCell::operator<(const CsvCell &a) const {
  if (x==0)
   return quote < a.quote;
  return x<0;
-};
+}
 
 /// Standard output function of CsvCell instances.
 void CsvCell::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat) const {
  a<<(requires_escape_for_strategy(strat,delims)?get_escaped(delims):get_dat());
 }
-

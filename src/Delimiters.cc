@@ -29,7 +29,7 @@ EscapeStrategy &operator<<(EscapeStrategy &a, const string &b){
   "remove"==b?ESC_REMOVE:
   ESC_UNDEF;
  return a;
-};
+}
 
 
 Delimiters::Delimiters():
@@ -40,7 +40,7 @@ Delimiters::Delimiters():
  iesc(CHR_QUOTE),
  oesc(CHR_QUOTE),
  eof(CHR_EOF){
-};
+}
 
 void Delimiters::set(Delimiter a, char b){
  switch (a) {
@@ -65,4 +65,3 @@ char Delimiters::get(Delimiter a) const {
   a == OESC ? oesc:
   eof;
 }
-

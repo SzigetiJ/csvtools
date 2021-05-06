@@ -91,5 +91,4 @@ bool Numeric::operator<(const Numeric &x) const {
   ++b.prec;
  }
  return a.val<b.val; 
-};
-
+}

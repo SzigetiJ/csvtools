@@ -6,7 +6,7 @@
 
 using namespace std;
 
-RowFilter::RowFilter(const pair<OpFun,pair<ColIvalV, string> > &a):pair<OpFun,pair<ColIvalV, string> >(a){};
+RowFilter::RowFilter(const pair<OpFun,pair<ColIvalV, string> > &a):pair<OpFun,pair<ColIvalV, string> >(a){}
 
 bool RowFilter::row_matches(const CsvRow &row) const {
    const FieldV &xfv=second.first.extract_ival(row.size());
@@ -16,4 +16,4 @@ bool RowFilter::row_matches(const CsvRow &row) const {
    dfline_csv.print(ss,Delimiters(),ESC_PRESERVE);
    dfline_s=ss.str();
    return first(dfline_s,second.second);
-};
+}

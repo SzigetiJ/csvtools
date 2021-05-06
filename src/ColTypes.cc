@@ -89,5 +89,3 @@ FieldV ColIvalV::extract_ival(int len) const {
  }
  return retv;
 }
-
-

@@ -23,7 +23,7 @@
 using namespace std;
 
 /// Standard constructor.
-CsvRowForJoinLess::CsvRowForJoinLess(const FieldPV &a):join_fields(a){};
+CsvRowForJoinLess::CsvRowForJoinLess(const FieldPV &a):join_fields(a){}
 
 /// This comparison checks only those fields that are selected for the join.
 bool CsvRowForJoinLess::operator()(const CsvRowForJoin &a, const CsvRowForJoin &b){
@@ -35,7 +35,7 @@ bool CsvRowForJoinLess::operator()(const CsvRowForJoin &a, const CsvRowForJoin &
   if (b_cell < a_cell) return false;
  }
  return false;
-};
+}
 
 /// Standard Constuctor. Initializes attributes.
 MultiSetJoinAlgorithm::MultiSetJoinAlgorithm(
@@ -51,22 +51,22 @@ MultiSetJoinAlgorithm::MultiSetJoinAlgorithm(
    right_rows.insert(right_rows.begin(),{empty_row,false});
   }
   current_b=current_e=current_it=right_rows.end();
-};
+}
 
 /// The header of the join is the concatenation of the two headers.
 CsvRow MultiSetJoinAlgorithm::get_head() const {
  CsvRow retv=left_stream->get_head();
  retv+=right_stream->get_head();
  return retv;
-};
+}
 
 /// The current line is the concatenation of the two current lines.
 CsvRow MultiSetJoinAlgorithm::get_current_line() const {
  CsvRow retv=left_stream->get_current_line();
  return retv+=current_it->first;
-};
+}
 
-int MultiSetJoinAlgorithm::get_record_cnt() const {return row_cnt;};
+int MultiSetJoinAlgorithm::get_record_cnt() const {return row_cnt;}
 
 bool MultiSetJoinAlgorithm::next(){
  if (current_it==current_e) {	// before first line (initialization)
@@ -95,5 +95,4 @@ bool MultiSetJoinAlgorithm::next(){
   }
  }
  return true;
-};
-
+}
