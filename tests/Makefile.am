@@ -1,10 +1,10 @@
 AM_DEFAULT_SOURCE_EXT = .cc
 
 TESTS = \
-	CsvCell_test
+	CsvCell_print_test
 
 check_PROGRAMS = \
-	CsvCell_test
+	CsvCell_print_test
 
 CLEANFILES = 
 
