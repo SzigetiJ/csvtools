@@ -1,3 +1,3 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = 
-SUBDIRS = src
+SUBDIRS = src tests
