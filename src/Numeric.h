@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2021 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -24,14 +24,14 @@
 /// Numeric values must be given in [-+][0-9]*\.?[0-9]* format.
 /// TODO check value overflow (constr., op+=).
 class Numeric {
- int val;	///< Numeric value.
- size_t prec;	///< Precision.
- int digits_to_num(int);	///< f(x)=10^x function for x>=0.
+  int val; ///< Numeric value.
+  size_t prec; ///< Precision.
+  static int digits_to_num(int); ///< f(x)=10^x function for x>=0.
 public:
- Numeric(const std::string&);
- std::string to_string() const;
- Numeric &operator+=(const std::string&);
- bool operator<(const Numeric&) const;
+  Numeric(const std::string&);
+  std::string to_string() const;
+  Numeric &operator+=(const std::string&);
+  bool operator<(const Numeric&) const;
 };
 
 #endif

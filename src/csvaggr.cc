@@ -60,7 +60,7 @@ class AggrFunBase : public AggrFunIface {
  function<T & (T&, const string&)> accumulator;
  function<void * (const string&)> initializer;
 public:
- AggrFunBase(const function<T & (T&, const string&)> &a, const function<void * (const string&)> &b=[](const string &a)->void*{return new T(a);}):accumulator(a),initializer(b){}
+ explicit AggrFunBase(const function<T & (T&, const string&)> &a, const function<void * (const string&)> &b=[](const string &a)->void*{return new T(a);}):accumulator(a),initializer(b){}
  void *init_value(const string &a) const {return initializer(a);}
  void *accumulate(void *a, const string &b) const {
   T &item=*(reinterpret_cast<T*>(a));
@@ -74,7 +74,7 @@ public:
 /// Aggregation function dealing with numeric values.
 class AggrFunNumeric : public AggrFunBase<Numeric> {
 public:
- AggrFunNumeric(const function<Numeric& (Numeric&, const string&)> &a):AggrFunBase<Numeric>(a){}
+ explicit AggrFunNumeric(const function<Numeric& (Numeric&, const string&)> &a):AggrFunBase<Numeric>(a){}
  string to_string(void *a) const {
   return reinterpret_cast<Numeric*>(a)->to_string();
  }
@@ -98,10 +98,10 @@ public:
 /// 3.) it must present a string value as result.
 class AggrValue {
  const AggrFunPtr fun; 
- bool has_dat;
- void *dat;
+ bool has_dat = false;
+ void *dat = NULL;
 public:
- AggrValue(const AggrFunPtr &f):fun(f),has_dat(false){};
+ explicit AggrValue(const AggrFunPtr &f):fun(f) {};
  bool init(const string &a){if (!has_dat) {dat=fun->init_value(a); has_dat=true; return true;} return false;};
  void accumulate(const string &a){fun->accumulate(dat,a);};
  string get_dat(){return fun->to_string(dat);};

@@ -59,15 +59,17 @@ std::ostream &operator<<(std::ostream&, const Option&);
 /// It is responsible for parsing command line and stores parsed options in option=>values map.
 class CommandLine {
 protected:
- const char *progname;	///< Name of the invoked program (0th command line argument).
  LogConfig logger;	///< CommandLine prints its messages (e.g., parse problems) via logger. However, there is a chicken-egg problem here, since the appropriate verbosity level is not defined prior to command line parsing. Thus CommandLine uses its own predefined logger.
  std::set<Option> option_s;	///< Set of available options.
  std::map<std::string, Option> flag_m;	///< Flag=>Option lookup map.
  std::map<std::string, Option> longname_m;	///< Longname=>Option lookup map.
  std::multimap<Option,std::vector<char*> > value_m;	///< Option=>given argument map. 
- bool parsed;	/// Indicating whether parsing is already done.
+ bool parsed = false;	/// Indicating whether parsing is already done.
+ const char *progname = NULL;	///< Name of the invoked program (0th command line argument).
+
  int parse(int, char**);
  virtual int process() = 0;
+
 public:
  CommandLine(const std::set<Option>&);
  virtual CommandLineExecuteResponse execute(int, char**) = 0;
