@@ -49,7 +49,7 @@ void CsvCell::set_escaped(bool a){
 }
 
 /// Some locales use decimal comma instead of decimal point.
-/// This funciton replaces comma characters to points.
+/// This funciton replaces comma characters by point characters.
 void CsvCell::to_decimal(){
  replace(dat.begin(),dat.end(),',','.');
 }

@@ -18,8 +18,10 @@ src/.libs
 m4/l*.m4
 tests/.deps
 tests/*_test
+tests/*_test.o
 tests/*_test.log
 tests/*_test.trs
+tests/test-suite.log
 coverage/*.gcda
 coverage/*.gcno
 coverage/csvtools.info
