@@ -7,7 +7,9 @@ CXXFLAGS=-Wall -Wpedantic -O0 -std=c++11 -fprofile-arcs -ftest-coverage -I$(SRCD
 CXXFLAGS_X=-Wall -Wpedantic -O0 -std=c++11 -I$(SRCDIR)
 LDFLAGS=-fprofile-arcs -ftest-coverage
 
-TEST_X0 = CsvCell_print
+TEST_X0 = \
+ CsvCell_print \
+ CsvCell_parse
 
 INFO_FILE=csvtools.info
 INFO_FILE_REDUCED=csvtools.x.info
