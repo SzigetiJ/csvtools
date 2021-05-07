@@ -1,10 +1,13 @@
-![GitHub](https://img.shields.io/github/license/SzigetiJ/csvtools)
+[![GitHub](https://img.shields.io/github/license/SzigetiJ/csvtools)](LICENSE)
 ![C/C++ CI](https://github.com/SzigetiJ/csvtools/workflows/C/C++%20CI/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bfe062e95e6d427ca609e5fb0d04a91e)](https://www.codacy.com/gh/SzigetiJ/csvtools/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SzigetiJ/csvtools&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/SzigetiJ/csvtools/branch/master/graph/badge.svg?token=7XZOJJ2DWL)](https://codecov.io/gh/SzigetiJ/csvtools)
 
 csvtools
 ========
 
-CsvTools provides transformation tools for CSV files. Supported transformation are the followings:
+CsvTools provides transformation tools for CSV files. Supported transformation
+are the followings:
 
 *   projection (column filtering)
 *   selection (row filtering by row condition)
@@ -23,8 +26,9 @@ Examples
 --------
 
 The input is given as a _well-formed_ CSV file
-(cells separated by comma (','), records separated by newline ('\n') and the CSV file is also terminated by newline,
-first line is the CSV header, cells that need to be escaped are escaped by doublequote ('"'),
+(cells separated by comma (`,`), records separated by newline (`\n`) and the CSV
+file is also terminated by newline, first line is the CSV header,
+cells that need to be escaped are escaped by doublequote (`"`),
 each line contains as many cells (fields) as the header):
 
 `persons.csv`
@@ -41,7 +45,8 @@ Soho"
 
 ### Projection
 
-For projection use `csvproj`. `csvproj` takes option `-c <expr>`, where expr defines columns or column interval.
+For projection use `csvproj`. `csvproj` takes option `-c <expr>`,
+where expr defines columns or column interval.
 
 *   `-c 0,1,2` denotes first (0), second (1) and third (2) columns, respectively. Note that column numbering begins with 0. This column sequence definition is equivalent with `-c 0 -c 1 -c 2`.
 *   `-c 2,0` denotes third (2) and first (0) columns, respectively.
@@ -77,9 +82,16 @@ Soho",4
 
 ### Selection
 
-Use `csvfilter` for selecting rows by condition. The special option interpreted by `csvfilter` is `-r <cond>`, where cond defines the fitering condition. The condition is given as a relation between a column (or sequence of columns) and a string constant. The syntax of the condition is `cond ::= <relation>:<expr>:str` where relation is one of {=, !=, <, <=, >, >=}, expr is a column expression (see Projection) and str is a string constant. If multiple `-r <cond>` conditions are given, row must fulfill each of them to get selected.
+Use `csvfilter` for selecting rows by condition. The special option interpreted
+by `csvfilter` is `-r <cond>`, where cond defines the fitering condition.
+The condition is given as a relation between a column (or sequence of columns)
+and a string constant.
+The syntax of the condition is `cond ::= <relation>:<expr>:str` where relation
+is one of {=, !=, <, <=, >, >=}, expr is a column expression (see Projection)
+and str is a string constant. If multiple `-r <cond>` conditions are given,
+row must fulfill each of them to get selected.
 
-*   `-r =:0:1` select rows where the first cell is `1`.
+*   `-r =:0:1` select rows where the first cell equals `1`.
 *   `-r =:1,3:foo,bar` selects rows where columns 1 and 3 (separated by default output field separator, `,`) give `foo,bar`. Equivalent with
     *    `-r =:3,1:bar,foo`
     *    `-r =:1:foo -r =:3:bar`
@@ -102,7 +114,13 @@ With `csvsort` the rows of CSV file can be sorted. Features:
 *   numeric / lexicographic sort,
 *   special handling of empty cells.
 
-The order of the rows can by contolled with the `-k {num}[d][n][e]` option where `num` is a column number, `d` is flag for _descending_ order, `n` flag is for _numeric_ sort and `e` flag denotes that empty cells are greater than not empty cells. If multiple order columns are defined, the second, third, etc. definitions are taken into account only if the rows cannot be sorted with the first definition. Examples:
+The order of the rows can by contolled with the `-k {num}[d][n][e]` option
+where `num` is a column number, `d` is flag for _descending_ order, `n` flag is
+for _numeric_ sort and `e` flag denotes that empty cells are greater than not empty cells.
+If multiple order columns are defined, the second, third, etc. definitions are
+taken into account only if the rows cannot be sorted with the first definition.
+
+Examples:
 
 *   `-k 0` sorts the rows ordered by the first column, lexicographically.
 *   `-k 0 -k 1n` sorts the rows ordered by the first column lexicographically, and if rows have the same value in the first column, their order is defined by the second column with numeric order.
@@ -120,16 +138,17 @@ With `csvaggr` a column (or a set of columns) can be aggregated.
 *   count
 *   concat
 
-Use `csvaggr` with option `-a <name> <fun> <expr>` where <name> will be the name of the result column,
-<fun> is the applied column function and <expr> is the column expression (see csvproj).
+Use `csvaggr` with option `-a <name> <fun> <expr>` where `<name>` will be the
+name of the result column, `<fun>` is the applied column function
+and `<expr>` is the column expression (see [csvproj](#markdown-header-projection)).
 There can be given multiple `-a` options. If a column is not part of any column expression,
 it will be used as grouping column.
-Thus, every column either will be aggregated or will be a grouping column. 
+Thus, every column either will be aggregated or will be a grouping column.
 
 For `csvaggr` to work properly, it is requsite that the input csv data is
 sorted by the grouping columns. 
 
-Unnecessaey columns cannot be dropped with `csvaggr`.
+Unnecessary columns cannot be dropped with `csvaggr`.
 Use `csvproj` to get rid of unused columns.
 
 Summarized, for aggregating an arbitrary csv file, invoke the
@@ -146,21 +165,29 @@ Examples:
 ### Join CSV files
 
 The command `csvjoin` supports joining of two csv files (left and right table).
-The left table is read from stdin, whereas the right table is defined by command line parameter `-jf <filename>`.
-The join type is also a mandatory parameter: `-jt <join_type>`. The following `join_type` values are available:
+The left table is read from stdin, whereas the right table is defined by command
+line parameter `-jf <filename>`.
+The join type is also a mandatory parameter: `-jt <join_type>`.
+The following `join_type` values are available:
 
 *   `natural` recognizes common colums, and performs inner join based on the common columns.
 *   `cross` performs full join. Results in Descartes-product of the two input tables.
 *   `inner` for inner join.
 *   `outer` for outer left join.
 
-In case of inner and outer join, the join columns must be provided: `-jc <expr>` where `expr` is a column expression (see projection).
+In case of inner and outer join, the join columns must be provided: `-jc <expr>`
+where `expr` is a column expression (see projection).
 
 ### Dealing with Other-than-Comma Separated Values
 
-CSV files are not always comma-separated. Some "CSV" files contain TAB- or semicolon-separated values. With `csvpipe` these files can be converted into comma-separated files and CSV files can be converted into Any-character Separated Values file. Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`, where ifs and ofs define the field separator at the input and at the output, respectively, whereas esc defines the field escaping strategy:
+CSV files are not always comma-separated. Some "CSV" files contain TAB- or
+semicolon-separated values. With `csvpipe` these files can be converted into
+comma-separated files and CSV files can be converted into Any-character Separated Values file.
+Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`,
+where ifs and ofs define the field separator at the input and at the output,
+respectively, whereas esc defines the field escaping strategy:
 
 *   `all`: every field will be escaped.
 *   `preserve`: already escaped fields remain escaped and escaping is introduced where necessary.
-*   `resolve`: same as `preserve`, except for the fields where field escaping was necessary at the input, but is not required at the output - there fields will not be escaped.
+*   `resolve`: same as `preserve`, except for the fields where field escaping was necessary at the input, but is not required at the output -- there fields will not be escaped.
 *   `remove`: remove escaping from fields if possible.
