@@ -73,7 +73,7 @@ ColIvalV::ColIvalV(const char *a){
 }
 
 /// Extracts sequence of column indentifiers from column intervals.
-/// @param len total number of columns (needed if {last} is omitted).
+/// @param len total number of columns (used only if {last} is omitted).
 /// @return Sequence of column identifiers.
 FieldV ColIvalV::extract_ival(int len) const {
  FieldV retv;
