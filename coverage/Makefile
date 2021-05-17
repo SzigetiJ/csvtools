@@ -8,6 +8,9 @@ CXXFLAGS_X=-Wall -Wpedantic -O0 -std=c++11 -I$(SRCDIR)
 LDFLAGS=-fprofile-arcs -ftest-coverage
 
 TEST_X0 = \
+ ColIval_ctor \
+ ColIvalV_ctor \
+ ColIvalV_extract_ival \
  CsvCell_decimal \
  CsvCell_less \
  CsvCell_parse \
