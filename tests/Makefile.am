@@ -7,7 +7,9 @@ TESTS = \
 	CsvCell_decimal_test \
 	CsvCell_less_test \
 	CsvCell_parse_test \
-	CsvCell_print_test
+	CsvCell_print_test \
+	CsvRow_io_test \
+	CsvRow_concat_test
 
 check_PROGRAMS = \
 	ColIval_ctor_test \
@@ -16,7 +18,9 @@ check_PROGRAMS = \
 	CsvCell_decimal_test \
 	CsvCell_less_test \
 	CsvCell_parse_test \
-	CsvCell_print_test
+	CsvCell_print_test \
+	CsvRow_io_test \
+	CsvRow_concat_test
 
 CLEANFILES = 
 
