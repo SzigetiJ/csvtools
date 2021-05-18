@@ -14,7 +14,9 @@ TEST_X0 = \
  CsvCell_decimal \
  CsvCell_less \
  CsvCell_parse \
- CsvCell_print
+ CsvCell_print \
+ CsvRow_io \
+ CsvRow_concat
 
 INFO_FILE=csvtools.info
 INFO_FILE_REDUCED=csvtools.x.info
