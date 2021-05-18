@@ -15,9 +15,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install lcov
       run: sudo apt-get install lcov
+    - name: prepare
+      run: aclocal && autoheader && autoconf && automake --add-missing
     - name: generate
-      run: make
-      working-directory: coverage
+      run: make -f Makefile.cov csvtools.info
+      working-directory: cov
     - name: upload
       run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} bash <(curl -s https://codecov.io/bash)
-      working-directory: coverage
+      working-directory: cov
