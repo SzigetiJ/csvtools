@@ -13,13 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install lcov
-      run: sudo apt-get install lcov
     - name: prepare
       run: aclocal && autoheader && autoconf && automake --add-missing
     - name: generate
-      run: make -f Makefile.cov csvtools.info
+      run: make -f coverage.mk gcov
       working-directory: cov
-    - name: upload
-      run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} bash <(curl -s https://codecov.io/bash)
-      working-directory: cov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        directory: cov
