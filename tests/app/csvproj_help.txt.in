@@ -1,0 +1,18 @@
+Filters columns of the csv file (projection). Takes stdin as input and puts result to stdout.
+
+Common usage: 
+@@FULLPATH@@ -c <expr> [-c <expr> ...]
+ expr ::= <ival>[,<expr>]		(column expression)
+ ival ::= num|-num|num-|num-num		(column interval)
+where num is integer value, for the first column num=0.
+
+Available options: 
+	-D	--debug	Include debug information (file:line) in log.
+	-V	--version	Display version.
+	-c	--columns=<arg1>	Define columns.
+	-h	--help	Display help.
+	-q	--quiet	Quiet output (display log messages of ERROR level or higher).
+	-qq	--very-quiet	Quiet output (display log messages only of FATAL level).
+	-v	--verbose	Verbose output (display log messages of INFO level or higher).
+	-vv	--more-verbose	Verbose output (display log messages of DEBUG level or higher).
+	-vvv	--most-verbose	Verbose output (display log messages of TRACE level or higher).

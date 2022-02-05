@@ -28,6 +28,7 @@ AC_HEADER_STDBOOL
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 tests/app/Makefile])
 AC_OUTPUT
 
