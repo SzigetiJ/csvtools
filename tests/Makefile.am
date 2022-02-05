@@ -29,3 +29,4 @@ BUILT_SOURCES =
 AM_CXXFLAGS = -I${top_srcdir}/src
 LDADD = ../src/libcsvtools.a
 
+SUBDIRS=app
