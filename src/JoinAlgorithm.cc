@@ -60,7 +60,7 @@ FieldPV JoinAlgorithm::derive_join_fields(
   for (unsigned int i=0; i<rhead.size(); ++i) {
    auto it=find(lhead.begin(),lhead.end(),rhead.at(i));
    if (it!=lhead.end()){
-    retv.push_back({i,it-lhead.begin()});
+    retv.push_back({it-lhead.begin(),i});
    }
   }
  } else {
