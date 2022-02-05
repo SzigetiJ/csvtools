@@ -8,3 +8,6 @@ cat "$WDIR/csvproj_help.txt.in" | sed "s:@@FULLPATH@@:$CSVPROJ:" > "./csvproj_he
 
 cat "$WDIR/t0.csv" | "$CSVPROJ" --help | diff - "./csvproj_help.txt" || exit 1
 cat "$WDIR/t0.csv" | "$CSVPROJ" -h | diff - "./csvproj_help.txt" || exit 1
+
+rm "./csvproj_help.txt"
+
