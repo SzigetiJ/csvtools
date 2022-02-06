@@ -57,7 +57,9 @@ int main(int argc, const char *argv[]) {
   CsvRow ex1;
   stringstream ex1_ss("1,2,1,2,1,2,1,2");
   ex1.parse(ex1_ss,delims);
-  assert(test_CsvRowConcat(t0,t0,ex0));
-  assert(test_CsvRowConcat(t0,t0,ex1));
+  auto res0 = test_CsvRowConcat(t0, t0, ex0);
+  assert(res0);
+  auto res1 = test_CsvRowConcat(t0, t0, ex1);
+  assert(res1);
   return 0;
 }
