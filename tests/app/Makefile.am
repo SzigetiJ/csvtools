@@ -7,3 +7,20 @@ TESTS = \
 	csvfilter_r1x_test.sh \
 	csvaggr_a0x_test.sh \
 	csvconv_4_test.sh
+
+dist_check_DATA= \
+	csvproj_help.txt.in \
+	t0.csv \
+	t0_proj0.csv t0_proj1.csv \
+	t0_sort1d.csv t0_sort1dn.csv t0_sort1n.csv t0_sort1x.csv \
+	t1.csv \
+	t1_aggr0cc.csv t1_aggr0cnt.csv t1_aggr0mmrev.csv t1_aggr0mn.csv t1_aggr0mx.csv t1_aggr0s.csv \
+	t1_filt02.csv t1_filt1a.csv t1_filtne.csv \
+	t1_sort1e0d.csv \
+	t1t2_natural.csv t1t2_outer.csv \
+	t2.csv t3.csv t2t3_cross.csv \
+	t4.csv \
+	t4_all.csv t4_preserve.csv t4_remove.csv t4_resolve.csv t4_xrm.csv \
+	t5.csv t5_aggr1smm.csv
+
+EXTRA_DIST=$(TESTS)
