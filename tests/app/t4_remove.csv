@@ -1,0 +1,7 @@
+name|test_string
+toremove|not "necessary" doublequote
+tointroduce|"|-| |= |_ |_ ()"
+noremove|""","", and some machines get confused"
+space| not the space at front
+spacequote| ""
+toresolve|originally, escaping was necessary
