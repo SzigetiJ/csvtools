@@ -6,6 +6,7 @@ CSVSORT="../../src/csvsort"
 CSVAGGR="../../src/csvaggr"
 
 cat "$WDIR/t1.csv" | "$CSVSORT" -k 1e |  "$CSVAGGR" -a total sum 0 | diff - "$WDIR/t1_aggr0s.csv" || exit 1
+cat "$WDIR/t1.csv" | "$CSVSORT" -k 1e |  "$CSVAGGR" --aggregation=total sum 0 | diff - "$WDIR/t1_aggr0s.csv" || exit 1
 cat "$WDIR/t1.csv" | "$CSVSORT" -k 1e |  "$CSVAGGR" -a maximum max 0 | diff - "$WDIR/t1_aggr0mx.csv" || exit 1
 cat "$WDIR/t1.csv" | "$CSVSORT" -k 1e |  "$CSVAGGR" -a minimum min 0 | diff - "$WDIR/t1_aggr0mn.csv" || exit 1
 cat "$WDIR/t1.csv" | "$CSVSORT" -k 1e |  "$CSVAGGR" -a count count 0 | diff - "$WDIR/t1_aggr0cnt.csv" || exit 1
