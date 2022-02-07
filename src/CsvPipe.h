@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 SZIGETI JÃ¡nos <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *

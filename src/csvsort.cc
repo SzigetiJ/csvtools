@@ -41,8 +41,8 @@ public:
  /// Checks for order keys.
  int process() {
   if (is_set_flag("k")) {
-   vector< vector<char*> > key_v=get_values_for_flag("k");
-   for (vector<char*> key : key_v) {
+   vector< vector<const char*> > key_v=get_values_for_flag("k");
+   for (vector<const char*> key : key_v) {
     const string a(key[0]);
     // TODO Key definition syntax check!
     order_l.push_back(RowOrderKey(stoi(a),(a.find('d')!=string::npos),(a.find('n')!=string::npos),(a.find('e')!=string::npos)));
@@ -56,7 +56,7 @@ public:
 const string DESCRIPTION="Sorts csv data rows. Multiple keys can be defined.\n";
 const string USAGE="[-k {num}[d][n][e]] [-k ...]\nwhere\n\tnum is column number,\n\td: descending order,\n\tn: compare as numeric,\n\te: empty fields are greater than not empty fields.";
 
-int main(int argc, char **argv) {
+int main(int argc, const char *argv[]) {
  const Delimiters delims;
  const EscapeStrategy strat=ESC_PRESERVE;
 

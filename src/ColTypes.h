@@ -41,6 +41,8 @@ typedef std::vector<ColID> FieldV;
 class ColIvalV : public std::vector<ColIval>{
 public:
  ColIvalV(const char*);
+ ColIvalV(const char*, const char *);
+ ColIvalV(const char*, unsigned int len);
  FieldV extract_ival(int) const;
 };
 

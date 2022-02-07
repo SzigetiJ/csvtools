@@ -51,8 +51,8 @@ const int join_option_n = sizeof(join_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: JoinCommandLine can derive join parameters from options.
 class JoinCommandLine : public DefaultCommandLine {
- pair<ColIvalV,ColIvalV> join_columns=make_pair("","");
- char *right_fname = NULL;
+ pair<ColIvalV,ColIvalV> join_columns=make_pair(ColIvalV("",0u),ColIvalV("",0u));
+ const char *right_fname = NULL;
  JoinType join_type=JOIN_INNER;
 public:
  JoinCommandLine(const string &desc, const string &usage) :
@@ -82,26 +82,25 @@ public:
   if (!is_set_flag("jc")){
    return 1;
   }
-  vector<vector<char*> > arg_v=get_values_for_flag("jc");
-  for (vector<char*> arg : arg_v){
-   char *sep=find(arg[0],arg[0]+strlen(arg[0]),':');
-   *sep=0;
-   ColIvalV tmpleft(arg[0]);
-   ColIvalV tmpright(sep+1);
-   join_columns.first.insert(join_columns.first.end(),tmpleft.begin(),tmpleft.end());  
+  vector<vector<const char*> > arg_v=get_values_for_flag("jc");
+  for (vector<const char*> arg : arg_v){
+   const char *sep=find(arg[0], arg[0] + strlen(arg[0]), ':');
+   ColIvalV tmpleft(arg[0], sep);
+   ColIvalV tmpright(sep + 1);
+   join_columns.first.insert(join_columns.first.end(),tmpleft.begin(),tmpleft.end());
    join_columns.second.insert(join_columns.second.end(),tmpright.begin(),tmpright.end());
   }
   return 0;
  };
 
  // getters
- char *get_right_fname() const {return right_fname;};
+ const char *get_right_fname() const {return right_fname;};
  JoinType get_join_type() const {return join_type;};
  pair<ColIvalV,ColIvalV> get_join_columns() const {return join_columns;};
 };
 
 
-int main(int argc, char **argv){
+int main(int argc, const char *argv[]){
  JoinCommandLine cmdline=JoinCommandLine(DESCRIPTION,USAGE);
  CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
  if (resp!=CMDLINE_OK) {

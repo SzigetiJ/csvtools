@@ -111,7 +111,7 @@ public:
 
 typedef map<string,AggrFunSmartPtr> AggrFunMap;
 
-typedef tuple<char*, AggrFunPtr, ColIvalV, FieldV> AggrCol;
+typedef tuple<const char*, AggrFunPtr, ColIvalV, FieldV> AggrCol;
 
 // Available column functions mapped by name.
 const AggrFunMap colfun_m={
@@ -151,10 +151,10 @@ public:
   DefaultCommandLine(desc, usage,set<Option>(aggr_option_a,aggr_option_a+aggr_option_n)){};
 
  int process() {
-  for (vector<char*> arg : get_values_for_flag("a")) {
-   char *name=arg[0];
-   char *fun=arg[1];
-   char *expr=arg[2];
+  for (vector<const char*> arg : get_values_for_flag("a")) {
+   const char *name=arg[0];
+   const char *fun=arg[1];
+   const char *expr=arg[2];
 
    ColIvalV col_v(expr);
    AggrFunMap::const_iterator fmi=colfun_m.find(fun);
@@ -171,7 +171,7 @@ public:
 
  void set_colnum(int size){
   INFO(global_logger,"columns: "<<size);
-  auto all=ColIvalV("-").extract_ival(size);
+  auto all=ColIvalV("-",1u).extract_ival(size);
   set<ColID> remain_s(all.begin(),all.end());
   for (AggrCol &aggr : aggr_v) {
    get<3>(aggr) = get<2>(aggr).extract_ival(size);
@@ -223,7 +223,7 @@ void flush_aggr_line(
 }
 
 
-int main(int argc, char **argv){
+int main(int argc, const char *argv[]){
  const Delimiters delims;
  const EscapeStrategy strat=ESC_PRESERVE;
 

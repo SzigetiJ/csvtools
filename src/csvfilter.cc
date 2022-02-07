@@ -67,25 +67,23 @@ public:
  int process() {
   filter_v.clear();
 
-  vector<vector<char*> > arg_v=get_values_for_longname("row");
-  for (vector<char*> arg : arg_v){
-   char *a=arg[0];
-   char *ae=a+strlen(a);
-   char *xptr=find(a,ae,':');
-   *xptr=0;
+  vector<vector<const char*> > arg_v=get_values_for_longname("row");
+  for (vector<const char*> arg : arg_v){
+   const char *a=arg[0];
+   const char *ae=a+strlen(a);
+   const char *xptr=find(a,ae,':');
    if (xptr==ae) {
     ERROR(logger, "Cannot parse condition.");
     return -1;
    }
-   char *xptr1=find(xptr+1,ae,':');
-   *xptr1=0;
+   const char *xptr1=find(xptr+1,ae,':');
    if (xptr1==ae) {
     ERROR(logger, "Cannot parse condition.");
     return -1;
    }
 
-   string op=a;
-   ColIvalV col_v(xptr+1);
+   string op(a, xptr - a);
+   ColIvalV col_v(xptr+1, xptr1);
    string str=xptr1+1;
    OpFunMap::const_iterator comi=colop_m.find(op);
    if (comi==colop_m.end()) {
@@ -101,7 +99,7 @@ public:
 };
 
 
-int main(int argc, char **argv){
+int main(int argc, const char *argv[]){
  SelectionCommandLine cmdline=SelectionCommandLine(DESCRIPTION,USAGE);
  CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
  if (resp!=CMDLINE_OK) {

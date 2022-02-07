@@ -63,28 +63,28 @@ protected:
  std::set<Option> option_s;	///< Set of available options.
  std::map<std::string, Option> flag_m;	///< Flag=>Option lookup map.
  std::map<std::string, Option> longname_m;	///< Longname=>Option lookup map.
- std::multimap<Option,std::vector<char*> > value_m;	///< Option=>given argument map. 
+ std::multimap<Option,std::vector<const char*> > value_m;	///< Option=>given argument map.
  bool parsed = false;	/// Indicating whether parsing is already done.
  const char *progname = NULL;	///< Name of the invoked program (0th command line argument).
 
- int parse(int, char**);
+ int parse(int, const char*[]);
  virtual int process() = 0;
 
 public:
  CommandLine(const std::set<Option>&);
- virtual CommandLineExecuteResponse execute(int, char**) = 0;
+ virtual CommandLineExecuteResponse execute(int, const char*[]) = 0;
 
  bool is_set_option(const Option&) const;
  bool is_set_flag(const char*) const;
  bool is_set_longname(const char*) const;
 
- std::vector<std::vector<char*> > get_values_for_option(const Option&) const;
- std::vector<std::vector<char*> > get_values_for_flag(const char*) const;
- std::vector<std::vector<char*> > get_values_for_longname(const char*) const;
+ std::vector<std::vector<const char*> > get_values_for_option(const Option&) const;
+ std::vector<std::vector<const char*> > get_values_for_flag(const char*) const;
+ std::vector<std::vector<const char*> > get_values_for_longname(const char*) const;
 
- char* get_arg_for_option(const Option&, int i=0) const;
- char* get_arg_for_flag(const char*, int i=0) const;
- char* get_arg_for_longname(const char*, int i=0) const;
+ const char* get_arg_for_option(const Option&, int i=0) const;
+ const char* get_arg_for_flag(const char*, int i=0) const;
+ const char* get_arg_for_longname(const char*, int i=0) const;
 
 };
 
