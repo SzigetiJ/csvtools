@@ -18,3 +18,13 @@ CSVCONV="../../src/csvconv"
 < "$WDIR/t4.csv" "$CSVCONV" -ofs ';' -ofs '|' | diff - "$WDIR/t4_preserve.csv" || exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -ofs '|' -esc remove -esc preserve | diff - "$WDIR/t4_preserve.csv" || exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -ofs '|' | "$CSVCONV" -ifs ';' -ifs '|' -esc remove | diff - "$WDIR/t4_xrm.csv" || exit 1
+
+echo "## ERROR lines expected">&2
+< "$WDIR/t4.csv" "$CSVCONV" -ofs >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -ofs 'x' 'y' >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -esc >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -ifs >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -fs '|' >/dev/null && exit 1
+echo "## END (ERROR lines expected)">&2
+
+true

@@ -10,3 +10,15 @@ CSVFILTER="../../src/csvfilter"
 < "$WDIR/t1.csv" "$CSVFILTER" -r ">:0:1" | diff - "$WDIR/t1_filt02.csv" || exit 1
 < "$WDIR/t1.csv" "$CSVFILTER" -r ">=:0:2" | diff - "$WDIR/t1_filt02.csv" || exit 1
 < "$WDIR/t1.csv" "$CSVFILTER" -r "!=:1,0:a,1" | diff - "$WDIR/t1_filtne.csv" || exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -r "<:0:2" | diff - "$WDIR/t1_filt01.csv" || exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -r "<=:0:1" | diff - "$WDIR/t1_filt01.csv" || exit 1
+
+echo "## ERROR lines expected">&2
+< "$WDIR/t1.csv" "$CSVFILTER" -r "==:0:1" >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -r >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -r "=" >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -r "=:0" >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVFILTER" -q "=:0:1" >/dev/null && exit 1
+echo "## END (ERROR lines expected)">&2
+
+true
