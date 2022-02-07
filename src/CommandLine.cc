@@ -54,11 +54,11 @@ CommandLine::CommandLine(const set<Option> &a) : logger(LogConfig()), option_s(a
   }
 }
 
-int CommandLine::parse(int argc, char **argv) {
+int CommandLine::parse(int argc, const char *argv[]) {
   progname = argv[0];
   int i = 1;
   while (i < argc) {
-    char *xcmd = argv[i];
+    const char *xcmd = argv[i];
     Option xoption;
     // option begins with dash
     if (xcmd[0] == DASH_CHR) {
@@ -66,8 +66,8 @@ int CommandLine::parse(int argc, char **argv) {
       // double dash denotes longname option
       if (xcmd[1] == DASH_CHR) {
         // longname option may be followed by equals sign
-        char *xcmd_e = xcmd + strlen(xcmd);
-        char *eq_pos = find(xcmd, xcmd_e, EQ_CHR);
+        const char *xcmd_e = xcmd + strlen(xcmd);
+        const char *eq_pos = find(xcmd, xcmd_e, EQ_CHR);
         auto it = longname_m.find(string(xcmd + 2, eq_pos));
         if (it == longname_m.end()) {
           ERROR(logger, "Cannot interpret option [" << xcmd << "], aborting.");
@@ -96,7 +96,7 @@ int CommandLine::parse(int argc, char **argv) {
         xoption = it->second;
         ++i;
       }
-      vector<char *> value_v;
+      vector<const char *> value_v;
       for (int j = 0; j < xoption.arg_num; ++j, ++i) {
         value_v.push_back(argv[i] + arg_chr_shift);
         arg_chr_shift = 0;
@@ -133,29 +133,29 @@ bool CommandLine::is_set_longname(const char *a) const {
   return longname_m.find(a) != longname_m.end() && is_set_option(longname_m.find(a)->second);
 }
 
-vector<vector<char*> > CommandLine::get_values_for_option(const Option &a) const {
-  vector<vector<char*> > retv;
+vector<vector<const char*> > CommandLine::get_values_for_option(const Option &a) const {
+  vector<vector<const char*> > retv;
   for (auto it = value_m.lower_bound(a); it != value_m.upper_bound(a); ++it)
     retv.push_back(it->second);
   return retv;
 }
 
-vector<vector<char*> > CommandLine::get_values_for_flag(const char *a) const {
-  return flag_m.find(a) != flag_m.end() ? get_values_for_option(flag_m.find(a)->second) : vector<vector<char*> >();
+vector<vector<const char*> > CommandLine::get_values_for_flag(const char *a) const {
+  return flag_m.find(a) != flag_m.end() ? get_values_for_option(flag_m.find(a)->second) : vector<vector<const char*> >();
 }
 
-vector<vector<char*> > CommandLine::get_values_for_longname(const char *a) const {
-  return longname_m.find(a) != longname_m.end() ? get_values_for_option(longname_m.find(a)->second) : vector<vector<char*> >();
+vector<vector<const char*> > CommandLine::get_values_for_longname(const char *a) const {
+  return longname_m.find(a) != longname_m.end() ? get_values_for_option(longname_m.find(a)->second) : vector<vector<const char*> >();
 }
 
-char* CommandLine::get_arg_for_option(const Option &a, int i) const {
+const char* CommandLine::get_arg_for_option(const Option &a, int i) const {
   return is_set_option(a) ? value_m.find(a)->second.at(i) : NULL;
 }
 
-char* CommandLine::get_arg_for_flag(const char *a, int i) const {
+const char* CommandLine::get_arg_for_flag(const char *a, int i) const {
   return is_set_flag(a) ? value_m.find(flag_m.find(a)->second)->second.at(i) : NULL;
 }
 
-char* CommandLine::get_arg_for_longname(const char *a, int i) const {
+const char* CommandLine::get_arg_for_longname(const char *a, int i) const {
   return is_set_longname(a) ? value_m.find(longname_m.find(a)->second)->second.at(i) : NULL;
 }

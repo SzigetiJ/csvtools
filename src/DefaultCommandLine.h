@@ -32,7 +32,7 @@ protected:
  void set_global_logger();
 public:
  DefaultCommandLine(const std::string&, const std::string&, const std::set<Option>&);
- virtual CommandLineExecuteResponse execute(int, char**);
+ virtual CommandLineExecuteResponse execute(int, const char*[]);
  LogConfig get_log_config() const;
  int print_if_needed() const;
  void print_usage() const;

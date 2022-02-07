@@ -60,16 +60,28 @@ ColIval::ColIval(const ColID &a) {
  first=a;
  second=a;
 }
+
+static void init(ColIvalV &res, const char *b, const char *e) {
+ while (b < e) {
+  const char* const comma_p=find(b, e, ',');
+  res.push_back(ColIval(string(b, comma_p).c_str()));
+  b = comma_p + 1;
+ }
+}
+
 /// Parses a projection parameter. The syntax of the projection parameter is
 ///  projparam::=projexpr[,projparam]
 /// @param a Character sequence (cstring) to parse.
 ColIvalV::ColIvalV(const char *a){
- const char* const a_end=a+strlen(a);
- while (a<a_end) {
-  const char* const comma_p=find(a,a_end,',');
-  push_back(ColIval(string(a,comma_p).c_str()));
-  a=comma_p+1;
- }
+ init(*this, a, a + strlen(a));
+}
+
+ColIvalV::ColIvalV(const char *a, unsigned int len){
+ init(*this, a, a + len);
+}
+
+ColIvalV::ColIvalV(const char *a, const char *a_end) {
+ init(*this, a, a_end);
 }
 
 /// Extracts sequence of column indentifiers from column intervals.

@@ -64,7 +64,7 @@ const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified c
 const string USAGE="[-ifs {chr}] [-ofs {chr}] [-esc {strategy}]\n";
 
 
-int main(int argc, char **argv) {
+int main(int argc, const char *argv[]) {
  PipeCommandLine cmdline=PipeCommandLine(DESCRIPTION,USAGE);
  CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
  if (resp!=CMDLINE_OK) {

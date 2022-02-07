@@ -70,7 +70,7 @@ void DefaultCommandLine::set_global_logger() {
  global_logger=get_log_config();
 }
 
-CommandLineExecuteResponse DefaultCommandLine::execute(int argc, char **argv) {
+CommandLineExecuteResponse DefaultCommandLine::execute(int argc, const char *argv[]) {
  if (parse(argc, argv)) {
   print_help();
   return CMDLINE_ERROR;

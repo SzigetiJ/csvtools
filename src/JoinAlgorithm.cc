@@ -54,7 +54,7 @@ FieldPV JoinAlgorithm::derive_join_fields(
  FieldPV retv;
  pair<ColIvalV,ColIvalV> join_columns=col_pair;
  if (t == JOIN_CROSS) { // cross join overrides join column setting
-  join_columns=make_pair("","");
+  join_columns=make_pair(ColIvalV("",0u),ColIvalV("",0u));
  }
  if (t == JOIN_NATURAL) {
   for (unsigned int i=0; i<rhead.size(); ++i) {
