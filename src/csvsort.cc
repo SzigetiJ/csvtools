@@ -23,6 +23,11 @@
 #include <list>
 #include <algorithm>
 
+constexpr char SYM_DESC = 'd';
+constexpr char SYM_NUMERIC = 'n';
+constexpr char SYM_EMPTYHI = 'e';
+constexpr char MODIFIERS[] = {SYM_DESC, SYM_NUMERIC, SYM_EMPTYHI};
+
 using namespace std;
 
 
@@ -44,8 +49,25 @@ public:
    vector< vector<const char*> > key_v=get_values_for_flag("k");
    for (vector<const char*> key : key_v) {
     const string a(key[0]);
-    // TODO Key definition syntax check!
-    order_l.push_back(RowOrderKey(stoi(a),(a.find('d')!=string::npos),(a.find('n')!=string::npos),(a.find('e')!=string::npos)));
+
+    int a_col;
+    size_t a_off;
+    try {
+     a_col = stoi(a,&a_off);
+    } catch (...) {
+     ERROR(get_log_config(), "Column number missing in argument '" << a << "'.");
+     return 2;
+    }
+    const string a_mod = a.substr(a_off);
+    if (a_mod.find_first_not_of(MODIFIERS, 0, 3) != string::npos) {
+     ERROR(get_log_config(), "Invalid modifier in argument '" << a << "'.");
+     return 3;
+    }
+    order_l.push_back(RowOrderKey(a_col,
+            (a_mod.find(SYM_DESC) != string::npos),
+            (a_mod.find(SYM_NUMERIC) != string::npos),
+            (a_mod.find(SYM_EMPTYHI) != string::npos)
+    ));
    }
   }
   return 0;

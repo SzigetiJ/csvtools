@@ -12,6 +12,7 @@ CSVJOIN="../../src/csvjoin"
 echo "## ERROR lines expected">&2
 < "$WDIR/t1.csv" "$CSVJOIN" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVJOIN" -jt natural >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVJOIN" -jt left -jc 1:0 -jf "$WDIR/t2.csv" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVJOIN" -jt inner -jf "$WDIR/t2.csv" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVJOIN" -jt outer -jf "$WDIR/t2.csv" >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2

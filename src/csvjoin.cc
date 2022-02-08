@@ -63,6 +63,10 @@ public:
   if (is_set_flag("jt")) {
    join_type<<get_arg_for_flag("jt");
   }
+  if (join_type == JOIN_UNDEF) {
+   ERROR(get_log_config(), "Invalid join type.");
+   return 4;
+  }
 // right table
   if (is_set_flag("jf")) {
    right_fname=get_arg_for_flag("jf");
