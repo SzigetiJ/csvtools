@@ -46,6 +46,4 @@ public:
  FieldV extract_ival(int) const;
 };
 
-class IncGen;
-
 #endif

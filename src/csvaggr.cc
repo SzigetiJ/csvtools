@@ -97,7 +97,7 @@ public:
 /// 2.) it must accept a string value for accumulation;
 /// 3.) it must present a string value as result.
 class AggrValue {
- const AggrFunPtr fun; 
+ const AggrFunPtr fun;
  bool has_dat = false;
  void *dat = NULL;
 public:
@@ -249,7 +249,7 @@ int main(int argc, const char *argv[]){
  for (auto acol : acols) {
   avalues.push_back(AggrValue(get<1>(acol)));
  }
- 
+
  bool first=true;
  CsvRow ref;
  CsvRow rx;

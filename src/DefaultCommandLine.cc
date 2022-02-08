@@ -19,7 +19,7 @@
 #include <iostream>
 #include "DefaultCommandLine.h"
 #include "../config.h"
- 
+
 using namespace std;
 
 const Option default_option_a[]={

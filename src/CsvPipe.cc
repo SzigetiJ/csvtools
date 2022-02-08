@@ -59,7 +59,7 @@ const CsvPipe &CsvPipe::process(istream &xin, ostream &xout, const Delimiters &d
 
  CsvRow rx;
  while (rx.parse(xin, delims)){
-  if (all_of(filter_v.begin(),filter_v.end(),bind2nd(mem_fun_ref(&RowFilter::row_matches),rx))) {
+  if (all_of(filter_v.begin(),filter_v.end(),bind(mem_fn(&RowFilter::row_matches), placeholders::_1, rx))) {
    rx.get_fields(xproj_v).print(xout,delims,strat);
    xout<<delims.get(ORS);
   }

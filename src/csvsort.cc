@@ -96,6 +96,6 @@ int main(int argc, const char *argv[]) {
  for_each(body.begin(),body.end(),[delims, strat](CsvRow &row) {
   row.print(cout, delims, strat);
   cout<<delims.get(ORS);
- }); 
+ });
 }
 
