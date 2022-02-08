@@ -26,6 +26,8 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t4.csv" "$CSVCONV" -esc null >/dev/null && exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -ifs >/dev/null && exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -fs '|' >/dev/null && exit 1
+## TODO
+#echo "a,\"b" | "$CSVCONV" >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true
