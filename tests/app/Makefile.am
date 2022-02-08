@@ -21,6 +21,6 @@ dist_check_DATA= \
 	t2.csv t3.csv t2t3_cross.csv \
 	t4.csv \
 	t4_all.csv t4_preserve.csv t4_remove.csv t4_resolve.csv t4_xrm.csv \
-	t5.csv t5_aggr1smm.csv
+	t5.csv t5_sort1n.csv t5_aggr1smm.csv
 
 EXTRA_DIST=$(TESTS)
