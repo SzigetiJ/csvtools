@@ -18,6 +18,7 @@
  */
 #ifndef _COLTYPES_H_
 #define _COLTYPES_H_
+#include <string>
 #include <vector>
 
 #define COLID_UNDEF 65535
@@ -31,7 +32,7 @@ typedef unsigned int ColID;
 class ColIval : public std::pair<ColID,ColID> {
 public:
  ColIval(const ColID&);
- ColIval(const char*);
+ ColIval(const std::string &);
 };
 
 /// Array of columns
@@ -40,6 +41,7 @@ typedef std::vector<ColID> FieldV;
 /// Array of intervals
 class ColIvalV : public std::vector<ColIval>{
 public:
+ ColIvalV(bool);
  ColIvalV(const char*);
  ColIvalV(const char*, const char *);
  ColIvalV(const char*, unsigned int len);

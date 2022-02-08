@@ -40,7 +40,7 @@ public:
   return 0;
  };
  ColIvalV get_intervals() const {
-  ColIvalV retv("", 0u);
+  ColIvalV retv(false);
   vector<vector<const char*> > arg_v=get_values_for_longname("columns");
   for (vector<const char*> arg : arg_v){
    ColIvalV tmpproj(arg[0]);

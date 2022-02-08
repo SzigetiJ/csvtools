@@ -23,6 +23,9 @@
 #include <functional>
 #include "log.h"
 
+#define SYM_IVAL '-'
+#define SYM_ENUM ','
+
 using namespace std;
 
 /// \file ColTypes.cc Column related types and procedures.
@@ -45,26 +48,30 @@ public:
 /// If the left side of the dash (first) is omitted, the interval begin will be undefined (meaning that the interval begins with the first column);
 /// if the right side of the dash (last) is omitted, the interval end will be undifined (meaning that the interval ends with the last column).
 /// @param a Character sequence (cstring) to parse.
-ColIval::ColIval(const char *a){
- const char *a_end=a+strlen(a);
- const char *dash_p=find(a,a_end,'-');
- bool is_interval=(dash_p!=a_end);
- bool undef_begin=(dash_p==a);
- bool undef_end=(dash_p==a_end-1);
- first=undef_begin?COLID_UNDEF:stoi(string(a,dash_p));
+ColIval::ColIval(const string &a){
+ auto dash_p = a.find(SYM_IVAL);
+ bool is_interval = (dash_p != string::npos);
+ if (!is_interval) dash_p = a.length();
+ bool undef_begin = (dash_p == 0u);
+ bool undef_end = (dash_p == a.length() - 1) || a.empty();
+ first=undef_begin?COLID_UNDEF:stoi(a.substr(0, dash_p));
  second=undef_end?COLID_UNDEF:
- is_interval?stoi(dash_p+1):first;
+  is_interval?stoi(a.substr(dash_p + 1, a.length() - (dash_p + 1))):first;
 }
 
 ColIval::ColIval(const ColID &a) {
- first=a;
- second=a;
+ first = a;
+ second = a;
 }
 
+/// Common part of ColIvalV ctors.
+/// \param res ColIvalV instance to initialize.
+/// \param b begin of column expression cstring.
+/// \param e end of column expression cstring.
 static void init(ColIvalV &res, const char *b, const char *e) {
  while (b < e) {
-  const char* const comma_p=find(b, e, ',');
-  res.push_back(ColIval(string(b, comma_p).c_str()));
+  const char* const comma_p=find(b, e, SYM_ENUM);
+  res.push_back(ColIval(string(b, comma_p)));
   b = comma_p + 1;
  }
 }
@@ -82,6 +89,15 @@ ColIvalV::ColIvalV(const char *a, unsigned int len){
 
 ColIvalV::ColIvalV(const char *a, const char *a_end) {
  init(*this, a, a_end);
+}
+
+/// Standard ctor of column sequence (ColIvalV).
+/// \param a true: every column; false: no column.
+ColIvalV::ColIvalV(bool a){
+ if (a) {
+  static const char all = SYM_IVAL;
+  init(*this, &all, &all + 1);
+ }
 }
 
 /// Extracts sequence of column indentifiers from column intervals.

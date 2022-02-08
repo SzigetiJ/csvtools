@@ -49,27 +49,27 @@ FieldPV JoinAlgorithm::derive_join_fields(
  const CsvRow &lhead,
  const CsvRow &rhead,
  const JoinType t,
- const pair<ColIvalV,ColIvalV> &col_pair
+ const pair<ColIvalV, ColIvalV> &col_pair
 ) const {
  FieldPV retv;
- pair<ColIvalV,ColIvalV> join_columns=col_pair;
+ pair<ColIvalV, ColIvalV> join_columns=col_pair;
  if (t == JOIN_CROSS) { // cross join overrides join column setting
-  join_columns=make_pair(ColIvalV("",0u),ColIvalV("",0u));
+  join_columns = make_pair(false, false);
  }
  if (t == JOIN_NATURAL) {
-  for (unsigned int i=0; i<rhead.size(); ++i) {
-   auto it=find(lhead.begin(),lhead.end(),rhead.at(i));
-   if (it!=lhead.end()){
-    retv.push_back({it-lhead.begin(),i});
+  for (unsigned int i=0; i < rhead.size(); ++i) {
+   auto it = find(lhead.begin(), lhead.end(), rhead.at(i));
+   if (it != lhead.end()){
+    retv.push_back({it-lhead.begin(), i});
    }
   }
  } else {
-  auto lf=join_columns.first.extract_ival(lhead.size());
-  auto rf=join_columns.second.extract_ival(rhead.size());
+  auto lf = join_columns.first.extract_ival(lhead.size());
+  auto rf = join_columns.second.extract_ival(rhead.size());
   transform(
-   lf.begin(),lf.end(),
-   rf.begin(),back_inserter(retv),
-   [](const ColID &a, const ColID &b){return make_pair(a,b);});
+   lf.begin(), lf.end(),
+   rf.begin(), back_inserter(retv),
+   [](const ColID &a, const ColID &b){return make_pair(a, b);});
  }
  return retv;
 }

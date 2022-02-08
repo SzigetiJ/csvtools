@@ -171,7 +171,7 @@ public:
 
  void set_colnum(int size){
   INFO(global_logger,"columns: "<<size);
-  auto all=ColIvalV("-",1u).extract_ival(size);
+  auto all=ColIvalV(true).extract_ival(size);
   set<ColID> remain_s(all.begin(),all.end());
   for (AggrCol &aggr : aggr_v) {
    get<3>(aggr) = get<2>(aggr).extract_ival(size);
