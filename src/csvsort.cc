@@ -56,12 +56,12 @@ public:
      a_col = stoi(a,&a_off);
     } catch (...) {
      ERROR(get_log_config(), "Column number missing in argument '" << a << "'.");
-     return 2;
+     return -1;
     }
     const string a_mod = a.substr(a_off);
     if (a_mod.find_first_not_of(MODIFIERS, 0, 3) != string::npos) {
      ERROR(get_log_config(), "Invalid modifier in argument '" << a << "'.");
-     return 3;
+     return -2;
     }
     order_l.push_back(RowOrderKey(a_col,
             (a_mod.find(SYM_DESC) != string::npos),

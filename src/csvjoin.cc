@@ -65,19 +65,19 @@ public:
   }
   if (join_type == JOIN_UNDEF) {
    ERROR(get_log_config(), "Invalid join type.");
-   return 4;
+   return -1;
   }
 // right table
   if (is_set_flag("jf")) {
    right_fname=get_arg_for_flag("jf");
   } else {
    ERROR(get_log_config(),"Right table is not defined.");
-   return 2;
+   return -2;
   }
 // join columns
   if (join_type != JOIN_NATURAL && join_type != JOIN_CROSS && set_join_columns()) {
    ERROR(get_log_config(), "Chosen join type requires join columns definition.");
-   return 3;
+   return -3;
   }
   return 0;
  };

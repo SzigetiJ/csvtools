@@ -32,21 +32,21 @@ const int proj_option_n = sizeof(proj_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: ProjectionCommandLine can derive column intervals from columns option value(s).
 class ProjectionCommandLine : public DefaultCommandLine {
-
+ ColIvalV col_seq;
 public:
  ProjectionCommandLine(const string &desc, const string &usage) :
-  DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)){};
+  DefaultCommandLine(desc, usage,set<Option>(proj_option_a,proj_option_a+proj_option_n)),
+  col_seq(false) {};
  int process(){
-  return 0;
- };
- ColIvalV get_intervals() const {
-  ColIvalV retv(false);
   vector<vector<const char*> > arg_v=get_values_for_longname("columns");
   for (vector<const char*> arg : arg_v){
    ColIvalV tmpproj(arg[0]);
-   retv.insert(retv.end(), tmpproj.begin(), tmpproj.end());
+   col_seq.insert(col_seq.end(), tmpproj.begin(), tmpproj.end());
   }
-  return retv;
+  return 0;
+ };
+ ColIvalV get_intervals() const {
+  return col_seq;
  };
 };
 
