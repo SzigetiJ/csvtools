@@ -37,7 +37,7 @@ class JoinAlgorithm : public CsvStream {
 protected:
  CsvIStream * const left_stream;	///< Left table given as CsvIStream.
  CsvIStream * const right_stream;	///< Right table given as CsvIStream.
- JoinType type;	///< Type of the join. 
+ JoinType type;	///< Type of the join.
  FieldPV join_fields;	///< Column pairs that have to match.
 
 private:

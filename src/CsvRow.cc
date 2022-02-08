@@ -78,5 +78,5 @@ CsvRowCompareWrapper::CsvRowCompareWrapper(CsvRowCompare &cmp) : cmp(cmp) {
 /// Comparison operator.
 /// Calls wrapped member.
 bool CsvRowCompareWrapper::operator()(const CsvRow &a, const CsvRow &b) const {
- return cmp(a, b); 
+ return cmp(a, b);
 }
