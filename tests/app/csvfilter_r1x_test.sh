@@ -19,6 +19,8 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t1.csv" "$CSVFILTER" -r "=" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVFILTER" -r "=:0" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVFILTER" -q "=:0:1" >/dev/null && exit 1
+## TODO
+#echo "a,\"b" | "$CSVFILTER" -r =:0:a >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true

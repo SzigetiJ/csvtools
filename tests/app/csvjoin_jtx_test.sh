@@ -15,6 +15,9 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t1.csv" "$CSVJOIN" -jt left -jc 1:0 -jf "$WDIR/t2.csv" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVJOIN" -jt inner -jf "$WDIR/t2.csv" >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVJOIN" -jt outer -jf "$WDIR/t2.csv" >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVJOIN" -jt natural -jf "$WDIR/t2_noexist.csv" >/dev/null && exit 1
+## TODO
+#echo "a,\"b" | "$CSVJOIN" -jt natural -jf "$WDIR/t2.csv" >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true
