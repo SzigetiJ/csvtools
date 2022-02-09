@@ -18,12 +18,12 @@ CSVAGGR="../../src/csvaggr"
 
 echo "## ERROR lines expected">&2
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a >/dev/null && exit 1
+< "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a string concat 0-1x >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a total sum >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a total sum 0 1 >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -aa total sum 0 >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a average avg 0 >/dev/null && exit 1
-## TODO
-#echo "a,\"b" | "$CSVAGGR" -a cnt count 0 >/dev/null && exit 1
+echo "a,\"b" | "$CSVAGGR" -a cnt count 0 >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true
