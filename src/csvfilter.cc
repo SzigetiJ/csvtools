@@ -83,7 +83,11 @@ public:
    }
 
    string op(a, xptr - a);
-   ColIvalV col_v(xptr+1, xptr1);
+   ColIvalV col_v(false);
+   if (col_v.parse(xptr + 1, xptr1 - (xptr + 1))) {
+    ERROR(logger, "Unrecognized column expression ["<<string(xptr + 1, xptr1 - (xptr + 1))<<"] in ["<<a<<"]. Aborting.");
+    return -2;
+   }
    string str=xptr1+1;
    OpFunMap::const_iterator comi=colop_m.find(op);
    if (comi==colop_m.end()) {

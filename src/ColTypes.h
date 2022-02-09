@@ -31,8 +31,10 @@ typedef unsigned int ColID;
 /// Column interval defined by the first and the last (!!!inclusive!!!) column.
 class ColIval : public std::pair<ColID,ColID> {
 public:
- ColIval(const ColID&);
- ColIval(const std::string &);
+ ColIval() = default;
+ ColIval(const ColID&); // WARNING: many types are implicitly converted to unsigned int
+ ColIval(const ColID&, const ColID&);
+ int parse(const char *, size_t);
 };
 
 /// Array of columns
@@ -41,10 +43,9 @@ typedef std::vector<ColID> FieldV;
 /// Array of intervals
 class ColIvalV : public std::vector<ColIval>{
 public:
- ColIvalV(bool);
- ColIvalV(const char*);
- ColIvalV(const char*, const char *);
- ColIvalV(const char*, unsigned int len);
+ ColIvalV(bool); // WARNING: many types are implicitly converted to bool
+ int parse(const char*, size_t len);
+ int parse(const char*);
  FieldV extract_ival(int) const;
 };
 

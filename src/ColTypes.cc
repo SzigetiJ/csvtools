@@ -30,6 +30,27 @@ using namespace std;
 
 /// \file ColTypes.cc Column related types and procedures.
 
+static int digitseq_parse_(const char *a_begin, int len, const char *&a_end);
+
+/// Because strtoxx, sttoxx, etc. parse '-' and '+'.
+/// For us, '-' has special meaning, and '+' is not accepted.
+/// \param a_begin cstring to parse.
+/// \param len Maximal number of chars to parse.
+/// \param a_end Output: end of parse position.
+/// \return Parsed number (overflow is not handled).
+static int digitseq_parse_(const char *a_begin, int len, const char *&a_end) {
+ int retv = 0;
+ const char *it=a_begin;
+ while (it < a_begin + len) {
+  char x = *it;
+  if (!isdigit(x)) break;
+  retv = 10 * retv + (x - '0');
+  ++it;
+ }
+ a_end=it;
+ return retv;
+}
+
 /// Simple incremental integer generator. It can be initialized (first generated value).
 class Sequence : public unary_function<void, int>{
  int last;
@@ -42,53 +63,80 @@ public:
 
 /// Parses a column interval (projection expression).
 /// The syntax of a column interval is
-///  projexpr::={first}[-[{last}]]|-{last}.
+///  projexpr::=[{first}][-[{last}]].
 /// first and last are column identifier numbers (first column is identified by 0).
 /// If the expression contains no dash ("-"), the interval contains only a single column.
 /// If the left side of the dash (first) is omitted, the interval begin will be undefined (meaning that the interval begins with the first column);
-/// if the right side of the dash (last) is omitted, the interval end will be undifined (meaning that the interval ends with the last column).
+/// if the right side of the dash (last) is omitted, the interval end will be undefined (meaning that the interval ends with the last column).
 /// @param a Character sequence (cstring) to parse.
-ColIval::ColIval(const string &a){
- auto dash_p = a.find(SYM_IVAL);
- bool is_interval = (dash_p != string::npos);
- if (!is_interval) dash_p = a.length();
- bool undef_begin = (dash_p == 0u);
- bool undef_end = (dash_p == a.length() - 1) || a.empty();
- first=undef_begin?COLID_UNDEF:stoi(a.substr(0, dash_p));
- second=undef_end?COLID_UNDEF:
-  is_interval?stoi(a.substr(dash_p + 1, a.length() - (dash_p + 1))):first;
+/// @param len length of parsing.
+int ColIval::parse(const char *a, size_t len){
+ const char *eotok0;
+ const char *eotok1;
+ auto lo = digitseq_parse_(a, len, eotok0);
+ bool is_point = (eotok0 == (a + len));
+ bool is_interval = !is_point && (*eotok0 == SYM_IVAL);
+ first = (eotok0 == a) ? COLID_UNDEF : lo;
+ if (!is_interval) {
+  second = first;
+  if (!is_point) { // there is an illegal character in a
+   return 1;
+  }
+ } else { // interval
+  auto a2 = eotok0 + 1;
+  auto len2 = len - (a2 - a);
+  auto hi = digitseq_parse_(a2, len2, eotok1);
+  second = (eotok1 == a2) ? COLID_UNDEF : hi;
+  if (eotok1 != (a2 + len2)) { // there is (are) remaining illegal character(s)
+   return 1;
+  }
+ }
+ return 0;
 }
 
+/// Point interval constructor.
+/// \param a Lower and upper bound of the interval.
 ColIval::ColIval(const ColID &a) {
  first = a;
  second = a;
 }
 
-/// Common part of ColIvalV ctors.
-/// \param res ColIvalV instance to initialize.
-/// \param b begin of column expression cstring.
-/// \param e end of column expression cstring.
-static void init(ColIvalV &res, const char *b, const char *e) {
- while (b < e) {
-  const char* const comma_p=find(b, e, SYM_ENUM);
-  res.push_back(ColIval(string(b, comma_p)));
-  b = comma_p + 1;
+/// Standard constructor.
+/// \param a Lower bound of the interval.
+/// \param b Upper bound of the interval (inclusive).
+ColIval::ColIval(const ColID &a, const ColID &b) {
+ first = a;
+ second = b;
+}
+
+/// Standard parser function.
+/// Note, this function does append to existing data.
+/// \param a cstring to parse.
+/// \param len Number of characters to parse.
+/// \return Error code.
+int ColIvalV::parse(const char *a, size_t len) {
+ const char *a_end = a + len;
+ const char *it=a;
+ while (it < a_end) { // the question is: what to do with a==""? Now we accept it.
+  const char* const comma_p=find(it, a_end, SYM_ENUM);
+  ColIval elem;
+  if (elem.parse(it, comma_p-it)) {
+   return 1;
+  }
+  push_back(elem);
+  it = comma_p + 1;
+  if (it == a_end) { // ',' is illegal ending!
+   return 1;
+  }
  }
+ return 0;
 }
 
-/// Parses a projection parameter. The syntax of the projection parameter is
-///  projparam::=projexpr[,projparam]
-/// @param a Character sequence (cstring) to parse.
-ColIvalV::ColIvalV(const char *a){
- init(*this, a, a + strlen(a));
-}
-
-ColIvalV::ColIvalV(const char *a, unsigned int len){
- init(*this, a, a + len);
-}
-
-ColIvalV::ColIvalV(const char *a, const char *a_end) {
- init(*this, a, a_end);
+/// Wrapper to standard parser function.
+/// \param a cstring to parse (its length is determined by strlen(a)).
+/// \return Inherited.
+int ColIvalV::parse(const char *a) {
+ return parse(a,strlen(a));
 }
 
 /// Standard ctor of column sequence (ColIvalV).
@@ -96,11 +144,11 @@ ColIvalV::ColIvalV(const char *a, const char *a_end) {
 ColIvalV::ColIvalV(bool a){
  if (a) {
   static const char all = SYM_IVAL;
-  init(*this, &all, &all + 1);
+  parse(&all, 1);
  }
 }
 
-/// Extracts sequence of column indentifiers from column intervals.
+/// Extracts sequence of column identifiers from column intervals.
 /// @param len total number of columns (used only if {last} is omitted).
 /// @return Sequence of column identifiers.
 FieldV ColIvalV::extract_ival(int len) const {
