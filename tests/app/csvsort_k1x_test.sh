@@ -16,6 +16,7 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t1.csv" "$CSVSORT" -k 1 n >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k dne >/dev/null && exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1f >/dev/null && exit 1
+echo "a,\"b" | "$CSVSORT" -k 0 >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true
