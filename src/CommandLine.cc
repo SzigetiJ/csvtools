@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2022 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -98,6 +98,10 @@ int CommandLine::parse(int argc, const char *argv[]) {
       }
       vector<const char *> value_v;
       for (int j = 0; j < xoption.arg_num; ++j, ++i) {
+       if (argc <= i) {
+        ERROR(logger, "Unexpected end of command line (option argument missing)");
+        return 1;
+       }
         value_v.push_back(argv[i] + arg_chr_shift);
         arg_chr_shift = 0;
       }
