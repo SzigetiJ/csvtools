@@ -27,7 +27,7 @@ using namespace std;
 
 /// Default constructor. Initializes projection to project every column
 /// and leaves row filter to select every row.
-CsvPipe::CsvPipe():proj_v("-",1){}
+CsvPipe::CsvPipe():proj_v(true){}
 
 /// Setter for projection.
 CsvPipe &CsvPipe::set_projection(const ColIvalV &a){

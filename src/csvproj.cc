@@ -40,8 +40,10 @@ public:
  int process(){
   vector<vector<const char*> > arg_v=get_values_for_longname("columns");
   for (vector<const char*> arg : arg_v){
-   ColIvalV tmpproj(arg[0]);
-   col_seq.insert(col_seq.end(), tmpproj.begin(), tmpproj.end());
+   if (col_seq.parse(arg[0])) {
+    ERROR(get_log_config(),"Illegal column expression ["<<arg[0]<<"].");
+    return -1;
+   }
   }
   return 0;
  };

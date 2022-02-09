@@ -54,6 +54,31 @@ class JoinCommandLine : public DefaultCommandLine {
  pair<ColIvalV,ColIvalV> join_columns=make_pair(false,false);
  const char *right_fname = NULL;
  JoinType join_type=JOIN_INNER;
+
+ int set_join_columns() {
+  if (!is_set_flag("jc")){
+   ERROR(get_log_config(), "Chosen join type requires join columns definition.");
+   return 1;
+  }
+  vector<vector<const char*> > arg_v=get_values_for_flag("jc");
+  for (vector<const char*> arg : arg_v){
+   size_t arg_len = strlen(arg[0]);
+   const char *sep=find(arg[0], arg[0] + arg_len, ':');
+   if (sep == arg[0] + arg_len) {
+    ERROR(get_log_config(), "Illegal join column definition ["<<arg[0]<<"].");
+    return 2;
+   }
+   if (join_columns.first.parse(arg[0], sep - arg[0])) {
+    ERROR(get_log_config(), "Illegal left table column list in join column definition ["<<arg[0]<<"].");
+    return 2;
+   }
+   if (join_columns.second.parse(sep + 1, arg_len - (sep + 1 - arg[0]))) {
+    ERROR(get_log_config(), "Illegal right table column list in join column definition ["<<arg[0]<<"].");
+    return 2;
+   }
+  }
+  return 0;
+ };
 public:
  JoinCommandLine(const string &desc, const string &usage) :
   DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)){};
@@ -76,24 +101,8 @@ public:
   }
 // join columns
   if (join_type != JOIN_NATURAL && join_type != JOIN_CROSS && set_join_columns()) {
-   ERROR(get_log_config(), "Chosen join type requires join columns definition.");
+   // set_join_columns already logged ERROR message
    return -3;
-  }
-  return 0;
- };
-
-#include <iostream>
- int set_join_columns() {
-  if (!is_set_flag("jc")){
-   return 1;
-  }
-  vector<vector<const char*> > arg_v=get_values_for_flag("jc");
-  for (vector<const char*> arg : arg_v){
-   const char *sep=find(arg[0], arg[0] + strlen(arg[0]), ':');
-   ColIvalV tmpleft(arg[0], sep);
-   ColIvalV tmpright(sep + 1);
-   join_columns.first.insert(join_columns.first.end(),tmpleft.begin(),tmpleft.end());
-   join_columns.second.insert(join_columns.second.end(),tmpright.begin(),tmpright.end());
   }
   return 0;
  };

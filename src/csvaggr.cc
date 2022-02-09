@@ -156,7 +156,11 @@ public:
    const char *fun=arg[1];
    const char *expr=arg[2];
 
-   ColIvalV col_v(expr);
+   ColIvalV col_v(false);
+   if (col_v.parse(expr)) {
+    ERROR(get_log_config(), "Illegal column expression [" << expr << "].");
+    return -1;
+   }
    AggrFunMap::const_iterator fmi=colfun_m.find(fun);
    if (fmi==colfun_m.end()) {
     ERROR(logger, "Unrecognized function ["<<fun<<"]. Aborting.");
