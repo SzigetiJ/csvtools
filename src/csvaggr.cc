@@ -35,7 +35,7 @@ const string USAGE="-a <name> <fun> <expr> [-a <name> <fun> <expr> [...]]\n"
 " name ::= str\t\t(name of the aggregated output column)\n"
 " expr ::= <ival>[,<expr>]\t\t(column expression)\n"
 " ival ::= num|-num|num-|num-num\t\t(column interval)\n"
-" fun ::= sum|min|max|count|concat\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
+" fun ::= sum|min|max|count|concat|first|last\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
 "where str is string, num is integer\n";
 
 /// General interface for aggregation (column) functions.
@@ -133,12 +133,19 @@ const AggrFunMap colfun_m={
  {"count", make_shared<AggrFunCnt<int> >()},
  {"concat", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
     return a+=b;
+   })},
+ {"first", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
+    return a;
+   })},
+ {"last", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
+   a=b;
+    return a;
    })}
 };
 
 // Aggregation specific options.
 const Option aggr_option_a[]={
-{"a","aggregation",3,APPEND,"Defines aggregation on column(s). arg1: new column name, arg2: aggr.function (sum|min|max|count|concat), arg3: column(s)"}
+{"a","aggregation",3,APPEND,"Defines aggregation on column(s). arg1: new column name, arg2: aggr.function (sum|min|max|count|concat|first|last), arg3: column(s)"}
 };
 const int aggr_option_n = sizeof(aggr_option_a)/sizeof(Option);
 

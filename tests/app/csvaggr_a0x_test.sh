@@ -11,6 +11,8 @@ CSVAGGR="../../src/csvaggr"
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a minimum min 0 | diff - "$WDIR/t1_aggr0mn.csv" || exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a count count 0 | diff - "$WDIR/t1_aggr0cnt.csv" || exit 1
 < "$WDIR/t1.csv" "$CSVSORT" -k 1e |  "$CSVAGGR" -a string concat 0 | diff - "$WDIR/t1_aggr0cc.csv" || exit 1
+< "$WDIR/t1.csv" "$CSVSORT" -k 0e |  "$CSVAGGR" -a first first 1 | diff - "$WDIR/t1_aggr0first.csv" || exit 1
+< "$WDIR/t1.csv" "$CSVSORT" -k 0e |  "$CSVAGGR" -a last last 1 | diff - "$WDIR/t1_aggr0last.csv" || exit 1
 
 < "$WDIR/t1.csv" "$CSVSORT" -k 1de |  "$CSVAGGR" -a minimum min 0 -a maximum max 0 | diff - "$WDIR/t1_aggr0mmrev.csv" || exit 1
 
