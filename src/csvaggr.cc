@@ -20,6 +20,7 @@
 #include <sstream>
 #include <algorithm>
 #include <memory>
+#include "ColFunc.h"
 #include "CsvPipe.h"
 #include "CsvRow.h"
 #include "Delimiters.h"
@@ -38,110 +39,7 @@ const string USAGE="-a <name> <fun> <expr> [-a <name> <fun> <expr> [...]]\n"
 " fun ::= sum|min|max|count|concat|first|last\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
 "where str is string, num is integer\n";
 
-/// General interface for aggregation (column) functions.
-class AggrFunIface {
-public:
- virtual void *init_value(const string&) const = 0;
- virtual void *accumulate(void*, const string&) const = 0;
- virtual string to_string(void*) const = 0;
- virtual void delete_value(void*) const = 0;
- virtual ~AggrFunIface() = default;
-};
-
-typedef shared_ptr<AggrFunIface> AggrFunSmartPtr;
-typedef AggrFunIface* AggrFunPtr;
-
-/// Base implementation of aggregation interface.
-/// It can be used with any type that supports T->string conversion.
-/// Accumulator function MUST be given,
-/// initializer function MAY be given (defaults to T(string&) constructor).
-template<typename T>
-class AggrFunBase : public AggrFunIface {
- function<T & (T&, const string&)> accumulator;
- function<void * (const string&)> initializer;
-public:
- explicit AggrFunBase(const function<T & (T&, const string&)> &a, const function<void * (const string&)> &b=[](const string &a)->void*{return new T(a);}):accumulator(a),initializer(b){}
- void *init_value(const string &a) const {return initializer(a);}
- void *accumulate(void *a, const string &b) const {
-  T &item=*(reinterpret_cast<T*>(a));
-  accumulator(item,b);
-  return &item;
- }
- virtual string to_string(void *a) const { return *(reinterpret_cast<string*>(a));}
- void delete_value(void *a) const {delete reinterpret_cast<T*>(a);}
-};
-
-/// Aggregation function dealing with numeric values.
-class AggrFunNumeric : public AggrFunBase<Numeric> {
-public:
- explicit AggrFunNumeric(const function<Numeric& (Numeric&, const string&)> &a):AggrFunBase<Numeric>(a){}
- string to_string(void *a) const {
-  return reinterpret_cast<Numeric*>(a)->to_string();
- }
-};
-
-/// Aggregation for counting. Use with type T=int|unsigned|long...
-template<typename T>
-class AggrFunCnt : public AggrFunBase<T> {
-public:
- AggrFunCnt():AggrFunBase<T>([](T &a, const string &b)->T&{return b.empty()?a:++a;},[](const string &a)->void*{return new T(a.empty()?0:1);}){}
- string to_string(void *a) const {
-  return std::to_string(*reinterpret_cast<T*>(a));
- }
-};
-
-/// Represents an aggregated value.
-/// Internally the aggregated value can be of ANY type.
-/// There are 3 requirements against the aggregated value:
-/// 1.) it must accept a string as initial value;
-/// 2.) it must accept a string value for accumulation;
-/// 3.) it must present a string value as result.
-class AggrValue {
- const AggrFunPtr fun;
- bool has_dat = false;
- void *dat = NULL;
-public:
- explicit AggrValue(const AggrFunPtr &f):fun(f) {};
- bool init(const string &a){if (!has_dat) {dat=fun->init_value(a); has_dat=true; return true;} return false;};
- void accumulate(const string &a){fun->accumulate(dat,a);};
- string get_dat(){return fun->to_string(dat);};
- bool cleanup(){if (has_dat) {fun->delete_value(dat);has_dat=false; return true;} return false;};
- bool valid_dat() const {return has_dat;};
-};
-
-typedef map<string,AggrFunSmartPtr> AggrFunMap;
-
 typedef tuple<const char*, AggrFunPtr, ColIvalV, FieldV> AggrCol;
-
-// Available column functions mapped by name.
-const AggrFunMap colfun_m={
- {"sum",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{return a+=b;})},
- {"min",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{
-    Numeric bnum(b);
-    if (bnum<a) {
-     a=bnum;
-    }
-    return a;
-   })},
- {"max",make_shared<AggrFunNumeric>([](Numeric &a, const string &b)->Numeric&{
-    Numeric bnum(b);
-    if (a<bnum) {
-     a=bnum;
-    }
-    return a;
-   })},
- {"count", make_shared<AggrFunCnt<int> >()},
- {"concat", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
-    return a+=b;
-   })},
- {"first", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
-    return a;
-   })},
- {"last", make_shared<AggrFunBase<string> >([](string &a, const string &b)->string&{
-   a=b;
-    return a;
-   })}
-};
 
 // Aggregation specific options.
 const Option aggr_option_a[]={
@@ -168,8 +66,8 @@ public:
     ERROR(get_log_config(), "Illegal column expression [" << expr << "].");
     return -1;
    }
-   AggrFunMap::const_iterator fmi=colfun_m.find(fun);
-   if (fmi==colfun_m.end()) {
+   AggrFunMap::const_iterator fmi=std_colfun_m.find(fun);
+   if (fmi==std_colfun_m.end()) {
     ERROR(logger, "Unrecognized function ["<<fun<<"]. Aborting.");
     return -2;
    }
