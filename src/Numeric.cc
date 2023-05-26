@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 -- 2021 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const char NEG_SIGN = '-';
-const char DECIMAL_SEP = '.';
+constexpr char NEG_SIGN = '-';
+constexpr char DECIMAL_SEP = '.';
 const string ZERO_STR = "0";
 
 int Numeric::digits_to_num(int a) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -23,8 +23,8 @@
 #include <functional>
 #include "log.h"
 
-#define SYM_IVAL '-'
-#define SYM_ENUM ','
+constexpr char SYM_IVAL = '-';
+constexpr char SYM_ENUM = ',';
 
 using namespace std;
 

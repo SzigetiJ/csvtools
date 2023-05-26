@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 -- 2022 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -21,8 +21,9 @@
 #include "CommandLine.h"
 #include "stl_out.h"
 
-#define DASH_CHR '-'
-#define EQ_CHR '='
+constexpr char DASH_CHR = '-';
+constexpr char EQ_CHR = '=';
+
 using namespace std;
 
 /// strict weak ordering by flag (lexicographic).

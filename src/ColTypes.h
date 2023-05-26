@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#define COLID_UNDEF 65535
+constexpr unsigned int COLID_UNDEF = 65535U;
 
 /// Column ID.
 /// The first column has ColID=0, etc.

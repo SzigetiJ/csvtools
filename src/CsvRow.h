@@ -27,7 +27,7 @@
 class CsvRow : public std::vector<CsvCell>{
 public:
  bool parse(std::istream&, const Delimiters&);
- void print(std::ostream&, const Delimiters&, const EscapeStrategy&) const;
+ std::ostream &print(std::ostream&, const Delimiters&, const EscapeStrategy&) const;
  CsvRow get_fields(const FieldV&) const;
  CsvRow &operator+=(const CsvRow&);
 };

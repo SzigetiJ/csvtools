@@ -134,10 +134,10 @@ void flush_aggr_line(
 
 int main(int argc, const char *argv[]){
  const Delimiters delims;
- const EscapeStrategy strat=ESC_PRESERVE;
+ const EscapeStrategy strat = ESC_PRESERVE;
 
- AggregationCommandLine cmdline=AggregationCommandLine(DESCRIPTION,USAGE);
- CommandLineExecuteResponse resp=cmdline.execute(argc, argv);
+ AggregationCommandLine cmdline = AggregationCommandLine(DESCRIPTION,USAGE);
+ CommandLineExecuteResponse resp = cmdline.execute(argc, argv);
  if (resp!=CMDLINE_OK) {
   return resp;
  }
