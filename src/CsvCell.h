@@ -40,6 +40,6 @@ public:
  std::string get_escaped(const Delimiters&) const;
  bool operator<(const CsvCell&) const;
  bool operator==(const CsvCell&) const;
- void print(std::ostream &, const Delimiters&, const EscapeStrategy&) const;
+ std::ostream &print(std::ostream &, const Delimiters&, const EscapeStrategy&) const;
 };
 #endif

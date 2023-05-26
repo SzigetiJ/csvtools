@@ -148,6 +148,6 @@ bool CsvCell::operator<(const CsvCell &a) const {
 }
 
 /// Standard output function of CsvCell instances.
-void CsvCell::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat) const {
- a<<(requires_escape_for_strategy(strat,delims)?get_escaped(delims):get_dat());
+ostream &CsvCell::print(ostream &a, const Delimiters &delims, const EscapeStrategy &strat) const {
+ return a<<(requires_escape_for_strategy(strat,delims)?get_escaped(delims):get_dat());
 }
