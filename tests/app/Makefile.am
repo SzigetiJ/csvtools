@@ -14,7 +14,7 @@ dist_check_DATA= \
 	t0_proj0.csv t0_proj1.csv \
 	t0_sort1d.csv t0_sort1dn.csv t0_sort1n.csv t0_sort1x.csv \
 	t1.csv \
-	t1_aggr0cc.csv t1_aggr0cnt.csv t1_aggr0mmrev.csv t1_aggr0mn.csv t1_aggr0mx.csv t1_aggr0s.csv \
+	t1_aggr0cc.csv t1_aggr0cnt.csv t1_aggr0mmrev.csv t1_aggr0mn.csv t1_aggr0mx.csv t1_aggr0s.csv t1_aggr0first.csv t1_aggr0last.csv \
 	t1_filt01.csv t1_filt02.csv t1_filt1a.csv t1_filtne.csv \
 	t1_sort1e0d.csv \
 	t1t2_natural.csv t1t2_outer.csv \
