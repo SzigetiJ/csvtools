@@ -58,7 +58,8 @@ FieldPV JoinAlgorithm::derive_join_fields(
  }
  if (t == JOIN_NATURAL) {
   for (unsigned int i=0; i < rhead.size(); ++i) {
-   auto it = find(lhead.begin(), lhead.end(), rhead.at(i));
+   const auto &a = rhead.at(i);
+   auto it = find_if(lhead.begin(), lhead.end(), [&a](const CsvCell &b){return a.get_dat() == b.get_dat();});
    if (it != lhead.end()){
     retv.push_back({it-lhead.begin(), i});
    }

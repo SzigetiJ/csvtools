@@ -31,8 +31,8 @@ bool CsvRowForJoinLess::operator()(const CsvRowForJoin &a, const CsvRowForJoin &
   pair<ColID,ColID> actual=join_fields[i];
   const CsvCell &a_cell=a.first[(a.second?actual.first:actual.second)];
   const CsvCell &b_cell=b.first[(b.second?actual.first:actual.second)];
-  if (a_cell < b_cell) return true;
-  if (b_cell < a_cell) return false;
+  if (a_cell.get_dat() < b_cell.get_dat()) return true;
+  if (b_cell.get_dat() < a_cell.get_dat()) return false;
  }
  return false;
 }
