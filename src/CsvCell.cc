@@ -38,9 +38,9 @@ CsvCell::CsvCell(const string &a, bool b):dat(a),quote(b){
 CsvCell::CsvCell():dat(),quote(false){}
 
 /// Cell datum getter
-string CsvCell::get_dat() const {
- return dat;
-}
+const std::string &CsvCell::get_dat() const {
+  return dat;
+ }
 
 /// Sets the quote flag.
 /// @param a Quote flag.

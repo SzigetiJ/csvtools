@@ -33,7 +33,7 @@ public:
  char parse(std::istream &, const Delimiters &);
  CsvCell(const std::string &, bool);
  CsvCell();
- std::string get_dat() const;
+ const std::string &get_dat() const;
  void set_escaped(bool);
  void to_decimal();
  bool requires_escape_for_strategy(const EscapeStrategy&, const Delimiters&) const;
@@ -42,4 +42,5 @@ public:
  bool operator==(const CsvCell&) const;
  std::ostream &print(std::ostream &, const Delimiters&, const EscapeStrategy&) const;
 };
+
 #endif
