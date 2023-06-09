@@ -4,6 +4,7 @@ TESTS = \
 	ColIval_ctor_test \
 	ColIvalV_ctor_test \
 	ColIvalV_extract_ival_test \
+	CsvCell_ctor_test \
 	CsvCell_decimal_test \
 	CsvCell_less_test \
 	CsvCell_parse_test \
@@ -16,6 +17,7 @@ check_PROGRAMS = \
 	ColIval_ctor_test \
 	ColIvalV_ctor_test \
 	ColIvalV_extract_ival_test \
+	CsvCell_ctor_test \
 	CsvCell_decimal_test \
 	CsvCell_less_test \
 	CsvCell_parse_test \

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([csvtools],[1.0.0])
+AC_INIT([csvtools],[1.1.0-pre1])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/CsvCell.h])
 AC_CONFIG_HEADERS([config.h])

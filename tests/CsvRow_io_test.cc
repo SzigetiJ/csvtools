@@ -12,7 +12,7 @@ ostream &operator<<(ostream &a, const CsvCell &b) {
   return a;
 }
 
-bool test_CsvRowParse(const string &obj, const Delimiters &delims, const vector<CsvCell> &expected_obj, bool expected_result) {
+bool test_CsvRowParse(const string &obj, const Delimiters &delims, const CsvRow &expected_obj, bool expected_result) {
   bool retv = true;
 
   CsvRow actual;
@@ -52,13 +52,13 @@ bool test_CsvRowPrint(const string &str, const Delimiters &delims, const EscapeS
 int main(int argc, const char *argv[]) {
   const Delimiters delims;
 
-  assert(test_CsvRowParse("hello", delims, {CsvCell("hello",false)},false));
-  assert(test_CsvRowParse("\"hello\"", delims, {CsvCell("hello",true)},false));
-  assert(test_CsvRowParse("\"hello\",world", delims, {CsvCell("hello",true),CsvCell("world",false)},false));
-  assert(test_CsvRowParse("1,2,\"3,4\"", delims, {CsvCell("1",false),CsvCell("2",false),CsvCell("3,4",true)},false));
+  assert(test_CsvRowParse("hello", delims, CsvRow({CsvCell("hello",false)}),false));
+  assert(test_CsvRowParse("\"hello\"", delims, CsvRow({CsvCell("hello",true)}),false));
+  assert(test_CsvRowParse("\"hello\",world", delims, CsvRow({CsvCell("hello",true),CsvCell("world",false)}),false));
+  assert(test_CsvRowParse("1,2,\"3,4\"", delims, CsvRow({CsvCell("1",false),CsvCell("2",false),CsvCell("3,4",true)}),false));
 
-  assert(test_CsvRowParse("\n", delims, {CsvCell("",false)},true));
-  assert(test_CsvRowParse("1,2\n", delims, {CsvCell("1",false),CsvCell("2",false)},true));
+  assert(test_CsvRowParse("\n", delims, CsvRow({CsvCell("",false)}),true));
+  assert(test_CsvRowParse("1,2\n", delims, CsvRow({CsvCell("1",false),CsvCell("2",false)}),true));
 
   assert(test_CsvRowPrint("1",delims,ESC_PRESERVE,"1"));
   assert(test_CsvRowPrint("1\n2",delims,ESC_PRESERVE,"1"));
