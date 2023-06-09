@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 - 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -21,6 +21,9 @@
 #include "CsvCell.h"
 
 using namespace std;
+
+CsvRow::CsvRow(const std::vector<CsvCell> &a):std::vector<CsvCell>(a){}
+CsvRow::CsvRow(std::vector<CsvCell> &&a):std::vector<CsvCell>(a){}
 
 /// Projection
 /// \param a cells to be selected (order sensitive)

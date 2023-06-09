@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 - 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -23,30 +23,38 @@
 #include "CsvCell.h"
 #include "ColTypes.h"
 
-/// Class representing a line (row) of a csv file.
-class CsvRow : public std::vector<CsvCell>{
+/**
+ * Class representing a line (row) of a csv file.
+ */
+class CsvRow : public std::vector<CsvCell> {
 public:
+ CsvRow() = default;
+ CsvRow(const std::vector<CsvCell> &a);
+ CsvRow(std::vector<CsvCell> &&a);
  bool parse(std::istream&, const Delimiters&);
  std::ostream &print(std::ostream&, const Delimiters&, const EscapeStrategy&) const;
  CsvRow get_fields(const FieldV&) const;
  CsvRow &operator+=(const CsvRow&);
 };
 
-/// Pure virtual parent class for row comparing functors.
+/**
+ *  Pure virtual parent class for row comparing functors.
+ */
 class CsvRowCompare {
 public:
- virtual bool operator()(const CsvRow&, const CsvRow&) const=0;
+ virtual bool operator()(const CsvRow&, const CsvRow&) const = 0;
 };
 
-/// Wrapper class for row comparing functors.
-/// This wrapper class must be used in functions.
-class CsvRowCompareWrapper
-{
+/**
+ * Wrapper class for row comparing functors.
+ * This wrapper class must be used in functions.
+ */
+class CsvRowCompareWrapper {
 private:
-    CsvRowCompare &cmp;
+ CsvRowCompare &cmp;
 public:
-    CsvRowCompareWrapper(CsvRowCompare&);
-    bool operator()(const CsvRow&, const CsvRow&) const;
+ CsvRowCompareWrapper(CsvRowCompare&);
+ bool operator()(const CsvRow&, const CsvRow&) const;
 };
 
 #endif

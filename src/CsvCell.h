@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 - 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -25,15 +25,21 @@
 class CsvCell {
 /// The stored data.
  std::string dat;
-/// Whether the data type is numeric (no quote) or text (quote). This influences the comparison of the data and also the output of the data.
+/// Whether the data type is numeric (no quote) or text (quote). Has impact on comparison of the data and also the output of the data.
  bool quote:1;
 
  bool requires_escape_at(bool, const Delimiters&) const;
 public:
  char parse(std::istream &, const Delimiters &);
  CsvCell(const std::string &, bool);
+ CsvCell(std::string &&, bool);
+ CsvCell(const std::string &);
+ CsvCell(std::string &&);
+ CsvCell(const char *);
+ CsvCell(int);
  CsvCell();
  const std::string &get_dat() const;
+ bool is_quoted() const;
  void set_escaped(bool);
  void to_decimal();
  bool requires_escape_for_strategy(const EscapeStrategy&, const Delimiters&) const;
