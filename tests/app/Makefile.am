@@ -6,7 +6,8 @@ TESTS = \
 	csvjoin_jtx_test.sh \
 	csvfilter_r1x_test.sh \
 	csvaggr_a0x_test.sh \
-	csvconv_4_test.sh
+	csvconv_4_test.sh \
+	csvpivot_test.sh
 
 dist_check_DATA= \
 	csvproj_help.txt.in \
@@ -21,6 +22,7 @@ dist_check_DATA= \
 	t2.csv t2esc.csv t2esch.csv t3.csv t2t3_cross.csv \
 	t4.csv \
 	t4_all.csv t4_preserve.csv t4_remove.csv t4_resolve.csv t4_xrm.csv \
-	t5.csv t5_sort1n.csv t5_aggr1smm.csv
+	t5.csv t5_sort1n.csv t5_aggr1smm.csv \
+	t6.csv t6pivot_sum.csv t6pivot_concat.csv t6pivot_count.csv t6pivot_first.csv t6pivot_last.csv t6pivot_max.csv t6pivot_min.csv
 
 EXTRA_DIST=$(TESTS)
