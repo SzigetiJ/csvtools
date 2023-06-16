@@ -17,6 +17,9 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t6.csv" "$CSVPIVOT" >/dev/null && exit 1
 < "$WDIR/t6.csv" "$CSVPIVOT" -p >/dev/null && exit 1
 < "$WDIR/t6.csv" "$CSVPIVOT" -p 0 1 2 >/dev/null && exit 1
+< "$WDIR/t6.csv" "$CSVPIVOT" -p 0 1 2 diff >/dev/null && exit 1
+< "$WDIR/t6.csv" "$CSVPIVOT" -p "owner" 1 2 count >/dev/null && exit 1
+echo "\"foo,bar" | "$CSVPIVOT" -p 0 1 2 max >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2
 
 true
