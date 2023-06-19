@@ -162,10 +162,10 @@ Examples:
 *   `csvproj -c -1 | csvaggr -a sum sum 1` calculates the sum of values in the second column grouped by the first column.
 *   `csvproj -c 4 | csvaggr -a min min 0` finds the minimum value of column #4.
 
-### Join CSV files
+### Joining CSV files
 
-The command `csvjoin` supports joining of two csv files (left and right table).
-The left table is read from stdin, whereas the right table is defined by command
+The command `csvjoin` supports joining of two csv files (left and right tables).
+The left table is read from stdin, whereas the right table must be defined by command
 line parameter `-jf <filename>`.
 The join type is also a mandatory parameter: `-jt <join_type>`.
 The following `join_type` values are available:
@@ -175,17 +175,20 @@ The following `join_type` values are available:
 *   `inner` for inner join.
 *   `outer` for outer left join.
 
-In case of inner and outer join, the join columns must be provided: `-jc <expr>`
-where `expr` is a column expression (see projection).
+In case of inner and outer join, the join columns
+of the left and the right tables must be provided:
+`-jc <expr>:<expr>`, where `expr` is a column expression (see projection).
 
 ### Dealing with Other-than-Comma Separated Values
 
 CSV files are not always comma-separated. Some "CSV" files contain TAB- or
-semicolon-separated values. With `csvpipe` these files can be converted into
+semicolon-separated values. With `csvconv` these files can be converted into
 comma-separated files and CSV files can be converted into Any-character Separated Values file.
-Available options: `[-ifs <char>] [-ofs <char>] [-esc {all|preserve|resolve|remove}]`,
-where ifs and ofs define the field separator at the input and at the output,
-respectively, whereas esc defines the field escaping strategy:
+Available options: `[-ifs <char>] [-ofs <char>] [-irs <char>] [-ors <char>] [-esc {all|preserve|resolve|remove}]`,
+where `ifs` and `ofs` define the *field* separator at the input and at the output,
+respectively,
+`irs` and `ors` define the *record* separator at the input and at the output,
+whereas `esc` defines the field escaping strategy:
 
 *   `all`: every field will be escaped.
 *   `preserve`: already escaped fields remain escaped and escaping is introduced where necessary.
