@@ -1,0 +1,3 @@
+@@VERSION@@
+Filters columns of the csv file (projection). Takes stdin as input and puts result to stdout.
+

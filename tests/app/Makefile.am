@@ -7,10 +7,11 @@ TESTS = \
 	csvfilter_r1x_test.sh \
 	csvaggr_a0x_test.sh \
 	csvconv_4_test.sh \
-	csvpivot_test.sh
+	csvpivot_test.sh \
+	cmdline_test.sh
 
 dist_check_DATA= \
-	csvproj_help.txt.in \
+	csvproj_help.txt.in csvproj_version.txt.in csvproj_ignore.txt \
 	t0.csv \
 	t0_proj0.csv t0_proj1.csv \
 	t0_sort1d.csv t0_sort1dn.csv t0_sort1n.csv t0_sort1x.csv \
@@ -26,3 +27,5 @@ dist_check_DATA= \
 	t6.csv t6pivot_sum.csv t6pivot_concat.csv t6pivot_count.csv t6pivot_first.csv t6pivot_last.csv t6pivot_max.csv t6pivot_min.csv
 
 EXTRA_DIST=$(TESTS)
+
+AM_TESTS_ENVIRONMENT=export "PACKAGE_STRING=@PACKAGE_STRING@";
