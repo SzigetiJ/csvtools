@@ -31,6 +31,8 @@ using namespace std;
 const Option conv_option_a[]={
 {"ifs","input-field-separator",1,OVERRIDE,"Define input field separator character."},
 {"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."},
+{"irs","input-record-separator",1,OVERRIDE,"Define input record separator character."},
+{"ors","output-record-separator",1,OVERRIDE,"Define output record separator character."},
 {"esc","escape-strategy",1,OVERRIDE,"Set (un)escape strategy {all|preserve|resolve|remove}. Default: preserve."}
 };
 const int conv_option_n = sizeof(conv_option_a)/sizeof(Option);
@@ -48,6 +50,10 @@ public:
    delims.set(IFS,get_arg_for_flag("ifs")[0]);
   if (is_set_flag("ofs"))
    delims.set(OFS,get_arg_for_flag("ofs")[0]);
+  if (is_set_flag("irs"))
+   delims.set(IRS,get_arg_for_flag("irs")[0]);
+  if (is_set_flag("ors"))
+   delims.set(ORS,get_arg_for_flag("ors")[0]);
   if (is_set_flag("esc")) {
    if ((strat<<string(get_arg_for_flag("esc")))==ESC_UNDEF) {
     ERROR(logger,"Invalid escape-strategy.");
@@ -60,8 +66,8 @@ public:
  EscapeStrategy get_strat() const {return strat;}
 };
 
-const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified conversions on rows and fields. Field separator character may be overridden.\n";
-const string USAGE="[-ifs {chr}] [-ofs {chr}] [-esc {strategy}]\n";
+const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified conversions on rows and fields. Field and record separator characters may be overridden.\n";
+const string USAGE="[-ifs {chr}] [-ofs {chr}] [-irs {chr}] [-ors {chr}] [-esc {strategy}]\n";
 
 
 int main(int argc, const char *argv[]) {
