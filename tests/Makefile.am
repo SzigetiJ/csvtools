@@ -11,7 +11,8 @@ TESTS = \
 	CsvCell_print_test \
 	CsvRow_io_test \
 	CsvRow_concat_test \
-	CsvIStream_test
+	CsvIStream_test \
+	strsplit_test
 
 check_PROGRAMS = \
 	ColIval_ctor_test \
@@ -24,7 +25,8 @@ check_PROGRAMS = \
 	CsvCell_print_test \
 	CsvRow_io_test \
 	CsvRow_concat_test \
-	CsvIStream_test
+	CsvIStream_test \
+	strsplit_test
 
 CLEANFILES = 
 
@@ -32,5 +34,7 @@ BUILT_SOURCES =
 
 AM_CXXFLAGS = -I${top_srcdir}/src
 LDADD = ../src/libcsvtools.a
+
+strsplit_test_SOURCES=strsplit_test.cc ../src/CommandLine.cc
 
 SUBDIRS=app

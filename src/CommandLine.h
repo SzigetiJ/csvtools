@@ -88,4 +88,7 @@ public:
 
 };
 
+// string utilities
+std::vector<std::string> str_split(const std::string &str, char sep, int parts);
+
 #endif

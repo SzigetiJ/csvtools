@@ -35,3 +35,14 @@ bool RowFilter::row_matches(const CsvRow &row) const {
    dfline_s=ss.str();
    return first(dfline_s,second.second);
 }
+
+RowFun2::RowFun2(unsigned int _argc, const RowFun &_fun) : argc(_argc), fun(_fun) {
+}
+
+unsigned int RowFun2::argnum() const {
+ return argc;
+}
+
+std::string RowFun2::exec(const std::string *_argv) const {
+ return fun(_argv);
+}

@@ -81,6 +81,7 @@ public:
     ERROR(logger, "Cannot parse condition.");
     return -1;
    }
+   str_split(string(a), ':', 3);
 
    string op(a, xptr - a);
    ColIvalV col_v(false);
