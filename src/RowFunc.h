@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 -- 2022 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -24,7 +24,7 @@
 #include <functional>
 
 /// bool function with two string parameters (binary predicate)
-typedef std::function<bool (const std::string&, const std::string&)> OpFun;
+typedef std::function<bool (const std::string&, const std::string&) > OpFun;
 
 /// row filter structure naming the binary predicate and the two parameters of the predicate.
 /// The first parameter defines a list of fields, the second parameter is a string invariant.
@@ -35,5 +35,17 @@ public:
 };
 
 typedef std::vector<RowFilter> RowFilterV;
+
+/// Generic row function
+typedef std::function<std::string (const std::string*) > RowFun;
+
+class RowFun2 {
+ unsigned int argc;
+ RowFun fun;
+public:
+ RowFun2(unsigned int _argc, const RowFun &_fun);
+ unsigned int argnum() const;
+ std::string exec(const std::string *_argv) const;
+};
 
 #endif
