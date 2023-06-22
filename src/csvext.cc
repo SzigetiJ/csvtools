@@ -54,7 +54,7 @@ const Option aggr_option_a[] = {
 const int aggr_option_n = sizeof (aggr_option_a) / sizeof (Option);
 
 typedef struct {
- RowFun2 fun;
+ RowFunSpec fun;
  string name;
 } AppendCol;
 
@@ -64,18 +64,18 @@ public:
 };
 
 class CRowFunArgument : public RowFunArgument {
-public:
  unsigned int col_idx;
-
+public:
+ CRowFunArgument(unsigned int _col_idx):col_idx(_col_idx){}
  string get_value(const CsvRow &row) const {
   return row[col_idx].get_dat();
  }
 };
 
 class VRowFunArgument : public RowFunArgument {
-public:
  string value;
-
+public:
+ VRowFunArgument(const string &_value):value(_value){}
  string get_value(const CsvRow &row) const {
   return value;
  }
@@ -87,32 +87,74 @@ typedef struct {
  shared_ptr<RowFunArgument> arg_ptr;
 } FunArg;
 
+initializer_list<RowFunSpec> rowfun_a = {
+ RowFunSpec("add","arg0 + arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) + stoi(a[1]));}),
+ RowFunSpec("sub","arg0 - arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) - stoi(a[1]));}),
+ RowFunSpec("mul","arg0 * arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) * stoi(a[1]));}),
+ RowFunSpec("div","arg0 / arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) / stoi(a[1]));}),
+ RowFunSpec("mod","arg0 % arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) % stoi(a[1]));}),
+ RowFunSpec("or","arg0 | arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) | stoi(a[1]));}),
+ RowFunSpec("and","arg0 & arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) & stoi(a[1]));}),
+ RowFunSpec("int","int(arg0),\tint(numeric)", 1, [](const string * a) {return to_string((int)stof(a[0]));}),
+
+ RowFunSpec("id","arg0,\tstring(string)", 1, [](const string * a) {return string(a[0]);}),
+ RowFunSpec("concat","arg0.append(arg1),\tstring(string,string)", 2, [](const string * a) {return string(a[0]).append(a[1]);}),
+ RowFunSpec("length","arg0.length(),\tint(string)", 1, [](const string * a) {return to_string(a[0].length());}),
+ RowFunSpec("index","arg0.find(arg1),\tint(string, string)", 2, [](const string * a) {return to_string(a[0].find(a[1]));}),
+ RowFunSpec("substr","arg0.substr(arg1, arg2),\tstring(string, int, int)", 3, [](const string * a) {return a[0].substr(stoi(a[1]),stoi(a[2]));}),
+
+ RowFunSpec("ifeq","arg0==arg1?arg2:arg3,\tstring(string, string, string, string)", 4, [](const string * a) {return a[0]==a[1]?a[2]:a[3];}),
+ RowFunSpec("iflt_str","arg0<arg1?arg2:arg3,\tstring(string, string, string, string)", 4, [](const string * a) {return a[0]<a[1]?a[2]:a[3];}),
+ RowFunSpec("iflt_int","(int)arg0<(int)arg1?arg2:arg3,\tstring(int, int, string, string)", 4, [](const string * a) {return stoi(a[0])<stoi(a[1])?a[2]:a[3];})
+};
+
 class AppenderCommandLine : public DefaultCommandLine {
+ map<string, RowFunSpec > rowfun_m;
  vector<AppendCol> extcol_v;
  vector<FunArg> args_v;
+ set<pair<unsigned int, unsigned int> > argpos_s;
  vector<vector<shared_ptr<RowFunArgument> > > arg_a;
 
- map<string, RowFun2 > rowfun_a = {
-  {"add", RowFun2(2, [](const string * a) {
-    return to_string(stoi(a[0]) + stoi(a[1]));
-   })}
- };
+ int parse_funargstr(bool pc, const string &str, FunArg &res) {
+  auto a = str_split(str, PARAM_INTERNAL_SEP, 3);
+  if (a.size() != 3) {
+   ERROR(get_log_config(), "Illegal parameter [" << str << "]");
+   return -1;
+  }
+  unsigned int fpos = stoul(a[0]);
+  unsigned int apos = stoul(a[1]);
+  shared_ptr<RowFunArgument> xarg = pc ?
+   (shared_ptr<RowFunArgument>)make_shared<CRowFunArgument>(stoul(a[2])):
+   (shared_ptr<RowFunArgument>)make_shared<VRowFunArgument>(a[2]);
+  res = (FunArg) {fpos, apos, xarg};
+  return 0;
+ }
 
 public:
 
- AppenderCommandLine(const string &desc, const string &usage) :
+ AppenderCommandLine(const string &desc, const string &usage, const initializer_list<RowFunSpec> _rowfuns) :
  DefaultCommandLine(desc, usage, set<Option>(aggr_option_a, aggr_option_a + aggr_option_n)) {
+  for (RowFunSpec spec : _rowfuns) {
+   rowfun_m.insert({spec.get_name(), spec});
+  }
  };
 
  int process() {
+  if (is_set_flag("hf")) {
+   cout << "Supported functions:"<<endl;
+   for (auto spec : rowfun_m) {
+    cout<<" "<<spec.first<<"\t"<<spec.second.get_desc()<<endl;
+   }
+   return -1; // TODO
+  }
   for (vector<const char*> arg : get_values_for_flag("a")) {
    auto a = str_split(arg[0], PARAM_INTERNAL_SEP, 2);
    if (a.size() != 2) {
-    ERROR(get_log_config(), "Illegal parameter [" << arg[0] << "]");
+    ERROR(get_log_config(), "Illegal parameter syntax [" << arg[0] << "]");
     return -1;
    }
-   auto rowfun_it = rowfun_a.find(a[0]);
-   if (rowfun_it == rowfun_a.end()) {
+   auto rowfun_it = rowfun_m.find(a[0]);
+   if (rowfun_it == rowfun_m.end()) {
     ERROR(get_log_config(), "Function not implemented [" << a[0] << "]");
     return -1;
    }
@@ -120,45 +162,56 @@ public:
   }
 
   for (vector<const char*> arg : get_values_for_flag("pc")) {
-   auto a = str_split(arg[0], PARAM_INTERNAL_SEP, 3);
-   if (a.size() != 3) {
-    ERROR(get_log_config(), "Illegal parameter [" << arg[0] << "]");
-    return -1;
+   FunArg fa;
+   int ret = parse_funargstr(true, arg[0],fa);
+   if (ret!=0) {
+    return ret;
    }
-   CRowFunArgument xcra;
-   xcra.col_idx = stoi(a[2]);
-   args_v.push_back((FunArg){stoul(a[0]), stoul(a[1]), make_shared<CRowFunArgument>(CRowFunArgument(xcra))});
+   args_v.push_back(fa);
+   argpos_s.insert({fa.fun_idx, fa.arg_idx});
   }
 
   for (vector<const char*> arg : get_values_for_flag("pv")) {
-   auto a = str_split(arg[0], PARAM_INTERNAL_SEP, 3);
-   if (a.size() != 3) {
-    ERROR(get_log_config(), "Illegal parameter [" << arg[0] << "]");
-    return -1;
+   FunArg fa;
+   int ret = parse_funargstr(false, arg[0], fa);
+   if (ret!=0) {
+    return ret;
    }
-   VRowFunArgument xvra;
-   xvra.value = a[2];
-   args_v.push_back((FunArg){stoul(a[0]), stoul(a[1]), make_shared<VRowFunArgument>(VRowFunArgument(xvra))});
+   args_v.push_back(fa);
+   argpos_s.insert({fa.fun_idx, fa.arg_idx});
   }
 
+  bool err_arg_oor = false;
   arg_a.resize(extcol_v.size());
   for (unsigned int i = 0; i < extcol_v.size(); ++i) {
    arg_a[i].resize(extcol_v[i].fun.argnum());
   }
   for (FunArg fa : args_v) {
    if (extcol_v.size() <= fa.fun_idx) {
-    ERROR(get_log_config(), "fpos out of range");
-    return -2;
+    ERROR(get_log_config(), "fpos #" << fa.fun_idx << " out of range");
+    err_arg_oor = true;
+    continue;
    }
    auto extcol = extcol_v[fa.fun_idx];
    if (extcol.fun.argnum() <= fa.arg_idx) {
-    ERROR(get_log_config(), "apos out of range");
-    return -2;
+    ERROR(get_log_config(), "apos #" << fa.arg_idx << " in function #" << fa.fun_idx << " out of range");
+    err_arg_oor = true;
+    continue;
    }
    arg_a[fa.fun_idx][fa.arg_idx] = fa.arg_ptr;
   }
 
-  return 0;
+  bool err_arg_missing = false;
+  for (unsigned int fpos = 0; fpos < extcol_v.size(); ++fpos) {
+   auto &extcol = extcol_v[fpos];
+   for (unsigned int apos = 0; apos < extcol.fun.argnum(); ++apos) {
+    if (argpos_s.find({fpos, apos}) == argpos_s.end()) {
+     ERROR(get_log_config(), "Function #" << fpos << " requires " << extcol.fun.argnum() << " arguments. Arg #" << apos << " not defined.");
+     err_arg_missing = true;
+    }
+   }
+  }
+  return (err_arg_missing || err_arg_oor) ? -2 : 0;
  };
 
  CsvRow &append_header(CsvRow &row) const {
@@ -185,7 +238,7 @@ int main(int argc, const char *argv[]) {
  const Delimiters delims;
  const EscapeStrategy strat = ESC_PRESERVE;
 
- AppenderCommandLine cmdline = AppenderCommandLine(DESCRIPTION, USAGE);
+ AppenderCommandLine cmdline = AppenderCommandLine(DESCRIPTION, USAGE, rowfun_a);
  CommandLineExecuteResponse resp = cmdline.execute(argc, argv);
  if (resp != CMDLINE_OK) {
   return resp;

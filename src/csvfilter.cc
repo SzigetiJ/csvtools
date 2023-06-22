@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 SZIGETI János <szigeti at pilar dot hu>
+ *  Copyright (C) 2014 -- 2023 SZIGETI János <szigeti at pilar dot hu>
  *
  *  This file is part of CsvTools.
  *
@@ -69,34 +69,26 @@ public:
 
   vector<vector<const char*> > arg_v=get_values_for_longname("row");
   for (vector<const char*> arg : arg_v){
-   const char *a=arg[0];
-   const char *ae=a+strlen(a);
-   const char *xptr=find(a,ae,':');
-   if (xptr==ae) {
-    ERROR(logger, "Cannot parse condition.");
-    return -1;
-   }
-   const char *xptr1=find(xptr+1,ae,':');
-   if (xptr1==ae) {
-    ERROR(logger, "Cannot parse condition.");
-    return -1;
-   }
-   str_split(string(a), ':', 3);
+   const char *a = arg[0];
+   auto ax = str_split(string(a), ':', 3);
 
-   string op(a, xptr - a);
+   if (ax.size() < 3) {
+    ERROR (logger, "Parameter ["<<a<<"] ill-formed. Aborting.");
+    return -1;
+   }
+   string op(ax[0]);
    ColIvalV col_v(false);
-   if (col_v.parse(xptr + 1, xptr1 - (xptr + 1))) {
-    ERROR(logger, "Unrecognized column expression ["<<string(xptr + 1, xptr1 - (xptr + 1))<<"] in ["<<a<<"]. Aborting.");
+   if (col_v.parse(ax[1].c_str())) {
+    ERROR(logger, "Unrecognized column expression ["<<ax[1]<<"] in ["<<a<<"]. Aborting.");
     return -2;
    }
-   string str=xptr1+1;
    OpFunMap::const_iterator comi=colop_m.find(op);
    if (comi==colop_m.end()) {
     ERROR(logger, "Unrecognized operator ["<<a<<"]. Aborting.");
     return -2;
    }
    OpFun co=comi->second;
-   filter_v.push_back(make_pair(co,make_pair(col_v,str)));
+   filter_v.push_back(make_pair(co,make_pair(col_v,ax[2])));
    INFO(logger, "Parameter parsed.");
   }
   return 0;
