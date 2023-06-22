@@ -36,13 +36,21 @@ bool RowFilter::row_matches(const CsvRow &row) const {
    return first(dfline_s,second.second);
 }
 
-RowFun2::RowFun2(unsigned int _argc, const RowFun &_fun) : argc(_argc), fun(_fun) {
+RowFunSpec::RowFunSpec(const char *_name, const char *_desc, unsigned int _argc, const RowFun &_fun) : name(_name), desc(_desc), argc(_argc), fun(_fun) {
 }
 
-unsigned int RowFun2::argnum() const {
+const char *RowFunSpec::get_name() const {
+ return name;
+}
+
+const char *RowFunSpec::get_desc() const {
+ return desc;
+}
+
+unsigned int RowFunSpec::argnum() const {
  return argc;
 }
 
-std::string RowFun2::exec(const std::string *_argv) const {
+std::string RowFunSpec::exec(const std::string *_argv) const {
  return fun(_argv);
 }

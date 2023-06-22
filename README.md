@@ -162,6 +162,49 @@ Examples:
 *   `csvproj -c -1 | csvaggr -a sum sum 1` calculates the sum of values in the second column grouped by the first column.
 *   `csvproj -c 4 | csvaggr -a min min 0` finds the minimum value of column #4.
 
+### Extention
+
+With `csvext` new columns can be appended to the CSV data.
+The content of the cells in the new column is the result of a predefined function.
+The supported functions are
+
+*   `add`
+*   `sub`
+*   `mul`
+*   `div`
+*   `mod`
+*   `and`
+*   `or`
+*   `int`
+*   `id`
+*   `concat`
+*   `length`
+*   `index`
+*   `substr`
+*   `ifeq`
+*   `iflt_str`
+*   `iflt_int`
+
+The arguments of the functions can be either existing cells in the current row or constant values.
+
+Use `csvext` with option `-a <fun>:<name>`,
+where `<fun>` is one of the predefined function,
+and <name> is the name of the new, appended column.
+`csvext` accepts option `-a` multiple times, and the specified new columns will appear in the output
+in the same order as the were given at the command line.
+
+The arguments of the function must be given by means of
+`-pc <fpos>:<apos>:<cidx>` (referring to an existing **cell** in column `<cidx>`)
+or `-pv <fpos>:<apos>:<val>` (for passing the constant **value** `<val>`).
+`<fpos>` is the *function position*, the index of the function (starting with 0),
+`<apos>` is the *argument position* within the function.
+
+Examples:
+
+*   `csvext -a id:dat -pv 0:0:missing` appends a column with name "dat", and the cells content is "missing".
+*   `csvext -a add:sum -pc 0:0:0 -pc 0:1:3` appends column "sum" with the sum of the 0th and 3rd columns.
+*   `csvext -a add:inc10 -pc 0:0:2 -pv 0:1:10` appends column "inc10" with the content of the 2nd column increased by 10.
+
 ### Joining CSV files
 
 The command `csvjoin` supports joining of two csv files (left and right tables).

@@ -8,6 +8,7 @@ TESTS = \
 	csvaggr_a0x_test.sh \
 	csvconv_4_test.sh \
 	csvpivot_test.sh \
+	csvext_test.sh \
 	cmdline_test.sh
 
 dist_check_DATA= \
@@ -25,7 +26,8 @@ dist_check_DATA= \
 	t4.csv \
 	t4_all.csv t4_preserve.csv t4_remove.csv t4_resolve.csv t4_xrm.csv \
 	t5.csv t5_sort1n.csv t5_aggr1smm.csv \
-	t6.csv t6pivot_sum.csv t6pivot_concat.csv t6pivot_count.csv t6pivot_first.csv t6pivot_last.csv t6pivot_max.csv t6pivot_min.csv
+	t6.csv t6pivot_sum.csv t6pivot_concat.csv t6pivot_count.csv t6pivot_first.csv t6pivot_last.csv t6pivot_max.csv t6pivot_min.csv \
+	t0_id1.csv t0_extadd.csv t0_extadd2.csv t0_extsub.csv
 
 EXTRA_DIST=$(TESTS)
 

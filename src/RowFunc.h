@@ -39,11 +39,15 @@ typedef std::vector<RowFilter> RowFilterV;
 /// Generic row function
 typedef std::function<std::string (const std::string*) > RowFun;
 
-class RowFun2 {
+class RowFunSpec {
+ const char *name;
+ const char *desc;
  unsigned int argc;
  RowFun fun;
 public:
- RowFun2(unsigned int _argc, const RowFun &_fun);
+ RowFunSpec(const char *_name, const char *_desc, unsigned int _argc, const RowFun &_fun);
+ const char *get_name() const;
+ const char *get_desc() const;
  unsigned int argnum() const;
  std::string exec(const std::string *_argv) const;
 };
