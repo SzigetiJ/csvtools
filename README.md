@@ -15,10 +15,10 @@ are the followings:
 *   aggregation (applying given column function to given columns)
 *   extension (appending new column(s) to the CSV as result of given row functions)
 *   join of two CSV files
-    *    natural join
-    *    equijoin
-    *    outer left join
-    *    cross (full) join
+    *   natural join
+    *   equijoin
+    *   outer left join
+    *   cross (full) join
 
 Furthermore, CsvTools can be used as C++ library (libcsvtools).
 
@@ -93,8 +93,8 @@ row must fulfill each of them to get selected.
 
 *   `-r =:0:1` select rows where the first cell equals `1`.
 *   `-r =:1,3:foo,bar` selects rows where columns 1 and 3 (separated by default output field separator, `,`) give `foo,bar`. Equivalent with
-    *    `-r =:3,1:bar,foo`
-    *    `-r =:1:foo -r =:3:bar`
+    *   `-r =:3,1:bar,foo`
+    *   `-r =:1:foo -r =:3:bar`
 *   `-r >=:0,50 -r <:0:100` selects rows where the first column is at least 50 but less than 100.
 
 `cat persons.csv | csvfilter -r "<:1:1800"` produces
@@ -186,8 +186,8 @@ in the same order as the were given at the command line.
 The arguments of the function must be given by means of
 `-pc <fpos>:<apos>:<cidx>` (referring to an existing **cell** in column `<cidx>`)
 or `-pv <fpos>:<apos>:<val>` (for passing the constant **value** `<val>`).
-`<fpos>` is the *function position*, the index of the function (starting with 0),
-`<apos>` is the *argument position* within the function.
+`<fpos>` is the _function position_, the index of the function (starting with 0),
+`<apos>` is the _argument position_ within the function.
 
 Examples:
 
@@ -218,9 +218,9 @@ CSV files are not always comma-separated. Some "CSV" files contain TAB- or
 semicolon-separated values. With `csvconv` these files can be converted into
 comma-separated files and CSV files can be converted into Any-character Separated Values file.
 Available options: `[-ifs <char>] [-ofs <char>] [-irs <char>] [-ors <char>] [-esc {all|preserve|resolve|remove}]`,
-where `ifs` and `ofs` define the *field* separator at the input and at the output,
+where `ifs` and `ofs` define the _field_ separator at the input and at the output,
 respectively,
-`irs` and `ors` define the *record* separator at the input and at the output,
+`irs` and `ors` define the _record_ separator at the input and at the output,
 whereas `esc` defines the field escaping strategy:
 
 *   `all`: every field will be escaped.
