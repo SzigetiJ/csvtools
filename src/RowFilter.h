@@ -16,29 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
-#ifndef _ROWFUNC_H_
-#define _ROWFUNC_H_
-#include <functional>
+#ifndef _ROWFILTER_H_
+#define _ROWFILTER_H_
+#include "ColTypes.h"
+#include "CsvClasses.h"
 #include <string>
+#include <functional>
 
-/// Generic row function
-typedef std::function<std::string (const std::string*) > RowFun;
+/// bool function with two string parameters (binary predicate)
+typedef std::function<bool (const std::string&, const std::string&) > OpFun;
 
-class RowFunSpec {
- const char *name;
- const char *desc;
- unsigned int argc;
- RowFun fun;
+/// row filter structure naming the binary predicate and the two parameters of the predicate.
+/// The first parameter defines a list of fields, the second parameter is a string invariant.
+class RowFilter : public std::pair<OpFun,std::pair<ColIvalV, std::string> > {
 public:
- RowFunSpec(const char *_name, const char *_desc, unsigned int _argc, const RowFun &_fun);
- const char *get_name() const;
- const char *get_desc() const;
- unsigned int argnum() const;
- std::string exec(const std::string *_argv) const;
+ RowFilter(const std::pair<OpFun,std::pair<ColIvalV, std::string> >&);
+ bool row_matches(const CsvRow&) const;
 };
 
-typedef std::initializer_list<RowFunSpec> RowFunSpecs;
-
-extern const RowFunSpecs std_rowfun_a;
+typedef std::vector<RowFilter> RowFilterV;
 
 #endif
