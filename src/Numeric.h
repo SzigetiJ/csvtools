@@ -29,6 +29,7 @@ class Numeric {
   static int digits_to_num(int); ///< f(x)=10^x function for x>=0.
 public:
   Numeric(const std::string&);
+  Numeric &set_prec(size_t _prec);
   std::string to_string() const;
   Numeric &operator+=(const std::string&);
   bool operator<(const Numeric&) const;

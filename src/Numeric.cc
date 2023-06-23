@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  * along with CsvTools. If not, see http://www.gnu.org/licenses/.
  */
+#include <sstream>
 #include "Numeric.h"
 
 using namespace std;
@@ -23,11 +24,12 @@ using namespace std;
 constexpr char NEG_SIGN = '-';
 constexpr char DECIMAL_SEP = '.';
 const string ZERO_STR = "0";
+constexpr int BASE = 10;
 
 int Numeric::digits_to_num(int a) {
   int retv = 1;
   for (auto i = 0; i < a; ++i) {
-    retv *= 10;
+    retv *= BASE;
   }
   return retv;
 }
@@ -60,16 +62,34 @@ Numeric::Numeric(const string &a) {
   }
 }
 
-// FIXME: str.size() &lt prec
 string Numeric::to_string() const {
   auto str = std::to_string(val);
-  bool put_zero = (prec + (val < 0 ? 1 : 0) == str.size());
-  return prec ?
-          (str.substr(0, str.size() - prec) +
-          (put_zero ? ZERO_STR : "") +
-          DECIMAL_SEP +
-          str.substr(str.size() - prec)) :
-          str;
+  bool is_signed = (val < 0);
+  int int_digits = str.size() - is_signed - prec;
+  stringstream ss;
+  if (is_signed) ss<<NEG_SIGN;
+  size_t str_ptr = is_signed;
+  if (0 < int_digits) {ss<<str.substr(str_ptr,int_digits); str_ptr+=int_digits;}
+  else ss<<ZERO_STR;
+  if (prec == 0) return ss.str();
+  ss<<DECIMAL_SEP;
+  size_t dec_digits = 0;
+  while ((int_digits + (int)dec_digits) < 0 && dec_digits < prec) {ss<<ZERO_STR; ++dec_digits;}
+  while (dec_digits < prec && str_ptr < str.size()) {ss<<str.at(str_ptr);++dec_digits; ++str_ptr;}
+  while (dec_digits < prec) {ss<<ZERO_STR; ++dec_digits;}
+  return ss.str();
+}
+
+Numeric &Numeric::set_prec(size_t _prec) {
+ while (prec < _prec) {
+  val *= BASE;
+  ++prec;
+ }
+ while (_prec < prec) {
+  val /= BASE;
+  --prec;
+ }
+ return *this;
 }
 
 Numeric &Numeric::operator+=(const string &a) {

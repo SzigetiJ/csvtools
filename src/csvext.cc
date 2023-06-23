@@ -66,7 +66,10 @@ public:
 class CRowFunArgument : public RowFunArgument {
  unsigned int col_idx;
 public:
- CRowFunArgument(unsigned int _col_idx):col_idx(_col_idx){}
+
+ CRowFunArgument(unsigned int _col_idx) : col_idx(_col_idx) {
+ }
+
  string get_value(const CsvRow &row) const {
   return row[col_idx].get_dat();
  }
@@ -75,7 +78,10 @@ public:
 class VRowFunArgument : public RowFunArgument {
  string value;
 public:
- VRowFunArgument(const string &_value):value(_value){}
+
+ VRowFunArgument(const string &_value) : value(_value) {
+ }
+
  string get_value(const CsvRow &row) const {
   return value;
  }
@@ -87,28 +93,8 @@ typedef struct {
  shared_ptr<RowFunArgument> arg_ptr;
 } FunArg;
 
-initializer_list<RowFunSpec> rowfun_a = {
- RowFunSpec("add","arg0 + arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) + stoi(a[1]));}),
- RowFunSpec("sub","arg0 - arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) - stoi(a[1]));}),
- RowFunSpec("mul","arg0 * arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) * stoi(a[1]));}),
- RowFunSpec("div","arg0 / arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) / stoi(a[1]));}),
- RowFunSpec("mod","arg0 % arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) % stoi(a[1]));}),
- RowFunSpec("or","arg0 | arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) | stoi(a[1]));}),
- RowFunSpec("and","arg0 & arg1,\tint(int, int)", 2, [](const string * a) {return to_string(stoi(a[0]) & stoi(a[1]));}),
- RowFunSpec("int","int(arg0),\tint(numeric)", 1, [](const string * a) {return to_string((int)stof(a[0]));}),
-
- RowFunSpec("id","arg0,\tstring(string)", 1, [](const string * a) {return string(a[0]);}),
- RowFunSpec("concat","arg0.append(arg1),\tstring(string,string)", 2, [](const string * a) {return string(a[0]).append(a[1]);}),
- RowFunSpec("length","arg0.length(),\tint(string)", 1, [](const string * a) {return to_string(a[0].length());}),
- RowFunSpec("index","arg0.find(arg1),\tint(string, string)", 2, [](const string * a) {return to_string(a[0].find(a[1]));}),
- RowFunSpec("substr","arg0.substr(arg1, arg2),\tstring(string, int, int)", 3, [](const string * a) {return a[0].substr(stoi(a[1]),stoi(a[2]));}),
-
- RowFunSpec("ifeq","arg0==arg1?arg2:arg3,\tstring(string, string, string, string)", 4, [](const string * a) {return a[0]==a[1]?a[2]:a[3];}),
- RowFunSpec("iflt_str","arg0<arg1?arg2:arg3,\tstring(string, string, string, string)", 4, [](const string * a) {return a[0]<a[1]?a[2]:a[3];}),
- RowFunSpec("iflt_int","(int)arg0<(int)arg1?arg2:arg3,\tstring(int, int, string, string)", 4, [](const string * a) {return stoi(a[0])<stoi(a[1])?a[2]:a[3];})
-};
-
 class AppenderCommandLine : public DefaultCommandLine {
+ const RowFunSpecs &rowfun_a;
  map<string, RowFunSpec > rowfun_m;
  vector<AppendCol> extcol_v;
  vector<FunArg> args_v;
@@ -124,26 +110,27 @@ class AppenderCommandLine : public DefaultCommandLine {
   unsigned int fpos = stoul(a[0]);
   unsigned int apos = stoul(a[1]);
   shared_ptr<RowFunArgument> xarg = pc ?
-   (shared_ptr<RowFunArgument>)make_shared<CRowFunArgument>(stoul(a[2])):
-   (shared_ptr<RowFunArgument>)make_shared<VRowFunArgument>(a[2]);
-  res = (FunArg) {fpos, apos, xarg};
+          (shared_ptr<RowFunArgument>)make_shared<CRowFunArgument>(stoul(a[2])) :
+          (shared_ptr<RowFunArgument>)make_shared<VRowFunArgument>(a[2]);
+  res = (FunArg){fpos, apos, xarg};
   return 0;
  }
 
 public:
 
- AppenderCommandLine(const string &desc, const string &usage, const initializer_list<RowFunSpec> _rowfuns) :
- DefaultCommandLine(desc, usage, set<Option>(aggr_option_a, aggr_option_a + aggr_option_n)) {
-  for (RowFunSpec spec : _rowfuns) {
+ AppenderCommandLine(const string &desc, const string &usage, const initializer_list<RowFunSpec> &_rowfun_a) :
+ DefaultCommandLine(desc, usage, set<Option>(aggr_option_a, aggr_option_a + aggr_option_n)),
+ rowfun_a(_rowfun_a) {
+  for (RowFunSpec spec : _rowfun_a) {
    rowfun_m.insert({spec.get_name(), spec});
   }
  };
 
  int process() {
   if (is_set_flag("hf")) {
-   cout << "Supported functions:"<<endl;
-   for (auto spec : rowfun_m) {
-    cout<<" "<<spec.first<<"\t"<<spec.second.get_desc()<<endl;
+   cout << "Supported functions:" << endl;
+   for (auto spec : rowfun_a) {
+    cout << " " << spec.get_name() << "\t" << spec.get_desc() << endl;
    }
    return -1; // TODO
   }
@@ -163,8 +150,8 @@ public:
 
   for (vector<const char*> arg : get_values_for_flag("pc")) {
    FunArg fa;
-   int ret = parse_funargstr(true, arg[0],fa);
-   if (ret!=0) {
+   int ret = parse_funargstr(true, arg[0], fa);
+   if (ret != 0) {
     return ret;
    }
    args_v.push_back(fa);
@@ -174,7 +161,7 @@ public:
   for (vector<const char*> arg : get_values_for_flag("pv")) {
    FunArg fa;
    int ret = parse_funargstr(false, arg[0], fa);
-   if (ret!=0) {
+   if (ret != 0) {
     return ret;
    }
    args_v.push_back(fa);
@@ -238,7 +225,7 @@ int main(int argc, const char *argv[]) {
  const Delimiters delims;
  const EscapeStrategy strat = ESC_PRESERVE;
 
- AppenderCommandLine cmdline = AppenderCommandLine(DESCRIPTION, USAGE, rowfun_a);
+ AppenderCommandLine cmdline = AppenderCommandLine(DESCRIPTION, USAGE, std_rowfun_a);
  CommandLineExecuteResponse resp = cmdline.execute(argc, argv);
  if (resp != CMDLINE_OK) {
   return resp;
