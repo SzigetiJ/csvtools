@@ -13,7 +13,7 @@ are the followings:
 *   selection (row filtering by row condition)
 *   sorting (rows ordered by given column(s))
 *   aggregation (applying given column function to given columns)
-*   extension (appending new column(s) to the CSV as result of given row functions) (TODO)
+*   extension (appending new column(s) to the CSV as result of given row functions)
 *   join of two CSV files
     *    natural join
     *    equijoin
@@ -132,11 +132,13 @@ Examples:
 With `csvaggr` a column (or a set of columns) can be aggregated.
 `csvaggr` supports the following column functions:
 
-*   sum
-*   min
-*   max
-*   count
-*   concat
+*   `sum`
+*   `min`
+*   `max`
+*   `count`
+*   `concat`
+*   `first`
+*   `last`
 
 Use `csvaggr` with option `-a <name> <fun> <expr>` where `<name>` will be the
 name of the result column, `<fun>` is the applied column function
@@ -168,22 +170,10 @@ With `csvext` new columns can be appended to the CSV data.
 The content of the cells in the new column is the result of a predefined function.
 The supported functions are
 
-*   `add`
-*   `sub`
-*   `mul`
-*   `div`
-*   `mod`
-*   `and`
-*   `or`
-*   `int`
-*   `id`
-*   `concat`
-*   `length`
-*   `index`
-*   `substr`
-*   `ifeq`
-*   `iflt_str`
-*   `iflt_int`
+*   int functions: `add`, `sub`, `mul`, `div`, `mod`, `and`, `or`
+*   float/numeric functions: `int`, `fadd`, `fsub`, `fmul`, `fdiv`, `prec`
+*   string functions: `id`, `concat`, `length`, `index`, `substr`, `lower`, `upper`
+*   branching functions: `ifeq`, `iflt_str`, `iflt_int`, `ifle_str`, `ifle_int`
 
 The arguments of the functions can be either existing cells in the current row or constant values.
 
