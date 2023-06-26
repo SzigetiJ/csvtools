@@ -34,16 +34,18 @@ const Option conv_option_a[]={
 {"ofs","output-field-separator",1,OVERRIDE,"Define output field separator character."},
 {"irs","input-record-separator",1,OVERRIDE,"Define input record separator character."},
 {"ors","output-record-separator",1,OVERRIDE,"Define output record separator character."},
-{"esc","escape-strategy",1,OVERRIDE,"Set (un)escape strategy {all|preserve|resolve|remove}. Default: preserve."},
-{"cesc","column-escape-strategy", 2, MultipleDefinition::APPEND, "Set (un)escape strategy for a set of columns. Arg1: column expression; arg2: escape stategy (see -esc, default: inherit)."},
-{"hesc","header-escape-strategy", 1, MultipleDefinition::OVERRIDE, "Set (un)escape strategy for the header row. See -esc, default: inherit."}
+{"esc", "escape-strategy", 1, OVERRIDE, "Set (un)escape strategy. Default: preserve."},
+{"cesc", "column-escape-strategy", 2, MultipleDefinition::APPEND, "Set (un)escape strategy for a set of columns. Arg1: column expression; arg2: escape strategy (default: inherit)."},
+{"hesc", "header-escape-strategy", 1, MultipleDefinition::OVERRIDE, "Set (un)escape strategy for the header row (default: inherit)."}
 };
 const int conv_option_n = sizeof(conv_option_a)/sizeof(Option);
+
+constexpr EscapeStrategy DEFAULT_ESC = EscapeStrategy::ESC_PRESERVE;
 
 /// Extension to DefaultCommandLine: PipeCommandLine can change default field separator characters.
 class PipeCommandLine : public DefaultCommandLine {
  Delimiters delims;
- EscapeStrategy strat=EscapeStrategy::ESC_PRESERVE;
+ EscapeStrategy strat = DEFAULT_ESC;
  vector<pair<ColIvalV, EscapeStrategy> > col_strat;
  EscapeStrategy head_strat = EscapeStrategy::ESC_INHERIT;
  vector<EscapeStrategy> head_esc_v;
@@ -115,7 +117,13 @@ public:
 };
 
 const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified conversions on rows and fields. Field and record separator characters may be overridden.\n";
-const string USAGE="[-ifs {chr}] [-ofs {chr}] [-irs {chr}] [-ors {chr}] [-esc {strategy}] [-cesc <expr> {strategy}] [-hesc {strategy}]\n";
+const string USAGE="[-ifs <chr>] [-ofs <chr>] [-irs <chr>] [-ors <chr>] [-esc <strat>] [-cesc <expr> <strat>] [-hesc <strat>]\n"
+"chr is an arbitrary character\n"
+"strat ::= 'all'|'preserve'|'resolve'|'remove'\t(escape strategy)\n" // inherit is a hidden strategy (cannot even be parsed)
+" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
+" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+"where num is integer value, for the first column num=0.";
+
 
 
 int main(int argc, const char *argv[]) {
