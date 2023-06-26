@@ -17,6 +17,9 @@ CSVCONV="../../src/csvconv"
 < "$WDIR/t3.csv" "$CSVCONV" -ors x | diff - "$WDIR/t3_rsx.csv" || exit 1
 < "$WDIR/t3_rstab.csv" "$CSVCONV" -irs "$(echo -en '\t')" | diff - "$WDIR/t3.csv" || exit 1
 
+< "$WDIR/t1.csv" "$CSVCONV" -esc all -cesc 0 remove -hesc all | diff - "$WDIR/t1_esc0.csv" || exit 1
+
+
 ## parameter override
 < "$WDIR/t4.csv" "$CSVCONV" -ofs ';' -ofs '|' | diff - "$WDIR/t4_preserve.csv" || exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -ofs '|' -esc remove -esc preserve | diff - "$WDIR/t4_preserve.csv" || exit 1
@@ -32,6 +35,13 @@ echo "## ERROR lines expected">&2
 < "$WDIR/t4.csv" "$CSVCONV" -rs '|' >/dev/null && exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -irs >/dev/null && exit 1
 < "$WDIR/t4.csv" "$CSVCONV" -ors >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -cesc >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -cesc 0 >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -cesc x all >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -cesc 0 invalid >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -hesc >/dev/null && exit 1
+< "$WDIR/t4.csv" "$CSVCONV" -hesc invalid >/dev/null && exit 1
+
 ## TODO
 #echo "a,\"b" | "$CSVCONV" >/dev/null && exit 1
 echo "## END (ERROR lines expected)">&2

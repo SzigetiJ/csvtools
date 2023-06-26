@@ -26,6 +26,7 @@ typedef enum {
  ESC_PRESERVE,	///< Exising escaping must be preserved.
  ESC_RESOLVE,	///< If input escaping was requisite but output escaping is not needed than do not escape the field.
  ESC_REMOVE,	///< Do not escape fields if not required.
+ ESC_INHERIT,	///< Inherited from higher level setting.
  ESC_UNDEF	///< Undefined value (denotes error).
 } EscapeStrategy;
 

@@ -19,7 +19,7 @@ dist_check_DATA= \
 	t1.csv \
 	t1_aggr0cc.csv t1_aggr0cnt.csv t1_aggr0mmrev.csv t1_aggr0mn.csv t1_aggr0mx.csv t1_aggr0s.csv t1_aggr0first.csv t1_aggr0last.csv \
 	t1_filt01.csv t1_filt02.csv t1_filt1a.csv t1_filtne.csv \
-	t1_sort1e0d.csv \
+	t1_sort1e0d.csv t1_esc0.csv \
 	t1t2_natural.csv t1t2_outer.csv \
 	t2.csv t2esc.csv t2esch.csv t3.csv t2t3_cross.csv \
 	t3_rsx.csv t3_rstab.csv \

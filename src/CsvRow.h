@@ -33,6 +33,7 @@ public:
  CsvRow(std::vector<CsvCell> &&a);
  bool parse(std::istream&, const Delimiters&);
  std::ostream &print(std::ostream&, const Delimiters&, const EscapeStrategy&) const;
+ std::ostream &print_refined(std::ostream&, const Delimiters&, const vector<EscapeStrategy>&) const;
  CsvRow get_fields(const FieldV&) const;
  CsvRow &operator+=(const CsvRow&);
 };

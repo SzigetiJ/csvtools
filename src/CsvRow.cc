@@ -61,6 +61,16 @@ ostream &CsvRow::print(ostream &a, const Delimiters &delims, const EscapeStrateg
  return a;
 }
 
+std::ostream &CsvRow::print_refined(std::ostream &a, const Delimiters &delims, const vector<EscapeStrategy> &strat) const {
+ for (ColID i = 0U; i < size(); ++i) {
+  if (i != 0)
+   a << delims.get(OFS);
+  at(i).print(a, delims, strat[i]);
+ }
+ return a;
+}
+
+
 /// Parses the input stream and builds the CsvRow object.
 /// \param a input stream to parse
 /// \return input has more lines (no eof has been encountered)
