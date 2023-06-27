@@ -34,8 +34,7 @@ using namespace std;
 const string DESCRIPTION="Aggregates columns of CSV file. Input file must be sorted.\n";
 const string USAGE="-a <name> <fun> <expr> [-a <name> <fun> <expr> [...]]\n"
 " name ::= str\t\t(name of the aggregated output column)\n"
-" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+ + string(colivalv_expr_help_str) +
 " fun ::= sum|min|max|count|concat|first|last\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
 "where str is string, num is integer\n";
 

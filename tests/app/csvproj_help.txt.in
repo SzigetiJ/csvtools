@@ -2,8 +2,9 @@ Filters columns of the csv file (projection). Takes stdin as input and puts resu
 
 Common usage: 
 @@FULLPATH@@ -c <expr> [-c <expr> ...]
- expr ::= <ival>[,<expr>]		(column expression)
- ival ::= num|-num|num-|num-num		(column interval)
+ expr ::= <ival>[','<expr>]		(column expression)
+ ival ::= cref|'-'cref|cref'-'|cref'-'cref		(column interval)
+ cref ::= num|'r'num		(column reference)
 where num is integer value, for the first column num=0.
 
 Available options: 

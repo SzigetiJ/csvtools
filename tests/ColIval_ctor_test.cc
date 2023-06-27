@@ -6,7 +6,7 @@
 
 using namespace std;
 
-bool test_ColIvalParse(const char *a, const pair<ColID,ColID> &expected, bool exp_success) {
+bool test_ColIvalParse(const char *a, const pair<ColRef,ColRef> &expected, bool exp_success) {
   bool retv = true;
 
   ColIval actual;
@@ -18,7 +18,8 @@ bool test_ColIvalParse(const char *a, const pair<ColID,ColID> &expected, bool ex
   }
   if (actual.first != expected.first || actual.second != expected.second) {
     retv = false;
-    cerr<<"Diff. actual: ["<<actual.first<<","<<actual.second<<"], expected: ["<<expected.first<<","<<expected.second<<"]"<<endl;
+    cerr<<"Diff. actual: ["<<actual.first.first<<'.'<<actual.first.second<<","<<actual.second.first<<'.'<<actual.second.second
+            <<"], expected: ["<<expected.first.first<<'.'<<expected.first.second<<","<<expected.second.first<<'.'<<expected.second.second<<"]"<<endl;
   }
 
   return retv;
@@ -26,25 +27,25 @@ bool test_ColIvalParse(const char *a, const pair<ColID,ColID> &expected, bool ex
 
 int main(int argc, const char *argv[]) {
 
-  assert((ColIval(1)==pair<ColID,ColID>(1,1)));
+  assert((ColIval({false, 1})==pair<ColRef,ColRef>({false, 1},{false, 1})));
 
-  assert(test_ColIvalParse("1",pair<ColID,ColID>(1,1),true));
-  assert(test_ColIvalParse("1-1",pair<ColID,ColID>(1,1),true));
-  assert(test_ColIvalParse("0-1",pair<ColID,ColID>(0,1),true));
-  assert(test_ColIvalParse("1-0",pair<ColID,ColID>(1,0),true));
+  assert(test_ColIvalParse("1",pair<ColRef,ColRef>({false, 1},{false, 1}),true));
+  assert(test_ColIvalParse("1-1",pair<ColRef,ColRef>({false, 1},{false, 1}),true));
+  assert(test_ColIvalParse("0-1",pair<ColRef,ColRef>({false, 0},{false, 1}),true));
+  assert(test_ColIvalParse("1-0",pair<ColRef,ColRef>({false, 1},{false, 0}),true));
 
-  assert(test_ColIvalParse("1-",pair<ColID,ColID>(1,COLID_UNDEF),true));
-  assert(test_ColIvalParse("-1",pair<ColID,ColID>(COLID_UNDEF,1),true));
-  assert(test_ColIvalParse("-",pair<ColID,ColID>(COLID_UNDEF,COLID_UNDEF),true));
+  assert(test_ColIvalParse("1-",pair<ColRef,ColRef>({false, 1},{false, COLID_UNDEF}),true));
+  assert(test_ColIvalParse("-1",pair<ColRef,ColRef>({false, COLID_UNDEF},{false, 1}),true));
+  assert(test_ColIvalParse("-",pair<ColRef,ColRef>({false, COLID_UNDEF},{false, COLID_UNDEF}),true));
 
-  assert(test_ColIvalParse("",pair<ColID,ColID>(COLID_UNDEF,COLID_UNDEF),true));
+  assert(test_ColIvalParse("",pair<ColRef,ColRef>({false, COLID_UNDEF},{false, COLID_UNDEF}),true));
 
-  assert(test_ColIvalParse("123",pair<ColID,ColID>(123,123),true));
+  assert(test_ColIvalParse("123",pair<ColRef,ColRef>({false, 123},{false, 123}),true));
 
-  assert(test_ColIvalParse("1+",pair<ColID,ColID>(1,1),false));
+  assert(test_ColIvalParse("1+",pair<ColRef,ColRef>({false, 1},{false, 1}),false));
 
-  assert(test_ColIvalParse(".",pair<ColID,ColID>(COLID_UNDEF,COLID_UNDEF),false));
-  assert(test_ColIvalParse("1--",pair<ColID,ColID>(1,COLID_UNDEF),false));
+  assert(test_ColIvalParse(".",pair<ColRef,ColRef>({false, COLID_UNDEF},{false, COLID_UNDEF}),false));
+  assert(test_ColIvalParse("1--",pair<ColRef,ColRef>({false, 1},{false, COLID_UNDEF}),false));
 
   return 0;
 }

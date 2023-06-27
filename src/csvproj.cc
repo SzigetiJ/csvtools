@@ -26,7 +26,7 @@ using namespace std;
 
 // Projection specific options.
 const Option proj_option_a[]={
-{"c","columns",1,APPEND,"Define columns."}
+ {"c", "columns", 1, APPEND, "Define columns."}
 };
 const int proj_option_n = sizeof(proj_option_a)/sizeof(Option);
 
@@ -53,9 +53,8 @@ public:
 };
 
 const string DESCRIPTION="Filters columns of the csv file (projection). Takes stdin as input and puts result to stdout.\n";
-const string USAGE="-c <expr> [-c <expr> ...]\n"
-" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+const string USAGE = "-c <expr> [-c <expr> ...]\n"
+ + string(colivalv_expr_help_str) +
 "where num is integer value, for the first column num=0.";
 
 int main(int argc, const char *argv[]){

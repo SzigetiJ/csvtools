@@ -55,6 +55,10 @@ where expr defines columns or column interval.
 *   `-c -3` denotes columns up to interval up to column 3, i.e., columns {0,1,2,3}.
 *   `-c 3-` denotes colums 3 and followers, i.e., columns {3,4,...,last}.
 *   `-c 1,0-2` denotes columns {1,0,1,2}.
+*   `-c r0` denotes the last column.
+*   `-c r1` denotes the last but one column.
+*   `-c r2-` denotes the last three columns.
+*   `-c -r1` denotes all columns except for the last one.
 *   Without any column interval option `csvproj` assumes that colums {} have to be projected, hence it produces an empty line for each input record.
 
 `cat persons.csv | csvproj -c 2` produces
