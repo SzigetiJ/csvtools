@@ -23,13 +23,17 @@ bool test_ColIvalVCtor(const char *a, const vector<ColIval> &expected) {
 int main(int argc, const char *argv[]) {
 
   assert(test_ColIvalVCtor("",{}));
-  assert(test_ColIvalVCtor("1",{ColIval(1)}));
-  assert(test_ColIvalVCtor("1,2",{ColIval(1),ColIval(2)}));
+  assert(test_ColIvalVCtor("1",{ColIval({false,1})}));
+  assert(test_ColIvalVCtor("1,2",{ColIval({false,1}),ColIval({false,2})}));
 
   assert(test_ColIvalVCtor("-1,3-",
-  {ColIval(COLID_UNDEF,1),ColIval(3,COLID_UNDEF)}));
+  {ColIval({false,COLID_UNDEF},{false,1}),ColIval({false,3},{false,COLID_UNDEF})}));
   assert(test_ColIvalVCtor("-1,,3-",
-  {ColIval(COLID_UNDEF,1),ColIval(COLID_UNDEF),ColIval(3,COLID_UNDEF)}));
+  {ColIval({false,COLID_UNDEF},{false,1}),ColIval({false,COLID_UNDEF}),ColIval({false,3},{false,COLID_UNDEF})}));
 
+  assert(test_ColIvalVCtor("r",{ColIval({true,0})}));
+  assert(test_ColIvalVCtor("r-r",{ColIval({true,0})}));
+  assert(test_ColIvalVCtor("-r",{ColIval({false,COLID_UNDEF},{true,0})}));
+  assert(test_ColIvalVCtor("r-",{ColIval({true,0},{false,COLID_UNDEF})}));
   return 0;
 }

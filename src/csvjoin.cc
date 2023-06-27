@@ -37,8 +37,7 @@ using namespace std;
 const string DESCRIPTION="Joins two CSV file. Left CSV file is taken from stdin, the filename of the right CSV data is given as argument and the result is put to stdout.\n";
 const string USAGE="-jf {filename} {-jt {natural|cross} | -jt {inner|outer} -jc <jexpr> [-jc <jexpr> ...]}\n"
 " jexpr ::= <expr>:<expr>\t\t(join column expression - left table columns:right table columns)\n"
-" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+ + string(colivalv_expr_help_str) +
 "where num is integer and column numbering begins with 0.\n";
 
 // Selection specific options.

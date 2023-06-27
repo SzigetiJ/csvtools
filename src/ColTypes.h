@@ -22,18 +22,20 @@
 #include <vector>
 
 constexpr unsigned int COLID_UNDEF = 65535U;
+extern const char *colivalv_expr_help_str;
 
 /// Column ID.
 /// The first column has ColID=0, etc.
 /// The undefined column (coded by the '-' input key) has ColID=COLID_UNDEF.
 typedef unsigned int ColID;
+typedef std::pair<bool, ColID> ColRef;  ///< first: is_reverse (right-to-left), second: column index
 
 /// Column interval defined by the first and the last (!!!inclusive!!!) column.
-class ColIval : public std::pair<ColID,ColID> {
+class ColIval : public std::pair<ColRef, ColRef> {
 public:
  ColIval() = default;
- ColIval(const ColID&); // WARNING: many types are implicitly converted to unsigned int
- ColIval(const ColID&, const ColID&);
+ ColIval(const ColRef&); // WARNING: many types are implicitly converted to unsigned int
+ ColIval(const ColRef&, const ColRef&);
  int parse(const char *, size_t);
 };
 

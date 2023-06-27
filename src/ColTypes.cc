@@ -25,30 +25,44 @@
 
 constexpr char SYM_IVAL = '-';
 constexpr char SYM_ENUM = ',';
+constexpr char SYM_REV = 'r';
 
 using namespace std;
 
+const char *colivalv_expr_help_str =
+" expr ::= <ival>[','<expr>]\t\t(column expression)\n"
+" ival ::= cref|'-'cref|cref'-'|cref'-'cref\t\t(column interval)\n"
+" cref ::= num|'r'num\t\t(column reference)\n";
+
 /// \file ColTypes.cc Column related types and procedures.
 
-static int digitseq_parse_(const char *a_begin, int len, const char *&a_end);
+static ColRef colref_parse_(const char *a_begin, int len, const char *&a_end);
 
-/// Because strtoxx, sttoxx, etc. parse '-' and '+'.
-/// For us, '-' has special meaning, and '+' is not accepted.
+/// Parses a column reference. A valid column reference string is a sequence of digits (0 or more characters) optionally preceeded by 'r'.
+/// '' (empty strings) means undefined value, 'r' means 'r0' (last column).
 /// \param a_begin cstring to parse.
 /// \param len Maximal number of chars to parse.
 /// \param a_end Output: end of parse position.
-/// \return Parsed number (overflow is not handled).
-static int digitseq_parse_(const char *a_begin, int len, const char *&a_end) {
- int retv = 0;
- const char *it=a_begin;
+/// \return Parsed column refernce (overflow is not handled).
+static ColRef colref_parse_(const char *a_begin, int len, const char *&a_end) {
+ bool is_reverse = (a_begin[0] == SYM_REV);
+ ColID col_idx = 0;
+ const char *it = (is_reverse? a_begin + 1 : a_begin);
+
  while (it < a_begin + len) {
   char x = *it;
-  if (!isdigit(x)) break;
-  retv = 10 * retv + (x - '0');
+  if (!isdigit(x)) {
+   break;
+  }
+  col_idx *= 10U;
+  col_idx += (x - '0');
   ++it;
  }
+ if (it == a_begin) {
+  col_idx = COLID_UNDEF;
+ }
  a_end=it;
- return retv;
+ return {is_reverse, col_idx};
 }
 
 /// Simple incremental integer generator. It can be initialized (first generated value).
@@ -73,10 +87,9 @@ public:
 int ColIval::parse(const char *a, size_t len){
  const char *eotok0;
  const char *eotok1;
- auto lo = digitseq_parse_(a, len, eotok0);
+ first = colref_parse_(a, len, eotok0);
  bool is_point = (eotok0 == (a + len));
  bool is_interval = !is_point && (*eotok0 == SYM_IVAL);
- first = (eotok0 == a) ? COLID_UNDEF : lo;
  if (!is_interval) {
   second = first;
   if (!is_point) { // there is an illegal character in a
@@ -85,8 +98,7 @@ int ColIval::parse(const char *a, size_t len){
  } else { // interval
   auto a2 = eotok0 + 1;
   auto len2 = len - (a2 - a);
-  auto hi = digitseq_parse_(a2, len2, eotok1);
-  second = (eotok1 == a2) ? COLID_UNDEF : hi;
+  second = colref_parse_(a2, len2, eotok1);
   if (eotok1 != (a2 + len2)) { // there is (are) remaining illegal character(s)
    return 1;
   }
@@ -96,7 +108,7 @@ int ColIval::parse(const char *a, size_t len){
 
 /// Point interval constructor.
 /// \param a Lower and upper bound of the interval.
-ColIval::ColIval(const ColID &a) {
+ColIval::ColIval(const ColRef &a) {
  first = a;
  second = a;
 }
@@ -104,7 +116,7 @@ ColIval::ColIval(const ColID &a) {
 /// Standard constructor.
 /// \param a Lower bound of the interval.
 /// \param b Upper bound of the interval (inclusive).
-ColIval::ColIval(const ColID &a, const ColID &b) {
+ColIval::ColIval(const ColRef &a, const ColRef &b) {
  first = a;
  second = b;
 }
@@ -153,15 +165,17 @@ ColIvalV::ColIvalV(bool a){
 /// @return Sequence of column identifiers.
 FieldV ColIvalV::extract_ival(int len) const {
  FieldV retv;
- for (unsigned int i=0;i<size();++i){
-  int cbegin=(at(i).first==COLID_UNDEF?0:at(i).first);
-  int cend=(at(i).second==COLID_UNDEF?len:at(i).second+1);
+ for (unsigned int i = 0U; i < size(); ++i){
+  const ColRef &lo = at(i).first;
+  const ColRef &hi = at(i).second;
+  int cbegin = lo.first ? (lo.second == COLID_UNDEF ? len - 1 : len - 1 - lo.second) : (lo.second == COLID_UNDEF ? 0 : lo.second);
+  int cend = hi.first ? (hi.second == COLID_UNDEF ? len : len - hi.second) : (hi.second == COLID_UNDEF ? len : hi.second + 1);
    // exception:
-  if (cend<cbegin) {
+  if (cend < cbegin) {
 //   WARN(logger, "Invalid interval: ["<<cbegin<<","<<cend<<"]");
-   cend=cbegin;
+   cend = cbegin;
   }
-  generate_n(back_inserter(retv),cend-cbegin,Sequence(cbegin));
+  generate_n(back_inserter(retv), cend - cbegin, Sequence(cbegin));
  }
  return retv;
 }

@@ -120,8 +120,7 @@ const string DESCRIPTION="Pipes csv from stdin to stdout and applies specified c
 const string USAGE="[-ifs <chr>] [-ofs <chr>] [-irs <chr>] [-ors <chr>] [-esc <strat>] [-cesc <expr> <strat>] [-hesc <strat>]\n"
 "chr is an arbitrary character\n"
 "strat ::= 'all'|'preserve'|'resolve'|'remove'\t(escape strategy)\n" // inherit is a hidden strategy (cannot even be parsed)
-" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+ + string(colivalv_expr_help_str) +
 "where num is integer value, for the first column num=0.";
 
 

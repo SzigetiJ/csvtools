@@ -33,8 +33,7 @@ using namespace std;
 
 const string DESCRIPTION = "Creates pivot table of CSV file.\n";
 const string USAGE = "-p <expr> <num> <num> <fun>\n"
-        " expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-        " ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+        + string(colivalv_expr_help_str) +
         " fun ::= sum|min|max|count|concat|first|last\t\t(aggregation function, sum, min and max aggregates numeric values, count counts not empty cells, concat concatenates cells without separator)\n"
         "where str is string, num is integer\n";
 

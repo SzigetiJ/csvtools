@@ -31,8 +31,7 @@ using namespace std;
 const string DESCRIPTION="Filters selected rows of the CSV file. Takes stdin as input and puts result to stdout.\n";
 const string USAGE="-r <cond> [-r <cond> ...]\n"
 " cond ::= <op>:<expr>:str\t\t(filtering condition)\n"
-" expr ::= <ival>[,<expr>]\t\t(column expression)\n"
-" ival ::= num|-num|num-|num-num\t\t(column interval)\n"
+ + string(colivalv_expr_help_str) +
 " op ::= =|!=|<|<=|>|>=\t\t(comparison operator, = and != compare strings, each other compares numbers)\n"
 "where str is string, num is integer\n";
 
