@@ -86,7 +86,6 @@ public:
 /// @param len length of parsing.
 int ColIval::parse(const char *a, size_t len){
  const char *eotok0;
- const char *eotok1;
  first = colref_parse_(a, len, eotok0);
  bool is_point = (eotok0 == (a + len));
  bool is_interval = !is_point && (*eotok0 == SYM_IVAL);
@@ -98,6 +97,7 @@ int ColIval::parse(const char *a, size_t len){
  } else { // interval
   auto a2 = eotok0 + 1;
   auto len2 = len - (a2 - a);
+  const char *eotok1;
   second = colref_parse_(a2, len2, eotok1);
   if (eotok1 != (a2 + len2)) { // there is (are) remaining illegal character(s)
    return 1;

@@ -248,4 +248,3 @@ The escaping strategy is one of the followings:
 
 The default escaping strategy is `preserve`.
 `cesc` overrides `esc`, `hesc` overrides both `esc` and `cesc`.
-

@@ -168,9 +168,8 @@ const char* CommandLine::get_arg_for_longname(const char *a, int i) const {
 std::vector<std::string> str_split(const std::string &str, char sep, int parts) {
  vector<string> retv;
  int idx_b = 0;
- int idx_sep = -1;
  for (int i = 0; (i < parts - 1); ++i) {
-  idx_sep = str.find(sep, idx_b);
+  int idx_sep = str.find(sep, idx_b);
   if (idx_sep == string::npos) break;
   retv.push_back(str.substr(idx_b, idx_sep - idx_b));
   idx_b = idx_sep + 1;

@@ -142,4 +142,3 @@ int main(int argc, const char *argv[]) {
   line.print_refined(cout, cmdline.get_delims(), cmdline.get_strat_b())<<cmdline.get_delims().get(Delimiter::ORS);
  }
 }
-
