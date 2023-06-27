@@ -10,10 +10,15 @@ CsvTools provides transformation tools for CSV files. Supported transformation
 are the followings:
 
 *   projection (column filtering)
+
 *   selection (row filtering by row condition)
+
 *   sorting (rows ordered by given column(s))
+
 *   aggregation (applying given column function to given columns)
+
 *   extension (appending new column(s) to the CSV as result of given row functions)
+
 *   join of two CSV files
     *   natural join
     *   equijoin
@@ -91,14 +96,16 @@ by `csvfilter` is `-r <cond>`, where cond defines the fitering condition.
 The condition is given as a relation between a column (or sequence of columns)
 and a string constant.
 The syntax of the condition is `cond ::= <relation>:<expr>:str` where relation
-is one of {=, !=, <, <=, >, >=}, expr is a column expression (see Projection)
+is one of {=, !=, <, <=, >, >=}, expr is a column expression (see [Projection](#projection))
 and str is a string constant. If multiple `-r <cond>` conditions are given,
 row must fulfill each of them to get selected.
 
 *   `-r =:0:1` select rows where the first cell equals `1`.
+
 *   `-r =:1,3:foo,bar` selects rows where columns 1 and 3 (separated by default output field separator, `,`) give `foo,bar`. Equivalent with
     *   `-r =:3,1:bar,foo`
     *   `-r =:1:foo -r =:3:bar`
+
 *   `-r >=:0,50 -r <:0:100` selects rows where the first column is at least 50 but less than 100.
 
 `cat persons.csv | csvfilter -r "<:1:1800"` produces
@@ -146,7 +153,7 @@ With `csvaggr` a column (or a set of columns) can be aggregated.
 
 Use `csvaggr` with option `-a <name> <fun> <expr>` where `<name>` will be the
 name of the result column, `<fun>` is the applied column function
-and `<expr>` is the column expression (see [csvproj](#markdown-header-projection)).
+and `<expr>` is the column expression (see [Projection](#projection)).
 There can be given multiple `-a` options. If a column is not part of any column expression,
 it will be used as grouping column.
 Thus, every column either will be aggregated or will be a grouping column.
@@ -214,7 +221,7 @@ The following `join_type` values are available:
 
 In case of inner and outer join, the join columns
 of the left and the right tables must be provided:
-`-jc <expr>:<expr>`, where `expr` is a column expression (see projection).
+`-jc <expr>:<expr>`, where `expr` is a column expression (see [Projection](#projection)).
 
 ### Dealing with Other-than-Comma Separated Values
 
@@ -225,13 +232,13 @@ Available options:
 
 *   `-ifs <char>` sets input field separator character
 *   `-ofs <char>` sets output field separator character
-*    `-irs <char>` sets input record separator character
-*    `-ors <char>` sets output record separator character
-*    `-esc <strategy>` sets global output cell escaping strategy
-*    `-cesc <expr> <strategy>` sets output cell escaping strategy for a set of columns
-*    `-hesc <strategy>` sets output cell escaping strategy for the header record
+*   `-irs <char>` sets input record separator character
+*   `-ors <char>` sets output record separator character
+*   `-esc <strategy>` sets global output cell escaping strategy
+*   `-cesc <expr> <strategy>` sets output cell escaping strategy for a set of columns
+*   `-hesc <strategy>` sets output cell escaping strategy for the header record
 
-`<expr>` is a column expression (see [csvproj](#markdown-header-projection)).
+`<expr>` is a column expression (see [Projection](#projection)).
 The escaping strategy is one of the followings:
 
 *   `all`: every field will be escaped.
