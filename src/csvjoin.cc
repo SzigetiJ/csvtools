@@ -50,9 +50,9 @@ const int join_option_n = sizeof(join_option_a)/sizeof(Option);
 
 /// Extension to DefaultCommandLine: JoinCommandLine can derive join parameters from options.
 class JoinCommandLine : public DefaultCommandLine {
- pair<ColIvalV,ColIvalV> join_columns=make_pair(false,false);
- const char *right_fname = NULL;
- JoinType join_type=JOIN_INNER;
+ pair<ColIvalV,ColIvalV> join_columns;
+ const char *right_fname;
+ JoinType join_type;
 
  int set_join_columns() {
   if (!is_set_flag("jc")){
@@ -80,7 +80,8 @@ class JoinCommandLine : public DefaultCommandLine {
  };
 public:
  JoinCommandLine(const string &desc, const string &usage) :
-  DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)){};
+  DefaultCommandLine(desc, usage,set<Option>(join_option_a,join_option_a+join_option_n)),
+  join_columns(make_pair(false,false)),right_fname(nullptr),join_type(JoinType::JOIN_INNER){};
 
  int process() {
 // join type
