@@ -21,6 +21,7 @@ dist_check_DATA= \
 	t1_filt01.csv t1_filt02.csv t1_filt1a.csv t1_filtne.csv \
 	t1_sort1e0d.csv t1_esc0.csv \
 	t1t2_natural.csv t1t2_outer.csv \
+	t1t4_natural.csv \
 	t2.csv t2esc.csv t2esch.csv t3.csv t2t3_cross.csv \
 	t3_rsx.csv t3_rstab.csv \
 	t4.csv \

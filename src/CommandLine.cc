@@ -28,7 +28,7 @@ using namespace std;
 
 /// strict weak ordering by flag (lexicographic).
 bool Option::operator<(const _Option &b) const {
-  return std::strcmp(flag, b.flag) < 0;
+  return (flag && b.flag) ? std::strcmp(flag, b.flag) < 0 : (flag < b.flag);
 }
 
 ostream &operator<<(ostream &a, const Option &b) {
@@ -50,8 +50,12 @@ ostream &operator<<(ostream &a, const Option &b) {
 
 CommandLine::CommandLine(const set<Option> &a) : logger(LogConfig()), option_s(a) {
   for (auto option : a) {
-    flag_m.insert(make_pair(option.flag, option));
-    longname_m.insert(make_pair(option.longname, option));
+    if (option.flag) {
+      flag_m.insert(make_pair(option.flag, option));
+    }
+    if (option.longname) {
+      longname_m.insert(make_pair(option.longname, option));
+    }
   }
 }
 
@@ -131,11 +135,11 @@ bool CommandLine::is_set_option(const Option &a) const {
 }
 
 bool CommandLine::is_set_flag(const char *a) const {
-  return flag_m.find(a) != flag_m.end() && is_set_option(flag_m.find(a)->second);
+  return a && flag_m.find(a) != flag_m.end() && is_set_option(flag_m.find(a)->second);
 }
 
 bool CommandLine::is_set_longname(const char *a) const {
-  return longname_m.find(a) != longname_m.end() && is_set_option(longname_m.find(a)->second);
+  return a && longname_m.find(a) != longname_m.end() && is_set_option(longname_m.find(a)->second);
 }
 
 vector<vector<const char*> > CommandLine::get_values_for_option(const Option &a) const {
@@ -146,11 +150,11 @@ vector<vector<const char*> > CommandLine::get_values_for_option(const Option &a)
 }
 
 vector<vector<const char*> > CommandLine::get_values_for_flag(const char *a) const {
-  return flag_m.find(a) != flag_m.end() ? get_values_for_option(flag_m.find(a)->second) : vector<vector<const char*> >();
+  return (a && flag_m.find(a) != flag_m.end()) ? get_values_for_option(flag_m.find(a)->second) : vector<vector<const char*> >();
 }
 
 vector<vector<const char*> > CommandLine::get_values_for_longname(const char *a) const {
-  return longname_m.find(a) != longname_m.end() ? get_values_for_option(longname_m.find(a)->second) : vector<vector<const char*> >();
+  return (a && longname_m.find(a) != longname_m.end()) ? get_values_for_option(longname_m.find(a)->second) : vector<vector<const char*> >();
 }
 
 const char* CommandLine::get_arg_for_option(const Option &a, int i) const {
